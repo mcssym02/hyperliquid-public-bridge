@@ -45,15 +45,27 @@ jobs:
           from pathlib import Path
 
           required = ["health.json", "snapshot.json", "history-2h.json", "xaut.json"]
+          loaded = {}
           for name in required:
               p = Path("data") / name
               assert p.exists(), f"missing {p}"
               data = json.loads(p.read_text())
               assert data.get("timestamp_utc"), f"missing timestamp in {name}"
+              loaded[name] = data
 
-          xaut = json.loads((Path("data") / "xaut.json").read_text())
+          xaut = loaded["xaut.json"]
           assert xaut.get("instrument") == "XAUT0/USDC", "XAUT identity mismatch"
-          assert "xyz:GOLD" not in json.dumps(xaut), "forbidden GOLD substitution"
+          assert xaut.get("type") == "spot", "XAUT must be spot"
+          if xaut.get("status") in ("OK", "PARTIAL"):
+              assert str(xaut.get("api_coin", "")).startswith("@"), "XAUT @index missing"
+              assert xaut.get("base", {}).get("name") == "XAUT0", "wrong XAUT base token"
+              assert xaut.get("quote", {}).get("name") == "USDC", "wrong XAUT quote token"
+
+          snapshot = loaded["snapshot.json"]
+          snap_xaut = next((a for a in snapshot.get("assets", []) if a.get("asset") == "XAUT0"), None)
+          assert snap_xaut is not None, "XAUT missing from snapshot"
+          assert snap_xaut.get("instrument") == "XAUT0/USDC", "snapshot XAUT identity mismatch"
+          assert snap_xaut.get("type") == "spot", "snapshot XAUT must be spot"
           print("JSON validation OK")
           PY
 
