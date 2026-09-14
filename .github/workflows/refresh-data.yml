@@ -1,0 +1,70 @@
+name: Refresh Hyperliquid public data
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "app.py"
+      - "collect_static.py"
+      - "requirements.txt"
+      - ".github/workflows/refresh-data.yml"
+  schedule:
+    - cron: "45,55 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hyperliquid-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Collect official Hyperliquid data
+        run: python collect_static.py
+
+      - name: Validate generated JSON
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          required = ["health.json", "snapshot.json", "history-2h.json", "xaut.json"]
+          for name in required:
+              p = Path("data") / name
+              assert p.exists(), f"missing {p}"
+              data = json.loads(p.read_text())
+              assert data.get("timestamp_utc"), f"missing timestamp in {name}"
+
+          xaut = json.loads((Path("data") / "xaut.json").read_text())
+          assert xaut.get("instrument") == "XAUT0/USDC", "XAUT identity mismatch"
+          assert "xyz:GOLD" not in json.dumps(xaut), "forbidden GOLD substitution"
+          print("JSON validation OK")
+          PY
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json
+          if git diff --cached --quiet; then
+            echo "No data changes"
+          else
+            git commit -m "data: refresh Hyperliquid snapshot"
+            git push
+          fi
