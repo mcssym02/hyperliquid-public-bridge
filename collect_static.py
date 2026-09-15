@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import httpx
+
 from app import health, history, snapshot, xaut
 
 DATA_DIR = Path("data")
@@ -17,6 +19,11 @@ PERPS = ("BTC", "ETH", "SOL", "HYPE")
 UNKNOWN = "UNKNOWN"
 NA = "NOT_APPLICABLE"
 
+MARGINPAD_BASE = "https://marginpad.io/api/v1"
+LIQ_WINDOW_SECONDS = 3600
+LIQ_LIVE_LIMIT = 400
+LIQ_TIMEOUT = httpx.Timeout(connect=4.0, read=12.0, write=4.0, pool=4.0)
+
 
 def write_json(name: str, payload: dict) -> None:
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -26,13 +33,32 @@ def write_json(name: str, payload: dict) -> None:
     tmp.replace(path)
 
 
-def parse_ts(value: str | None) -> float | None:
-    if not value:
+def parse_ts(value: Any) -> float | None:
+    if value is None:
         return None
+    if isinstance(value, (int, float)):
+        x = float(value)
+        if x > 1e14:
+            return x / 1_000_000.0
+        if x > 1e11:
+            return x / 1000.0
+        return x
+    text = str(value).strip()
     try:
-        return datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp()
+        x = float(text)
+        return parse_ts(x)
+    except Exception:
+        pass
+    try:
+        return datetime.fromisoformat(text.replace("Z", "+00:00")).timestamp()
     except Exception:
         return None
+
+
+def iso_utc(ts: float | None) -> str | None:
+    if ts is None:
+        return None
+    return datetime.fromtimestamp(ts, tz=timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def as_float(v: Any) -> float | None:
@@ -124,7 +150,228 @@ def classify_spot_perp(cur: dict[str, Any], prev: dict[str, Any] | None) -> str:
     return "PERP_LED" if abs(perp_ret) > abs(spot_ret) else "SPOT_LED"
 
 
-def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, Any]]) -> dict[str, Any]:
+def canonical_symbol(value: Any) -> str:
+    s = str(value or "").upper().strip()
+    if ":" in s:
+        s = s.split(":")[-1]
+    for suffix in ("USDT", "USDC", "USD-PERP", "USD", "PERP"):
+        if s.endswith(suffix) and len(s) > len(suffix):
+            s = s[: -len(suffix)]
+            break
+    return s.replace("/", "").replace("-", "")
+
+
+def normalize_exchange(value: Any) -> str:
+    s = str(value or "").strip().lower().replace(" ", "_")
+    if "hyperliquid" in s or s in {"hl", "hyper_liquid"}:
+        return "hyperliquid"
+    return s or "unknown"
+
+
+def normalize_side(value: Any) -> str:
+    s = str(value or "").strip().lower()
+    if "long" in s:
+        return "long"
+    if "short" in s:
+        return "short"
+    if s == "sell":
+        return "long"
+    if s == "buy":
+        return "short"
+    return "unknown"
+
+
+def find_event_list(payload: Any) -> list[dict[str, Any]]:
+    if isinstance(payload, list):
+        return [x for x in payload if isinstance(x, dict)]
+    if not isinstance(payload, dict):
+        return []
+    for key in ("events", "liquidations", "items", "rows", "data"):
+        val = payload.get(key)
+        if isinstance(val, list):
+            return [x for x in val if isinstance(x, dict)]
+        if isinstance(val, dict):
+            nested = find_event_list(val)
+            if nested:
+                return nested
+    return []
+
+
+def normalize_liq_event(raw: dict[str, Any]) -> dict[str, Any] | None:
+    ts = None
+    for k in ("ts", "timestamp", "time", "event_time", "eventTime", "created_at"):
+        ts = parse_ts(raw.get(k))
+        if ts is not None:
+            break
+    if ts is None:
+        return None
+
+    symbol = canonical_symbol(raw.get("symbol") or raw.get("coin") or raw.get("asset"))
+    if not symbol:
+        return None
+    exchange = normalize_exchange(raw.get("exchange") or raw.get("venue") or raw.get("source"))
+    side = normalize_side(raw.get("side") or raw.get("position_side") or raw.get("direction"))
+    price = as_float(raw.get("price") or raw.get("px") or raw.get("fill_price"))
+    qty = as_float(raw.get("qty") or raw.get("quantity") or raw.get("size") or raw.get("sz"))
+    notional = as_float(raw.get("notional") or raw.get("value_usd") or raw.get("notional_usd") or raw.get("value"))
+    if notional is None and price is not None and qty is not None:
+        notional = abs(price * qty)
+    if notional is None:
+        return None
+
+    return {
+        "ts_ms": int(ts * 1000),
+        "timestamp_utc": iso_utc(ts),
+        "exchange": exchange,
+        "symbol": symbol,
+        "side": side,
+        "price": price,
+        "qty": qty,
+        "notional_usd": abs(notional),
+    }
+
+
+def dedupe_events(events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[tuple[Any, ...]] = set()
+    out: list[dict[str, Any]] = []
+    for e in events:
+        key = (
+            e.get("ts_ms"), e.get("exchange"), e.get("symbol"), e.get("side"),
+            e.get("price"), e.get("qty"), e.get("notional_usd"),
+        )
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(e)
+    out.sort(key=lambda x: int(x.get("ts_ms", 0)))
+    return out
+
+
+def summarize_events(events: list[dict[str, Any]]) -> dict[str, Any]:
+    long_events = [e for e in events if e.get("side") == "long"]
+    short_events = [e for e in events if e.get("side") == "short"]
+    unknown_events = [e for e in events if e.get("side") not in {"long", "short"}]
+    by_exchange: dict[str, dict[str, Any]] = {}
+    for e in events:
+        ex = str(e.get("exchange") or "unknown")
+        row = by_exchange.setdefault(ex, {
+            "count": 0, "total_usd": 0.0,
+            "long_count": 0, "long_usd": 0.0,
+            "short_count": 0, "short_usd": 0.0,
+            "unknown_side_count": 0, "unknown_side_usd": 0.0,
+        })
+        n = float(e.get("notional_usd") or 0.0)
+        row["count"] += 1
+        row["total_usd"] += n
+        side = e.get("side")
+        if side == "long":
+            row["long_count"] += 1; row["long_usd"] += n
+        elif side == "short":
+            row["short_count"] += 1; row["short_usd"] += n
+        else:
+            row["unknown_side_count"] += 1; row["unknown_side_usd"] += n
+    return {
+        "count": len(events),
+        "total_usd": sum(float(e.get("notional_usd") or 0.0) for e in events),
+        "long_count": len(long_events),
+        "long_usd": sum(float(e.get("notional_usd") or 0.0) for e in long_events),
+        "short_count": len(short_events),
+        "short_usd": sum(float(e.get("notional_usd") or 0.0) for e in short_events),
+        "unknown_side_count": len(unknown_events),
+        "unknown_side_usd": sum(float(e.get("notional_usd") or 0.0) for e in unknown_events),
+        "by_exchange": by_exchange,
+    }
+
+
+async def fetch_marginpad(client: httpx.AsyncClient, path: str) -> tuple[Any | None, str | None]:
+    try:
+        r = await client.get(f"{MARGINPAD_BASE}{path}")
+        r.raise_for_status()
+        payload = r.json()
+        if isinstance(payload, dict) and payload.get("ok") is False:
+            return None, f"API error: {payload.get('error')}"
+        return payload, None
+    except Exception as exc:
+        return None, f"{type(exc).__name__}: {str(exc)[:220]}"
+
+
+async def collect_liquidations() -> dict[str, Any]:
+    now = datetime.now(timezone.utc).timestamp()
+    cutoff = now - LIQ_WINDOW_SECONDS
+    headers = {"User-Agent": "hyperliquid-public-bridge/1.2 liquidation-audit"}
+    async with httpx.AsyncClient(timeout=LIQ_TIMEOUT, headers=headers, follow_redirects=True) as client:
+        tasks = {a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/live?symbol={a}&limit={LIQ_LIVE_LIMIT}")) for a in PERPS}
+        feed_task = asyncio.create_task(fetch_marginpad(client, "/feed"))
+        feed_payload, feed_error = await feed_task
+        live_results = {a: await task for a, task in tasks.items()}
+
+    feed_events = []
+    if feed_payload is not None:
+        feed_events = [e for x in find_event_list(feed_payload) if (e := normalize_liq_event(x)) is not None]
+
+    assets: list[dict[str, Any]] = []
+    source_errors: dict[str, Any] = {"feed": feed_error, "live": {}}
+    any_ok = feed_payload is not None
+
+    for asset in PERPS:
+        payload, err = live_results[asset]
+        source_errors["live"][asset] = err
+        if payload is not None:
+            any_ok = True
+        live_events = []
+        if payload is not None:
+            live_events = [e for x in find_event_list(payload) if (e := normalize_liq_event(x)) is not None]
+        combined = dedupe_events([e for e in live_events + feed_events if e.get("symbol") == asset])
+        window_events = [e for e in combined if (e.get("ts_ms", 0) / 1000.0) >= cutoff]
+        hl_events = [e for e in window_events if e.get("exchange") == "hyperliquid"]
+
+        earliest_all = min((e.get("ts_ms", 0) for e in combined), default=0) / 1000.0 if combined else None
+        latest_all = max((e.get("ts_ms", 0) for e in combined), default=0) / 1000.0 if combined else None
+        live_ok = payload is not None
+        if live_ok and earliest_all is not None and earliest_all <= cutoff:
+            coverage = "FULL_WINDOW_FROM_RAW_EVENTS"
+        elif live_ok and combined:
+            coverage = "PARTIAL_WINDOW_RAW_EVENTS_DO_NOT_REACH_H-1"
+        elif feed_payload is not None and combined:
+            coverage = "PARTIAL_FEED_ONLY"
+        elif live_ok:
+            coverage = "EMPTY_OR_QUIET_WINDOW"
+        else:
+            coverage = "UNAVAILABLE"
+
+        assets.append({
+            "asset": asset,
+            "window_minutes": 60,
+            "coverage_status": coverage,
+            "earliest_event_utc": iso_utc(earliest_all),
+            "latest_event_utc": iso_utc(latest_all),
+            "global_observed_h1": summarize_events(window_events),
+            "hyperliquid_observed_h1": summarize_events(hl_events),
+            "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
+            "event_sample_count_total": len(combined),
+            "event_sample_count_h1": len(window_events),
+        })
+
+    return {
+        "service": "hyperliquid-public-bridge",
+        "version": "1.2.0",
+        "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "status": "OK" if any_ok else "UNAVAILABLE",
+        "window_minutes": 60,
+        "source": {
+            "provider": "MarginPad",
+            "endpoint_kind": "keyless public realized liquidation feed",
+            "authentication_required": False,
+            "methodology": "Observed forced-liquidation events from public exchange streams; no price/OI inference.",
+            "documented_venues": ["binance", "bybit", "okx", "bitmex", "hyperliquid", "bitfinex", "gate", "htx", "dydx"],
+            "note": "Global and Hyperliquid subtotals are computed only from returned raw events inside the last 60 minutes. Coverage status must be read before using totals.",
+        },
+        "assets": assets,
+        "source_errors": source_errors,
+    }
+
+
+def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, Any]], liquidations_data: dict[str, Any]) -> dict[str, Any]:
     ts_str = snapshot_data.get("timestamp_utc")
     current_ts = parse_ts(ts_str) or datetime.now(timezone.utc).timestamp()
     current = compact_record(snapshot_data)
@@ -173,9 +420,10 @@ def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, 
             "baseline_status": "OK" if baseline else "NOT_RECORDED",
         })
 
+    liq_assets = {r.get("asset"): r for r in liquidations_data.get("assets", []) if isinstance(r, dict)}
     return {
         "service": "hyperliquid-public-bridge",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "timestamp_utc": ts_str,
         "status": "OK",
         "baseline_h1_timestamp_utc": baseline_ts,
@@ -184,8 +432,12 @@ def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, 
         "baseline_tolerance_minutes": TARGET_TOLERANCE_MIN,
         "assets": out_assets,
         "liquidations_h1": {
-            "status": "UNAVAILABLE",
-            "reason": "No reliable public aggregate is produced by this bridge; do not infer liquidations from price/OI.",
+            "status": liquidations_data.get("status", "UNAVAILABLE"),
+            "source": "MarginPad keyless public realized-liquidation collector",
+            "posture": "SECONDARY_OBSERVED",
+            "official_hyperliquid_marketwide_endpoint": "NOT_AVAILABLE",
+            "assets": {a: liq_assets.get(a, {"coverage_status": "UNAVAILABLE"}) for a in PERPS},
+            "rule": "Read coverage_status before totals; never infer missing liquidations from price/OI.",
         },
     }
 
@@ -204,16 +456,16 @@ def prune_and_append(records: list[dict[str, Any]], new_record: dict[str, Any]) 
 
 
 async def main() -> None:
-    health_data, snapshot_data, history_data, xaut_data = await asyncio.gather(
-        health(), snapshot(), history(2), xaut()
+    health_data, snapshot_data, history_data, xaut_data, liquidations_data = await asyncio.gather(
+        health(), snapshot(), history(2), xaut(), collect_liquidations()
     )
 
     previous_records = load_history()
-    derived_data = derive(snapshot_data, previous_records)
+    derived_data = derive(snapshot_data, previous_records, liquidations_data)
     updated_records = prune_and_append(previous_records, compact_record(snapshot_data))
     state_data = {
         "service": "hyperliquid-public-bridge",
-        "version": "1.1.0",
+        "version": "1.2.0",
         "timestamp_utc": snapshot_data.get("timestamp_utc"),
         "keep_hours": KEEP_HOURS,
         "record_count": len(updated_records),
@@ -224,6 +476,7 @@ async def main() -> None:
     write_json("snapshot.json", snapshot_data)
     write_json("history-2h.json", history_data)
     write_json("xaut.json", xaut_data)
+    write_json("liquidations.json", liquidations_data)
     write_json("derived.json", derived_data)
     write_json("market-state-history.json", state_data)
 
@@ -232,6 +485,8 @@ async def main() -> None:
         "snapshot": snapshot_data.get("status"),
         "history_2h": history_data.get("status"),
         "xaut": xaut_data.get("status"),
+        "liquidations": liquidations_data.get("status"),
+        "liq_coverage": {a.get("asset"): a.get("coverage_status") for a in liquidations_data.get("assets", [])},
         "derived": derived_data.get("status"),
         "baseline_h1": derived_data.get("baseline_h1_status"),
         "state_records": len(updated_records),
