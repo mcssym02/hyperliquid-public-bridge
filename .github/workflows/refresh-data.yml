@@ -87,8 +87,17 @@ jobs:
           liq_assets = {a.get("asset"): a for a in liq.get("assets", []) if isinstance(a, dict)}
           for asset in ("BTC", "ETH", "SOL", "HYPE"):
               assert asset in liq_assets, f"{asset} missing from liquidations.json"
-              assert "coverage_status" in liq_assets[asset], f"{asset} liquidation coverage missing"
-              assert "hyperliquid_observed_h1" in liq_assets[asset], f"{asset} HL liquidation aggregate missing"
+              row = liq_assets[asset]
+              assert "global_coverage_status" in row, f"{asset} global liquidation coverage missing"
+              assert "global_h1" in row, f"{asset} global liquidation aggregate missing"
+              assert "hyperliquid_coverage_status" in row, f"{asset} HL liquidation coverage missing"
+              assert "hyperliquid_observed_h1" in row, f"{asset} HL liquidation aggregate missing"
+              if row.get("global_coverage_status") == "FULL_60M_ARCHIVE":
+                  gh = row.get("global_h1", {})
+                  assert gh.get("status") == "OK", f"{asset} global H-1 marked full but aggregate not OK"
+                  assert gh.get("total_usd") is not None, f"{asset} global H-1 total missing"
+                  assert gh.get("long_usd") is not None, f"{asset} global long liquidation total missing"
+                  assert gh.get("short_usd") is not None, f"{asset} global short liquidation total missing"
 
           state = loaded["market-state-history.json"]
           assert isinstance(state.get("records"), list), "state records missing"
