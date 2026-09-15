@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
-  "version": "1.1.0",
-  "timestamp_utc": "2026-09-15T15:05:49.670570Z",
+  "version": "1.2.0",
+  "timestamp_utc": "2026-09-15T15:17:41.703289Z",
   "status": "OK",
   "baseline_h1_timestamp_utc": null,
   "baseline_h1_status": "NOT_RECORDED",
@@ -12,17 +12,17 @@
       "asset": "BTC",
       "instrument": "BTC",
       "type": "perp",
-      "current_mid_px": "76001.0",
+      "current_mid_px": "76006.5",
       "price_change_h1_pct": null,
-      "open_interest_base": "36671.33258",
+      "open_interest_base": "37603.58908",
       "delta_oi_h1_abs": null,
       "delta_oi_h1_pct": null,
       "funding_rate_hourly": "0.0000125",
       "funding_change_h1_abs": null,
       "spot_compare_status": "OK",
       "spot_compare_instrument": "UBTC/USDC",
-      "spot_compare_mid_px": "75992.5",
-      "spot_perp_basis_bps": "1.1185",
+      "spot_compare_mid_px": "76016.5",
+      "spot_perp_basis_bps": "-1.3155",
       "basis_change_h1_bps": null,
       "spot_perp_state": "CURRENT_BASIS_ONLY",
       "baseline_status": "NOT_RECORDED"
@@ -31,17 +31,17 @@
       "asset": "ETH",
       "instrument": "ETH",
       "type": "perp",
-      "current_mid_px": "2410.05",
+      "current_mid_px": "2414.3",
       "price_change_h1_pct": null,
-      "open_interest_base": "998568.7594000003",
+      "open_interest_base": "995890.2430000001",
       "delta_oi_h1_abs": null,
       "delta_oi_h1_pct": null,
-      "funding_rate_hourly": "-0.0000012652",
+      "funding_rate_hourly": "0.0000015771",
       "funding_change_h1_abs": null,
       "spot_compare_status": "OK",
       "spot_compare_instrument": "UETH/USDC",
-      "spot_compare_mid_px": "2409.3",
-      "spot_perp_basis_bps": "3.1129",
+      "spot_compare_mid_px": "2415.05",
+      "spot_perp_basis_bps": "-3.1055",
       "basis_change_h1_bps": null,
       "spot_perp_state": "CURRENT_BASIS_ONLY",
       "baseline_status": "NOT_RECORDED"
@@ -50,17 +50,17 @@
       "asset": "SOL",
       "instrument": "SOL",
       "type": "perp",
-      "current_mid_px": "98.9945",
+      "current_mid_px": "99.1495",
       "price_change_h1_pct": null,
-      "open_interest_base": "5524276.4600000009",
+      "open_interest_base": "5521620.8199999984",
       "delta_oi_h1_abs": null,
       "delta_oi_h1_pct": null,
-      "funding_rate_hourly": "-0.0000088736",
+      "funding_rate_hourly": "-0.0000030649",
       "funding_change_h1_abs": null,
       "spot_compare_status": "OK",
       "spot_compare_instrument": "USOL/USDC",
-      "spot_compare_mid_px": "99.0345",
-      "spot_perp_basis_bps": "-4.0390",
+      "spot_compare_mid_px": "99.1745",
+      "spot_perp_basis_bps": "-2.5208",
       "basis_change_h1_bps": null,
       "spot_perp_state": "CURRENT_BASIS_ONLY",
       "baseline_status": "NOT_RECORDED"
@@ -69,17 +69,17 @@
       "asset": "HYPE",
       "instrument": "HYPE",
       "type": "perp",
-      "current_mid_px": "77.264",
+      "current_mid_px": "77.3955",
       "price_change_h1_pct": null,
-      "open_interest_base": "20724610.2599999979",
+      "open_interest_base": "20761294.3600000143",
       "delta_oi_h1_abs": null,
       "delta_oi_h1_pct": null,
       "funding_rate_hourly": "0.0000125",
       "funding_change_h1_abs": null,
       "spot_compare_status": "OK",
       "spot_compare_instrument": "HYPE/USDC",
-      "spot_compare_mid_px": "77.3065",
-      "spot_perp_basis_bps": "-5.4976",
+      "spot_compare_mid_px": "77.4165",
+      "spot_perp_basis_bps": "-2.7126",
       "basis_change_h1_bps": null,
       "spot_perp_state": "CURRENT_BASIS_ONLY",
       "baseline_status": "NOT_RECORDED"
@@ -88,7 +88,7 @@
       "asset": "XAUT0",
       "instrument": "XAUT0/USDC",
       "type": "spot",
-      "current_mid_px": "4276.95",
+      "current_mid_px": "4280.55",
       "price_change_h1_pct": null,
       "open_interest": "NOT_APPLICABLE",
       "delta_oi_h1_abs": "NOT_APPLICABLE",
@@ -100,7 +100,438 @@
     }
   ],
   "liquidations_h1": {
-    "status": "UNAVAILABLE",
-    "reason": "No reliable public aggregate is produced by this bridge; do not infer liquidations from price/OI."
+    "status": "OK",
+    "source": "MarginPad keyless public realized-liquidation collector",
+    "posture": "SECONDARY_OBSERVED",
+    "official_hyperliquid_marketwide_endpoint": "NOT_AVAILABLE",
+    "assets": {
+      "BTC": {
+        "asset": "BTC",
+        "window_minutes": 60,
+        "coverage_status": "PARTIAL_WINDOW_RAW_EVENTS_DO_NOT_REACH_H-1",
+        "earliest_event_utc": "2026-09-15T14:50:38.316000Z",
+        "latest_event_utc": "2026-09-15T15:16:07Z",
+        "global_observed_h1": {
+          "count": 400,
+          "total_usd": 6489275.09783,
+          "long_count": 249,
+          "long_usd": 5456446.91943,
+          "short_count": 151,
+          "short_usd": 1032828.1784,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "hyperliquid": {
+              "count": 109,
+              "total_usd": 1122095.4991999993,
+              "long_count": 12,
+              "long_usd": 664317.48758,
+              "short_count": 97,
+              "short_usd": 457778.01162,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "binance": {
+              "count": 41,
+              "total_usd": 3360794.2326199994,
+              "long_count": 21,
+              "long_usd": 3052450.6255200002,
+              "short_count": 20,
+              "short_usd": 308343.6071,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "gate": {
+              "count": 80,
+              "total_usd": 336613.2091900001,
+              "long_count": 70,
+              "long_usd": 259419.54001000008,
+              "short_count": 10,
+              "short_usd": 77193.66918000001,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "htx": {
+              "count": 17,
+              "total_usd": 391355.0943,
+              "long_count": 16,
+              "long_usd": 383732.0343,
+              "short_count": 1,
+              "short_usd": 7623.060000000001,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "okx": {
+              "count": 25,
+              "total_usd": 422680.80322,
+              "long_count": 21,
+              "long_usd": 419463.86112,
+              "short_count": 4,
+              "short_usd": 3216.9421,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "bybit": {
+              "count": 124,
+              "total_usd": 670936.2593,
+              "long_count": 105,
+              "long_usd": 492263.3708999999,
+              "short_count": 19,
+              "short_usd": 178672.8884,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "binance-coin": {
+              "count": 4,
+              "total_usd": 184800.0,
+              "long_count": 4,
+              "long_usd": 184800.0,
+              "short_count": 0,
+              "short_usd": 0.0,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_observed_h1": {
+          "count": 109,
+          "total_usd": 1122095.4992,
+          "long_count": 12,
+          "long_usd": 664317.4875800001,
+          "short_count": 97,
+          "short_usd": 457778.01162,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "hyperliquid": {
+              "count": 109,
+              "total_usd": 1122095.4991999993,
+              "long_count": 12,
+              "long_usd": 664317.48758,
+              "short_count": 97,
+              "short_usd": 457778.01162,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
+        "event_sample_count_total": 400,
+        "event_sample_count_h1": 400
+      },
+      "ETH": {
+        "asset": "ETH",
+        "window_minutes": 60,
+        "coverage_status": "PARTIAL_WINDOW_RAW_EVENTS_DO_NOT_REACH_H-1",
+        "earliest_event_utc": "2026-09-15T14:51:45.904000Z",
+        "latest_event_utc": "2026-09-15T15:17:38.090000Z",
+        "global_observed_h1": {
+          "count": 400,
+          "total_usd": 4952204.37961,
+          "long_count": 265,
+          "long_usd": 3071446.3930800003,
+          "short_count": 135,
+          "short_usd": 1880757.98653,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "htx": {
+              "count": 27,
+              "total_usd": 75889.74800000002,
+              "long_count": 24,
+              "long_usd": 69041.19660000001,
+              "short_count": 3,
+              "short_usd": 6848.5513999999985,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "gate": {
+              "count": 139,
+              "total_usd": 857925.0845900003,
+              "long_count": 98,
+              "long_usd": 778968.8918400005,
+              "short_count": 41,
+              "short_usd": 78956.19275000003,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "binance": {
+              "count": 56,
+              "total_usd": 1584451.3721399999,
+              "long_count": 20,
+              "long_usd": 1049315.65212,
+              "short_count": 36,
+              "short_usd": 535135.72002,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "hyperliquid": {
+              "count": 87,
+              "total_usd": 1764761.9889899995,
+              "long_count": 73,
+              "long_usd": 638126.5719699997,
+              "short_count": 14,
+              "short_usd": 1126635.41702,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "bybit": {
+              "count": 43,
+              "total_usd": 498501.1127999999,
+              "long_count": 37,
+              "long_usd": 475892.74069999985,
+              "short_count": 6,
+              "short_usd": 22608.3721,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "okx": {
+              "count": 46,
+              "total_usd": 167735.07309000002,
+              "long_count": 11,
+              "long_usd": 57161.33985,
+              "short_count": 35,
+              "short_usd": 110573.73324,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "binance-coin": {
+              "count": 2,
+              "total_usd": 2940.0,
+              "long_count": 2,
+              "long_usd": 2940.0,
+              "short_count": 0,
+              "short_usd": 0.0,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_observed_h1": {
+          "count": 87,
+          "total_usd": 1764761.98899,
+          "long_count": 73,
+          "long_usd": 638126.57197,
+          "short_count": 14,
+          "short_usd": 1126635.41702,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "hyperliquid": {
+              "count": 87,
+              "total_usd": 1764761.9889899995,
+              "long_count": 73,
+              "long_usd": 638126.5719699997,
+              "short_count": 14,
+              "short_usd": 1126635.41702,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
+        "event_sample_count_total": 400,
+        "event_sample_count_h1": 400
+      },
+      "SOL": {
+        "asset": "SOL",
+        "window_minutes": 60,
+        "coverage_status": "PARTIAL_WINDOW_RAW_EVENTS_DO_NOT_REACH_H-1",
+        "earliest_event_utc": "2026-09-15T14:40:47.461000Z",
+        "latest_event_utc": "2026-09-15T15:04:46Z",
+        "global_observed_h1": {
+          "count": 400,
+          "total_usd": 2435917.809767,
+          "long_count": 253,
+          "long_usd": 2234578.905197,
+          "short_count": 147,
+          "short_usd": 201338.90457,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "hyperliquid": {
+              "count": 138,
+              "total_usd": 200116.13627,
+              "long_count": 1,
+              "long_usd": 22504.519800000002,
+              "short_count": 137,
+              "short_usd": 177611.61646999998,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "okx": {
+              "count": 56,
+              "total_usd": 163515.215,
+              "long_count": 52,
+              "long_usd": 158962.361,
+              "short_count": 4,
+              "short_usd": 4552.854,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "bybit": {
+              "count": 101,
+              "total_usd": 467949.16,
+              "long_count": 100,
+              "long_usd": 465282.832,
+              "short_count": 1,
+              "short_usd": 2666.328,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "binance": {
+              "count": 68,
+              "total_usd": 1435825.821997,
+              "long_count": 64,
+              "long_usd": 1431450.0038969999,
+              "short_count": 4,
+              "short_usd": 4375.8181,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "gate": {
+              "count": 29,
+              "total_usd": 91231.52000000002,
+              "long_count": 28,
+              "long_usd": 79099.23200000002,
+              "short_count": 1,
+              "short_usd": 12132.288,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "htx": {
+              "count": 4,
+              "total_usd": 18029.9565,
+              "long_count": 4,
+              "long_usd": 18029.9565,
+              "short_count": 0,
+              "short_usd": 0.0,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "binance-coin": {
+              "count": 4,
+              "total_usd": 59250.0,
+              "long_count": 4,
+              "long_usd": 59250.0,
+              "short_count": 0,
+              "short_usd": 0.0,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_observed_h1": {
+          "count": 138,
+          "total_usd": 200116.13627000002,
+          "long_count": 1,
+          "long_usd": 22504.519800000002,
+          "short_count": 137,
+          "short_usd": 177611.61647,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "hyperliquid": {
+              "count": 138,
+              "total_usd": 200116.13627,
+              "long_count": 1,
+              "long_usd": 22504.519800000002,
+              "short_count": 137,
+              "short_usd": 177611.61646999998,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
+        "event_sample_count_total": 400,
+        "event_sample_count_h1": 400
+      },
+      "HYPE": {
+        "asset": "HYPE",
+        "window_minutes": 60,
+        "coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
+        "earliest_event_utc": "2026-09-15T07:32:46.690000Z",
+        "latest_event_utc": "2026-09-15T15:16:31.151000Z",
+        "global_observed_h1": {
+          "count": 273,
+          "total_usd": 706793.5513404,
+          "long_count": 220,
+          "long_usd": 617832.5775804,
+          "short_count": 53,
+          "short_usd": 88960.97376000001,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "bybit": {
+              "count": 74,
+              "total_usd": 73951.5123,
+              "long_count": 73,
+              "long_usd": 73913.3217,
+              "short_count": 1,
+              "short_usd": 38.190599999999996,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "okx": {
+              "count": 42,
+              "total_usd": 139238.83980000002,
+              "long_count": 41,
+              "long_usd": 129079.63020000001,
+              "short_count": 1,
+              "short_usd": 10159.209600000002,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "binance": {
+              "count": 58,
+              "total_usd": 241363.21455039998,
+              "long_count": 55,
+              "long_usd": 241134.08282039998,
+              "short_count": 3,
+              "short_usd": 229.13172999999998,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            },
+            "hyperliquid": {
+              "count": 99,
+              "total_usd": 252239.98469000004,
+              "long_count": 51,
+              "long_usd": 173705.54286000002,
+              "short_count": 48,
+              "short_usd": 78534.44183000001,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_observed_h1": {
+          "count": 99,
+          "total_usd": 252239.98469,
+          "long_count": 51,
+          "long_usd": 173705.54286000002,
+          "short_count": 48,
+          "short_usd": 78534.44183000001,
+          "unknown_side_count": 0,
+          "unknown_side_usd": 0,
+          "by_exchange": {
+            "hyperliquid": {
+              "count": 99,
+              "total_usd": 252239.98469000004,
+              "long_count": 51,
+              "long_usd": 173705.54286000002,
+              "short_count": 48,
+              "short_usd": 78534.44183000001,
+              "unknown_side_count": 0,
+              "unknown_side_usd": 0.0
+            }
+          }
+        },
+        "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
+        "event_sample_count_total": 400,
+        "event_sample_count_h1": 273
+      }
+    },
+    "rule": "Read coverage_status before totals; never infer missing liquidations from price/OI."
   }
 }
