@@ -21,7 +21,7 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 4
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Collect official Hyperliquid data
+      - name: Collect official Hyperliquid data and public liquidation feed
         run: python collect_static.py
 
       - name: Validate generated JSON
@@ -49,6 +49,7 @@ jobs:
               "snapshot.json",
               "history-2h.json",
               "xaut.json",
+              "liquidations.json",
               "derived.json",
               "market-state-history.json",
           ]
@@ -81,6 +82,14 @@ jobs:
           assert assets["XAUT0"].get("delta_oi_h1_abs") == "NOT_APPLICABLE", "XAUT OI must be N/A"
           assert assets["XAUT0"].get("funding") == "NOT_APPLICABLE", "XAUT funding must be N/A"
 
+          liq = loaded["liquidations.json"]
+          assert liq.get("window_minutes") == 60, "liquidation window must be 60m"
+          liq_assets = {a.get("asset"): a for a in liq.get("assets", []) if isinstance(a, dict)}
+          for asset in ("BTC", "ETH", "SOL", "HYPE"):
+              assert asset in liq_assets, f"{asset} missing from liquidations.json"
+              assert "coverage_status" in liq_assets[asset], f"{asset} liquidation coverage missing"
+              assert "hyperliquid_observed_h1" in liq_assets[asset], f"{asset} HL liquidation aggregate missing"
+
           state = loaded["market-state-history.json"]
           assert isinstance(state.get("records"), list), "state records missing"
           assert state.get("record_count") == len(state.get("records", [])), "state record_count mismatch"
@@ -91,7 +100,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/derived.json data/market-state-history.json
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/market-state-history.json
           if git diff --cached --quiet; then
             echo "No data changes"
           else
