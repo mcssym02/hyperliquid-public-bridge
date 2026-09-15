@@ -21,7 +21,8 @@ NA = "NOT_APPLICABLE"
 
 MARGINPAD_BASE = "https://marginpad.io/api/v1"
 LIQ_WINDOW_SECONDS = 3600
-LIQ_LIVE_LIMIT = 400
+LIQ_RECENT_MINUTES = 60
+LIQ_LIVE_LIMIT = 1000
 LIQ_TIMEOUT = httpx.Timeout(connect=4.0, read=12.0, write=4.0, pool=4.0)
 
 
@@ -45,8 +46,7 @@ def parse_ts(value: Any) -> float | None:
         return x
     text = str(value).strip()
     try:
-        x = float(text)
-        return parse_ts(x)
+        return parse_ts(float(text))
     except Exception:
         pass
     try:
@@ -265,11 +265,14 @@ def summarize_events(events: list[dict[str, Any]]) -> dict[str, Any]:
         row["total_usd"] += n
         side = e.get("side")
         if side == "long":
-            row["long_count"] += 1; row["long_usd"] += n
+            row["long_count"] += 1
+            row["long_usd"] += n
         elif side == "short":
-            row["short_count"] += 1; row["short_usd"] += n
+            row["short_count"] += 1
+            row["short_usd"] += n
         else:
-            row["unknown_side_count"] += 1; row["unknown_side_usd"] += n
+            row["unknown_side_count"] += 1
+            row["unknown_side_usd"] += n
     return {
         "count": len(events),
         "total_usd": sum(float(e.get("notional_usd") or 0.0) for e in events),
@@ -280,6 +283,111 @@ def summarize_events(events: list[dict[str, Any]]) -> dict[str, Any]:
         "unknown_side_count": len(unknown_events),
         "unknown_side_usd": sum(float(e.get("notional_usd") or 0.0) for e in unknown_events),
         "by_exchange": by_exchange,
+    }
+
+
+def norm_key(value: Any) -> str:
+    return "".join(ch for ch in str(value).lower() if ch.isalnum())
+
+
+def pick_numeric(row: dict[str, Any], side: str) -> float | None:
+    aliases = {
+        "long": {
+            "long", "longs", "longusd", "longvalue", "longnotional", "longamount",
+            "longliquidated", "longliquidation", "longliquidations", "longliq", "longliqus",
+        },
+        "short": {
+            "short", "shorts", "shortusd", "shortvalue", "shortnotional", "shortamount",
+            "shortliquidated", "shortliquidation", "shortliquidations", "shortliq", "shortliqus",
+        },
+    }
+    normalized = {norm_key(k): v for k, v in row.items()}
+    for key in aliases[side]:
+        v = as_float(normalized.get(key))
+        if v is not None:
+            return abs(v)
+    return None
+
+
+def find_histogram_rows(payload: Any) -> list[dict[str, Any]]:
+    candidates: list[list[dict[str, Any]]] = []
+
+    def walk(node: Any) -> None:
+        if isinstance(node, list):
+            dicts = [x for x in node if isinstance(x, dict)]
+            if dicts:
+                scored = sum(1 for r in dicts if pick_numeric(r, "long") is not None or pick_numeric(r, "short") is not None)
+                if scored:
+                    candidates.append(dicts)
+            for x in node:
+                walk(x)
+        elif isinstance(node, dict):
+            for v in node.values():
+                walk(v)
+
+    walk(payload)
+    if not candidates:
+        return []
+    candidates.sort(key=lambda rows: sum(1 for r in rows if pick_numeric(r, "long") is not None or pick_numeric(r, "short") is not None), reverse=True)
+    return candidates[0]
+
+
+def summarize_histogram(payload: Any) -> dict[str, Any]:
+    rows = find_histogram_rows(payload)
+    if not rows:
+        return {
+            "status": "PARSE_ERROR",
+            "bucket_count": 0,
+            "long_usd": None,
+            "short_usd": None,
+            "total_usd": None,
+            "note": "No time-bucket list with recognizable long/short fields was found.",
+        }
+
+    long_total = 0.0
+    short_total = 0.0
+    long_found = False
+    short_found = False
+    timestamps: list[float] = []
+    used = 0
+
+    for row in rows:
+        lv = pick_numeric(row, "long")
+        sv = pick_numeric(row, "short")
+        if lv is None and sv is None:
+            continue
+        used += 1
+        if lv is not None:
+            long_total += lv
+            long_found = True
+        if sv is not None:
+            short_total += sv
+            short_found = True
+        for k in ("ts", "timestamp", "time", "bucket", "bucket_ts", "bucketTime", "start"):
+            t = parse_ts(row.get(k))
+            if t is not None:
+                timestamps.append(t)
+                break
+
+    if not long_found and not short_found:
+        return {
+            "status": "PARSE_ERROR",
+            "bucket_count": 0,
+            "long_usd": None,
+            "short_usd": None,
+            "total_usd": None,
+            "note": "Histogram rows were found but no numeric long/short values could be parsed.",
+        }
+
+    return {
+        "status": "OK",
+        "bucket_count": used,
+        "long_usd": long_total,
+        "short_usd": short_total,
+        "total_usd": long_total + short_total,
+        "earliest_bucket_utc": iso_utc(min(timestamps)) if timestamps else None,
+        "latest_bucket_utc": iso_utc(max(timestamps)) if timestamps else None,
+        "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window.",
     }
 
 
@@ -298,73 +406,98 @@ async def fetch_marginpad(client: httpx.AsyncClient, path: str) -> tuple[Any | N
 async def collect_liquidations() -> dict[str, Any]:
     now = datetime.now(timezone.utc).timestamp()
     cutoff = now - LIQ_WINDOW_SECONDS
-    headers = {"User-Agent": "hyperliquid-public-bridge/1.2 liquidation-audit"}
+    headers = {"User-Agent": "hyperliquid-public-bridge/1.3 liquidation-audit"}
     async with httpx.AsyncClient(timeout=LIQ_TIMEOUT, headers=headers, follow_redirects=True) as client:
-        tasks = {a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/live?symbol={a}&limit={LIQ_LIVE_LIMIT}")) for a in PERPS}
+        recent_tasks = {
+            a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/recent?symbol={a}&minutes={LIQ_RECENT_MINUTES}"))
+            for a in PERPS
+        }
+        live_tasks = {
+            a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/live?symbol={a}&limit={LIQ_LIVE_LIMIT}"))
+            for a in PERPS
+        }
         feed_task = asyncio.create_task(fetch_marginpad(client, "/feed"))
         feed_payload, feed_error = await feed_task
-        live_results = {a: await task for a, task in tasks.items()}
+        recent_results = {a: await task for a, task in recent_tasks.items()}
+        live_results = {a: await task for a, task in live_tasks.items()}
 
-    feed_events = []
+    feed_events: list[dict[str, Any]] = []
     if feed_payload is not None:
         feed_events = [e for x in find_event_list(feed_payload) if (e := normalize_liq_event(x)) is not None]
 
     assets: list[dict[str, Any]] = []
-    source_errors: dict[str, Any] = {"feed": feed_error, "live": {}}
+    source_errors: dict[str, Any] = {"feed": feed_error, "recent": {}, "live": {}}
     any_ok = feed_payload is not None
 
     for asset in PERPS:
-        payload, err = live_results[asset]
-        source_errors["live"][asset] = err
-        if payload is not None:
+        recent_payload, recent_err = recent_results[asset]
+        live_payload, live_err = live_results[asset]
+        source_errors["recent"][asset] = recent_err
+        source_errors["live"][asset] = live_err
+        if recent_payload is not None or live_payload is not None:
             any_ok = True
-        live_events = []
-        if payload is not None:
-            live_events = [e for x in find_event_list(payload) if (e := normalize_liq_event(x)) is not None]
+
+        global_h1 = summarize_histogram(recent_payload) if recent_payload is not None else {
+            "status": "UNAVAILABLE",
+            "bucket_count": 0,
+            "long_usd": None,
+            "short_usd": None,
+            "total_usd": None,
+            "note": recent_err or "60-minute archive endpoint unavailable.",
+        }
+
+        live_events: list[dict[str, Any]] = []
+        if live_payload is not None:
+            live_events = [e for x in find_event_list(live_payload) if (e := normalize_liq_event(x)) is not None]
         combined = dedupe_events([e for e in live_events + feed_events if e.get("symbol") == asset])
         window_events = [e for e in combined if (e.get("ts_ms", 0) / 1000.0) >= cutoff]
         hl_events = [e for e in window_events if e.get("exchange") == "hyperliquid"]
 
         earliest_all = min((e.get("ts_ms", 0) for e in combined), default=0) / 1000.0 if combined else None
         latest_all = max((e.get("ts_ms", 0) for e in combined), default=0) / 1000.0 if combined else None
-        live_ok = payload is not None
+        live_ok = live_payload is not None
         if live_ok and earliest_all is not None and earliest_all <= cutoff:
-            coverage = "FULL_WINDOW_FROM_RAW_EVENTS"
+            hl_coverage = "FULL_WINDOW_FROM_RAW_EVENTS"
         elif live_ok and combined:
-            coverage = "PARTIAL_WINDOW_RAW_EVENTS_DO_NOT_REACH_H-1"
+            hl_coverage = "PARTIAL_WINDOW_RAW_EVENTS_DO_NOT_REACH_H-1"
         elif feed_payload is not None and combined:
-            coverage = "PARTIAL_FEED_ONLY"
+            hl_coverage = "PARTIAL_FEED_ONLY"
         elif live_ok:
-            coverage = "EMPTY_OR_QUIET_WINDOW"
+            hl_coverage = "EMPTY_OR_QUIET_WINDOW"
         else:
-            coverage = "UNAVAILABLE"
+            hl_coverage = "UNAVAILABLE"
+
+        global_coverage = "FULL_60M_ARCHIVE" if global_h1.get("status") == "OK" else global_h1.get("status", "UNAVAILABLE")
 
         assets.append({
             "asset": asset,
-            "window_minutes": 60,
-            "coverage_status": coverage,
-            "earliest_event_utc": iso_utc(earliest_all),
-            "latest_event_utc": iso_utc(latest_all),
-            "global_observed_h1": summarize_events(window_events),
+            "window_minutes": LIQ_RECENT_MINUTES,
+            "global_coverage_status": global_coverage,
+            "global_h1": global_h1,
+            "hyperliquid_coverage_status": hl_coverage,
             "hyperliquid_observed_h1": summarize_events(hl_events),
+            "hyperliquid_earliest_raw_event_utc": iso_utc(earliest_all),
+            "hyperliquid_latest_raw_event_utc": iso_utc(latest_all),
             "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
-            "event_sample_count_total": len(combined),
-            "event_sample_count_h1": len(window_events),
+            "raw_event_limit": LIQ_LIVE_LIMIT,
+            "raw_event_sample_count_total": len(combined),
+            "raw_event_sample_count_h1": len(window_events),
         })
 
     return {
         "service": "hyperliquid-public-bridge",
-        "version": "1.2.0",
+        "version": "1.3.0",
         "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "status": "OK" if any_ok else "UNAVAILABLE",
-        "window_minutes": 60,
+        "window_minutes": LIQ_RECENT_MINUTES,
         "source": {
             "provider": "MarginPad",
-            "endpoint_kind": "keyless public realized liquidation feed",
             "authentication_required": False,
-            "methodology": "Observed forced-liquidation events from public exchange streams; no price/OI inference.",
+            "global_h1_endpoint": "/api/v1/liquidations/recent?symbol={ASSET}&minutes=60",
+            "hyperliquid_raw_endpoint": f"/api/v1/liquidations/live?symbol={{ASSET}}&limit={LIQ_LIVE_LIMIT}",
+            "methodology": "Global H-1 comes from MarginPad's measured time-bucketed liquidation archive. Hyperliquid-specific H-1 is computed only from returned raw events and carries an explicit coverage status.",
             "documented_venues": ["binance", "bybit", "okx", "bitmex", "hyperliquid", "bitfinex", "gate", "htx", "dydx"],
-            "note": "Global and Hyperliquid subtotals are computed only from returned raw events inside the last 60 minutes. Coverage status must be read before using totals.",
+            "documented_market_coverage": "approximately 70%+ of liquidation flow; observed, not extrapolated",
         },
         "assets": assets,
         "source_errors": source_errors,
@@ -423,7 +556,7 @@ def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, 
     liq_assets = {r.get("asset"): r for r in liquidations_data.get("assets", []) if isinstance(r, dict)}
     return {
         "service": "hyperliquid-public-bridge",
-        "version": "1.2.0",
+        "version": "1.3.0",
         "timestamp_utc": ts_str,
         "status": "OK",
         "baseline_h1_timestamp_utc": baseline_ts,
@@ -436,8 +569,8 @@ def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, 
             "source": "MarginPad keyless public realized-liquidation collector",
             "posture": "SECONDARY_OBSERVED",
             "official_hyperliquid_marketwide_endpoint": "NOT_AVAILABLE",
-            "assets": {a: liq_assets.get(a, {"coverage_status": "UNAVAILABLE"}) for a in PERPS},
-            "rule": "Read coverage_status before totals; never infer missing liquidations from price/OI.",
+            "assets": {a: liq_assets.get(a, {"global_coverage_status": "UNAVAILABLE", "hyperliquid_coverage_status": "UNAVAILABLE"}) for a in PERPS},
+            "rule": "Use global_h1 when global_coverage_status=FULL_60M_ARCHIVE. Read Hyperliquid raw coverage separately; never infer missing liquidations from price/OI.",
         },
     }
 
@@ -465,7 +598,7 @@ async def main() -> None:
     updated_records = prune_and_append(previous_records, compact_record(snapshot_data))
     state_data = {
         "service": "hyperliquid-public-bridge",
-        "version": "1.2.0",
+        "version": "1.3.0",
         "timestamp_utc": snapshot_data.get("timestamp_utc"),
         "keep_hours": KEEP_HOURS,
         "record_count": len(updated_records),
@@ -486,7 +619,8 @@ async def main() -> None:
         "history_2h": history_data.get("status"),
         "xaut": xaut_data.get("status"),
         "liquidations": liquidations_data.get("status"),
-        "liq_coverage": {a.get("asset"): a.get("coverage_status") for a in liquidations_data.get("assets", [])},
+        "liq_global_coverage": {a.get("asset"): a.get("global_coverage_status") for a in liquidations_data.get("assets", [])},
+        "liq_hl_coverage": {a.get("asset"): a.get("hyperliquid_coverage_status") for a in liquidations_data.get("assets", [])},
         "derived": derived_data.get("status"),
         "baseline_h1": derived_data.get("baseline_h1_status"),
         "state_records": len(updated_records),
