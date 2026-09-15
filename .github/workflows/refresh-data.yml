@@ -44,7 +44,14 @@ jobs:
           import json
           from pathlib import Path
 
-          required = ["health.json", "snapshot.json", "history-2h.json", "xaut.json"]
+          required = [
+              "health.json",
+              "snapshot.json",
+              "history-2h.json",
+              "xaut.json",
+              "derived.json",
+              "market-state-history.json",
+          ]
           loaded = {}
           for name in required:
               p = Path("data") / name
@@ -66,6 +73,17 @@ jobs:
           assert snap_xaut is not None, "XAUT missing from snapshot"
           assert snap_xaut.get("instrument") == "XAUT0/USDC", "snapshot XAUT identity mismatch"
           assert snap_xaut.get("type") == "spot", "snapshot XAUT must be spot"
+
+          derived = loaded["derived.json"]
+          assets = {a.get("asset"): a for a in derived.get("assets", []) if isinstance(a, dict)}
+          for asset in ("BTC", "ETH", "SOL", "HYPE", "XAUT0"):
+              assert asset in assets, f"{asset} missing from derived.json"
+          assert assets["XAUT0"].get("delta_oi_h1_abs") == "NOT_APPLICABLE", "XAUT OI must be N/A"
+          assert assets["XAUT0"].get("funding") == "NOT_APPLICABLE", "XAUT funding must be N/A"
+
+          state = loaded["market-state-history.json"]
+          assert isinstance(state.get("records"), list), "state records missing"
+          assert state.get("record_count") == len(state.get("records", [])), "state record_count mismatch"
           print("JSON validation OK")
           PY
 
@@ -73,7 +91,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/derived.json data/market-state-history.json
           if git diff --cached --quiet; then
             echo "No data changes"
           else
