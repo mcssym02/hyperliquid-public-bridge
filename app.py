@@ -9,9 +9,15 @@ import httpx
 from fastapi import FastAPI, Query
 
 APP_NAME = "hyperliquid-public-bridge"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 INFO_URL = "https://api.hyperliquid.xyz/info"
 PERPS = ("BTC", "ETH", "SOL", "HYPE")
+SPOT_ALIASES = {
+    "BTC": ("UBTC", "BTC"),
+    "ETH": ("UETH", "ETH"),
+    "SOL": ("USOL", "SOL"),
+    "HYPE": ("HYPE",),
+}
 UNKNOWN = "UNKNOWN"
 NA = "NOT_APPLICABLE"
 ALLOWED = {"allMids", "metaAndAssetCtxs", "spotMetaAndAssetCtxs", "candleSnapshot", "fundingHistory", "l2Book"}
@@ -54,21 +60,30 @@ def perp_map(raw: Any) -> dict[str, dict[str, Any]]:
     return out
 
 
-def resolve_xaut(raw: Any) -> dict[str, Any] | None:
+def spot_catalog(raw: Any) -> tuple[dict[int, dict[str, Any]], list[dict[str, Any]], list[Any]]:
     if not isinstance(raw, list) or len(raw) != 2:
-        return None
+        return {}, [], []
     meta, ctxs = raw
     if not isinstance(meta, dict) or not isinstance(ctxs, list):
-        return None
+        return {}, [], []
     tokens = {t.get("index"): t for t in meta.get("tokens", []) if isinstance(t, dict) and isinstance(t.get("index"), int)}
-    for pos, pair in enumerate(meta.get("universe", [])):
-        if not isinstance(pair, dict):
-            continue
+    universe = [x for x in meta.get("universe", []) if isinstance(x, dict)]
+    return tokens, universe, ctxs
+
+
+def resolve_spot(raw: Any, base_names: tuple[str, ...], quote_name: str = "USDC") -> dict[str, Any] | None:
+    tokens, universe, ctxs = spot_catalog(raw)
+    if not tokens:
+        return None
+    wanted = {x.upper() for x in base_names}
+    for pos, pair in enumerate(universe):
         ids = pair.get("tokens")
         if not isinstance(ids, list) or len(ids) != 2:
             continue
         base, quote = tokens.get(ids[0]), tokens.get(ids[1])
-        if not base or not quote or base.get("name") != "XAUT0" or quote.get("name") != "USDC":
+        if not base or not quote:
+            continue
+        if str(base.get("name", "")).upper() not in wanted or str(quote.get("name", "")).upper() != quote_name.upper():
             continue
         idx = pair.get("index")
         if not isinstance(idx, int):
@@ -77,8 +92,33 @@ def resolve_xaut(raw: Any) -> dict[str, Any] | None:
         ctx = next((x for x in ctxs if isinstance(x, dict) and x.get("coin") == coin), None)
         if ctx is None and pos < len(ctxs) and isinstance(ctxs[pos], dict):
             ctx = ctxs[pos]
-        return {"pair_index": idx, "api_coin": coin, "base": base, "quote": quote, "ctx": ctx or {}}
+        return {
+            "pair_index": idx,
+            "api_coin": coin,
+            "base": base,
+            "quote": quote,
+            "ctx": ctx or {},
+            "instrument": f"{base.get('name', UNKNOWN)}/{quote.get('name', UNKNOWN)}",
+        }
     return None
+
+
+def resolve_xaut(raw: Any) -> dict[str, Any] | None:
+    return resolve_spot(raw, ("XAUT0",), "USDC")
+
+
+def as_float(v: Any) -> float | None:
+    try:
+        return float(v)
+    except Exception:
+        return None
+
+
+def basis_bps(perp_mid: Any, spot_mid: Any) -> str:
+    p, s = as_float(perp_mid), as_float(spot_mid)
+    if p is None or s is None or s == 0:
+        return UNKNOWN
+    return f"{((p / s) - 1.0) * 10000:.4f}"
 
 
 def candle_summary(raw: Any) -> dict[str, Any]:
@@ -123,7 +163,7 @@ async def health():
 async def snapshot():
     ts = now_utc(); end_ms = int(time.time() * 1000); start_ms = end_ms - 24 * 3600 * 1000
     (pr, pe), (sr, se) = await asyncio.gather(safe({"type": "metaAndAssetCtxs"}), safe({"type": "spotMetaAndAssetCtxs"}))
-    perps = perp_map(pr); x = resolve_xaut(sr)
+    perps = perp_map(pr); x = resolve_xaut(sr); spot_comparators = {a: resolve_spot(sr, SPOT_ALIASES[a]) for a in PERPS}
     defs = [(a, a, "perp") for a in PERPS] + ([ ("XAUT0", x["api_coin"], "spot") ] if x else [])
     auxs = await asyncio.gather(*(aux(c, start_ms, end_ms) for _, c, _ in defs)) if defs else []
     amap = {d[0]: a for d, a in zip(defs, auxs)}
@@ -132,8 +172,8 @@ async def snapshot():
         ctx = perps.get(a)
         if ctx is None:
             records.append({"asset": a, "instrument": a, "type": "perp", "status": "UNAVAILABLE", "retrieved_at_utc": ts, "error": pe or "Asset absent"}); continue
-        q = amap.get(a, {})
-        records.append({"asset": a, "instrument": a, "type": "perp", "status": "PARTIAL" if q.get("errors") else "OK", "retrieved_at_utc": ts, "source_time_ms": q.get("source_time_ms", UNKNOWN), "mark_px": ctx.get("markPx", UNKNOWN), "mid_px": ctx.get("midPx", UNKNOWN), "oracle_index_px": ctx.get("oraclePx", UNKNOWN), "prev_day_px": ctx.get("prevDayPx", UNKNOWN), "high_24h": q.get("high_24h", UNKNOWN), "low_24h": q.get("low_24h", UNKNOWN), "best_bid": q.get("best_bid", UNKNOWN), "best_ask": q.get("best_ask", UNKNOWN), "volume_24h_notional": ctx.get("dayNtlVlm", UNKNOWN), "volume_24h_base": ctx.get("dayBaseVlm", UNKNOWN), "open_interest_base": ctx.get("openInterest", UNKNOWN), "funding_rate_hourly": ctx.get("funding", UNKNOWN), "funding_interval": "1h", "premium": ctx.get("premium", UNKNOWN), "errors": q.get("errors", [])})
+        q = amap.get(a, {}); spot = spot_comparators.get(a); spot_ctx = spot["ctx"] if spot else {}; spot_mid = spot_ctx.get("midPx", UNKNOWN) if spot else UNKNOWN
+        records.append({"asset": a, "instrument": a, "type": "perp", "status": "PARTIAL" if q.get("errors") else "OK", "retrieved_at_utc": ts, "source_time_ms": q.get("source_time_ms", UNKNOWN), "mark_px": ctx.get("markPx", UNKNOWN), "mid_px": ctx.get("midPx", UNKNOWN), "oracle_index_px": ctx.get("oraclePx", UNKNOWN), "prev_day_px": ctx.get("prevDayPx", UNKNOWN), "high_24h": q.get("high_24h", UNKNOWN), "low_24h": q.get("low_24h", UNKNOWN), "best_bid": q.get("best_bid", UNKNOWN), "best_ask": q.get("best_ask", UNKNOWN), "volume_24h_notional": ctx.get("dayNtlVlm", UNKNOWN), "volume_24h_base": ctx.get("dayBaseVlm", UNKNOWN), "open_interest_base": ctx.get("openInterest", UNKNOWN), "funding_rate_hourly": ctx.get("funding", UNKNOWN), "funding_interval": "1h", "premium": ctx.get("premium", UNKNOWN), "spot_compare_status": "OK" if spot else "UNAVAILABLE", "spot_compare_instrument": spot.get("instrument", UNKNOWN) if spot else UNKNOWN, "spot_compare_api_coin": spot.get("api_coin", UNKNOWN) if spot else UNKNOWN, "spot_compare_mid_px": spot_mid, "spot_compare_mark_px": spot_ctx.get("markPx", UNKNOWN) if spot else UNKNOWN, "spot_perp_basis_bps": basis_bps(ctx.get("midPx", UNKNOWN), spot_mid), "errors": q.get("errors", [])})
     if x:
         ctx = x["ctx"]; q = amap.get("XAUT0", {})
         records.append({"asset": "XAUT0", "instrument": "XAUT0/USDC", "api_coin": x["api_coin"], "spot_pair_index": x["pair_index"], "type": "spot", "status": "PARTIAL" if q.get("errors") else "OK", "retrieved_at_utc": ts, "source_time_ms": q.get("source_time_ms", UNKNOWN), "mark_px": ctx.get("markPx", UNKNOWN), "mid_px": ctx.get("midPx", UNKNOWN), "oracle_index_px": NA, "prev_day_px": ctx.get("prevDayPx", UNKNOWN), "high_24h": q.get("high_24h", UNKNOWN), "low_24h": q.get("low_24h", UNKNOWN), "best_bid": q.get("best_bid", UNKNOWN), "best_ask": q.get("best_ask", UNKNOWN), "volume_24h_notional": ctx.get("dayNtlVlm", UNKNOWN), "volume_24h_base": ctx.get("dayBaseVlm", UNKNOWN), "open_interest_base": NA, "funding_rate_hourly": NA, "funding_interval": NA, "base_token_id": x["base"].get("tokenId", UNKNOWN), "quote_token_id": x["quote"].get("tokenId", UNKNOWN), "identity_guard": "Exact Hyperliquid spot XAUT0/USDC; never xyz:GOLD", "errors": q.get("errors", [])})
@@ -147,21 +187,26 @@ async def snapshot():
 async def history(hours: int = Query(default=2, ge=1, le=24)):
     ts = now_utc(); end_ms = int(time.time() * 1000); start_ms = end_ms - hours * 3600 * 1000; interval = "1m" if hours <= 6 else "5m"
     (pr, pe), (sr, se) = await asyncio.gather(safe({"type": "metaAndAssetCtxs"}), safe({"type": "spotMetaAndAssetCtxs"}))
-    perps = perp_map(pr); x = resolve_xaut(sr)
-    defs = [(a, a, "perp") for a in PERPS] + [("XAUT0", x["api_coin"] if x else "", "spot")]
-    async def one(asset: str, coin: str, kind: str):
-        inst = asset if kind == "perp" else "XAUT0/USDC"
-        if not coin:
-            return {"asset": asset, "instrument": inst, "type": kind, "status": "UNAVAILABLE", "candles": UNKNOWN, "funding_history": NA if kind == "spot" else UNKNOWN, "oi_history": NA if kind == "spot" else UNKNOWN, "error": se or "Exact XAUT0/USDC pair unresolved"}
-        cp = {"type": "candleSnapshot", "req": {"coin": coin, "interval": interval, "startTime": start_ms, "endTime": end_ms}}
-        if kind == "perp":
-            (cr, ce), (fr, fe) = await asyncio.gather(safe(cp), safe({"type": "fundingHistory", "coin": coin, "startTime": start_ms, "endTime": end_ms}))
+    perps = perp_map(pr); x = resolve_xaut(sr); spot_comparators = {a: resolve_spot(sr, SPOT_ALIASES[a]) for a in PERPS}
+    async def one_perp(asset: str):
+        cp = {"type": "candleSnapshot", "req": {"coin": asset, "interval": interval, "startTime": start_ms, "endTime": end_ms}}
+        (cr, ce), (fr, fe) = await asyncio.gather(safe(cp), safe({"type": "fundingHistory", "coin": asset, "startTime": start_ms, "endTime": end_ms}))
+        s = candle_summary(cr); spot = spot_comparators.get(asset)
+        if spot:
+            scr, sce = await safe({"type": "candleSnapshot", "req": {"coin": spot["api_coin"], "interval": interval, "startTime": start_ms, "endTime": end_ms}})
+            ss = candle_summary(scr)
+            spot_summary = {"status": "OK" if sce is None else "PARTIAL", "instrument": spot["instrument"], "api_coin": spot["api_coin"], "current_mid_px": spot["ctx"].get("midPx", UNKNOWN), "path_summary": {"start_open": ss.get("start_open", UNKNOWN), "end_close": ss.get("end_close", UNKNOWN), "high": ss.get("high", UNKNOWN), "low": ss.get("low", UNKNOWN)}, "candles": ss.get("candles", UNKNOWN), "error": sce}
         else:
-            cr, ce = await safe(cp); fr, fe = NA, None
-        s = candle_summary(cr); errs = [e for e in (ce, fe) if e]
-        oi = perps.get(asset, {}).get("openInterest", UNKNOWN) if kind == "perp" else NA
-        return {"asset": asset, "instrument": inst, "api_coin": coin, "type": kind, "status": "PARTIAL" if errs else "OK", "interval": interval, "start_time_ms": start_ms, "end_time_ms": end_ms, "candle_count": s.get("count", UNKNOWN), "path_summary": {"start_open": s.get("start_open", UNKNOWN), "end_close": s.get("end_close", UNKNOWN), "high": s.get("high", UNKNOWN), "low": s.get("low", UNKNOWN)}, "candles": s.get("candles", UNKNOWN), "current_open_interest_base": oi, "oi_history": UNKNOWN if kind == "perp" else NA, "oi_history_note": "No official documented public Info REST endpoint exposes historical OI series; not fabricated." if kind == "perp" else NA, "funding_history": fr if kind == "perp" and fr is not None else (UNKNOWN if kind == "perp" else NA), "funding_interval": "1h" if kind == "perp" else NA, "errors": errs}
-    records = await asyncio.gather(*(one(*d) for d in defs))
+            spot_summary = {"status": "UNAVAILABLE", "instrument": UNKNOWN, "api_coin": UNKNOWN, "current_mid_px": UNKNOWN, "path_summary": UNKNOWN, "candles": UNKNOWN, "error": "No comparable Hyperliquid spot pair resolved"}
+        errs = [e for e in (ce, fe) if e]; oi = perps.get(asset, {}).get("openInterest", UNKNOWN)
+        return {"asset": asset, "instrument": asset, "api_coin": asset, "type": "perp", "status": "PARTIAL" if errs else "OK", "interval": interval, "start_time_ms": start_ms, "end_time_ms": end_ms, "candle_count": s.get("count", UNKNOWN), "path_summary": {"start_open": s.get("start_open", UNKNOWN), "end_close": s.get("end_close", UNKNOWN), "high": s.get("high", UNKNOWN), "low": s.get("low", UNKNOWN)}, "candles": s.get("candles", UNKNOWN), "current_open_interest_base": oi, "oi_history": UNKNOWN, "oi_history_note": "Official public REST exposes current OI; rolling OI history is persisted by the static collector in market-state-history.json.", "funding_history": fr if fr is not None else UNKNOWN, "funding_interval": "1h", "spot_comparison": spot_summary, "errors": errs}
+    records = list(await asyncio.gather(*(one_perp(a) for a in PERPS)))
+    if x:
+        cp = {"type": "candleSnapshot", "req": {"coin": x["api_coin"], "interval": interval, "startTime": start_ms, "endTime": end_ms}}
+        cr, ce = await safe(cp); s = candle_summary(cr)
+        records.append({"asset": "XAUT0", "instrument": "XAUT0/USDC", "api_coin": x["api_coin"], "type": "spot", "status": "PARTIAL" if ce else "OK", "interval": interval, "start_time_ms": start_ms, "end_time_ms": end_ms, "candle_count": s.get("count", UNKNOWN), "path_summary": {"start_open": s.get("start_open", UNKNOWN), "end_close": s.get("end_close", UNKNOWN), "high": s.get("high", UNKNOWN), "low": s.get("low", UNKNOWN)}, "candles": s.get("candles", UNKNOWN), "current_open_interest_base": NA, "oi_history": NA, "oi_history_note": NA, "funding_history": NA, "funding_interval": NA, "errors": [ce] if ce else []})
+    else:
+        records.append({"asset": "XAUT0", "instrument": "XAUT0/USDC", "type": "spot", "status": "UNAVAILABLE", "candles": UNKNOWN, "funding_history": NA, "oi_history": NA, "error": se or "Exact XAUT0/USDC pair unresolved"})
     status = "OK" if all(r.get("status") == "OK" for r in records) else "PARTIAL" if any(r.get("status") in ("OK", "PARTIAL") for r in records) else "UNAVAILABLE"
     return {"service": APP_NAME, "version": APP_VERSION, "timestamp_utc": ts, "status": status, "requested_hours": hours, "interval": interval, "assets": records, "upstream_errors": {"perps": pe, "spot": se}}
 
@@ -173,4 +218,4 @@ async def xaut():
     if not x:
         return {"service": APP_NAME, "version": APP_VERSION, "timestamp_utc": ts, "status": "UNAVAILABLE", "instrument": "XAUT0/USDC", "type": "spot", "identity_guard": "No fallback to xyz:GOLD or any other gold instrument", "error": se or "Exact XAUT0/USDC pair not found"}
     q = await aux(x["api_coin"], start_ms, end_ms); ctx = x["ctx"]
-    return {"service": APP_NAME, "version": APP_VERSION, "timestamp_utc": ts, "status": "PARTIAL" if q.get("errors") else "OK", "instrument": "XAUT0/USDC", "type": "spot", "api_coin": x["api_coin"], "spot_pair_index": x["pair_index"], "base": {"name": x["base"].get("name", UNKNOWN), "token_index": x["base"].get("index", UNKNOWN), "token_id": x["base"].get("tokenId", UNKNOWN)}, "quote": {"name": x["quote"].get("name", UNKNOWN), "token_index": x["quote"].get("index", UNKNOWN), "token_id": x["quote"].get("tokenId", UNKNOWN)}, "market": {"source_time_ms": q.get("source_time_ms", UNKNOWN), "mark_px": ctx.get("markPx", UNKNOWN), "mid_px": ctx.get("midPx", UNKNOWN), "prev_day_px": ctx.get("prevDayPx", UNKNOWN), "high_24h": q.get("high_24h", UNKNOWN), "low_24h": q.get("low_24h", UNKNOWN), "best_bid": q.get("best_bid", UNKNOWN), "best_ask": q.get("best_ask", UNKNOWN), "volume_24h_notional": ctx.get("dayNtlVlm", UNKNOWN), "volume_24h_base": ctx.get("dayBaseVlm", UNKNOWN), "open_interest": NA, "funding": NA}, "identity_guard": {"required_base": "XAUT0", "required_quote": "USDC", "forbidden_substitution": "xyz:GOLD", "resolution": "dynamic from official spotMeta tokens + universe"}, "errors": q.get("errors", [])}
+    return {"service": APP_NAME, "version": APP_VERSION, "timestamp_utc": ts, "status": "PARTIAL" if q.get("errors") else "OK", "instrument": "XAUT0/USDC", "type": "spot", "api_coin": x["api_coin"], "spot_pair_index": x["pair_index"], "base": {"name": x["base"].get("name", UNKNOWN), "token_index": x["base"].get("index", UNKNOWN), "token_id": x["base"].get("tokenId", UNKNOWN)}, "quote": {"name": x["quote"].get("name", UNKNOWN), "token_index": x["quote"].get("index", UNKNOWN), "token_id": x["quote"].get("tokenId", UNKNOWN)}, "market": {"source_time_ms": q.get("source_time_ms", UNKNOWN), "mark_px": ctx.get("markPx", UNKNOWN), "mid_px": ctx.get("midPx", UNKNOWN), "prev_day_px": ctx.get("prevDayPx", UNKNOWN), "high_24h": q.get("high_24h", UNKNOWN), "low_24h": q.get("low_24h", UNKNOWN), "best_bid": q.get("best_bid", UNKNOWN), "best_ask": q.get("best_ask", UNKNOWN), "volume_24h_notional": ctx.get("dayNtlVlm", UNKNOWN), "volume_24h_base": ctx.get("dayBaseVlm", UNKNOWN), "open_interest": NA, "funding": NA}, "identity_guard": {"required_base": "XAUT0", "required_quote": "USDC", "forbidden_substitution": "xyz:GOLD", "resolution": "dynamic from official spot metadata tokens + universe"}, "errors": q.get("errors", [])}
