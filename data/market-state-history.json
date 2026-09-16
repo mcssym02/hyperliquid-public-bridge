@@ -1,9 +1,9 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.3.0",
-  "timestamp_utc": "2026-09-16T13:04:56.311235Z",
+  "timestamp_utc": "2026-09-16T13:47:21.902998Z",
   "keep_hours": 48,
-  "record_count": 44,
+  "record_count": 45,
   "records": [
     {
       "timestamp_utc": "2026-09-15T15:05:49.670570Z",
@@ -2856,6 +2856,71 @@
           "type": "spot",
           "mark_px": "4346.4",
           "mid_px": "4346.3",
+          "open_interest_base": "NOT_APPLICABLE",
+          "funding_rate_hourly": "NOT_APPLICABLE",
+          "spot_compare_status": "NOT_APPLICABLE",
+          "spot_compare_instrument": "NOT_APPLICABLE",
+          "spot_compare_mid_px": "NOT_APPLICABLE",
+          "spot_perp_basis_bps": "NOT_APPLICABLE"
+        }
+      }
+    },
+    {
+      "timestamp_utc": "2026-09-16T13:47:21.902998Z",
+      "assets": {
+        "BTC": {
+          "instrument": "BTC",
+          "type": "perp",
+          "mark_px": "75708.0",
+          "mid_px": "75707.5",
+          "open_interest_base": "36314.66722",
+          "funding_rate_hourly": "0.0000125",
+          "spot_compare_status": "OK",
+          "spot_compare_instrument": "UBTC/USDC",
+          "spot_compare_mid_px": "75669.5",
+          "spot_perp_basis_bps": "5.0218"
+        },
+        "ETH": {
+          "instrument": "ETH",
+          "type": "perp",
+          "mark_px": "2395.2",
+          "mid_px": "2395.25",
+          "open_interest_base": "980003.0242000008",
+          "funding_rate_hourly": "0.0000125",
+          "spot_compare_status": "OK",
+          "spot_compare_instrument": "UETH/USDC",
+          "spot_compare_mid_px": "2394.7",
+          "spot_perp_basis_bps": "2.2967"
+        },
+        "SOL": {
+          "instrument": "SOL",
+          "type": "perp",
+          "mark_px": "97.235",
+          "mid_px": "97.2185",
+          "open_interest_base": "5311874.2200000007",
+          "funding_rate_hourly": "0.0000021513",
+          "spot_compare_status": "OK",
+          "spot_compare_instrument": "USOL/USDC",
+          "spot_compare_mid_px": "97.1835",
+          "spot_perp_basis_bps": "3.6014"
+        },
+        "HYPE": {
+          "instrument": "HYPE",
+          "type": "perp",
+          "mark_px": "78.22",
+          "mid_px": "78.3395",
+          "open_interest_base": "20390130.5399999991",
+          "funding_rate_hourly": "0.0000125",
+          "spot_compare_status": "OK",
+          "spot_compare_instrument": "HYPE/USDC",
+          "spot_compare_mid_px": "78.376",
+          "spot_perp_basis_bps": "-4.6570"
+        },
+        "XAUT0": {
+          "instrument": "XAUT0/USDC",
+          "type": "spot",
+          "mark_px": "4343.9",
+          "mid_px": "4343.4",
           "open_interest_base": "NOT_APPLICABLE",
           "funding_rate_hourly": "NOT_APPLICABLE",
           "spot_compare_status": "NOT_APPLICABLE",
