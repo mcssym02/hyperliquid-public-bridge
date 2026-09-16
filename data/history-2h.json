@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.1.0",
-  "timestamp_utc": "2026-09-16T08:51:08.751367Z",
+  "timestamp_utc": "2026-09-16T08:57:35.858175Z",
   "status": "OK",
   "requested_hours": 2,
   "interval": "1m",
@@ -13,82 +13,16 @@
       "type": "perp",
       "status": "OK",
       "interval": "1m",
-      "start_time_ms": 1789541468751,
-      "end_time_ms": 1789548668751,
+      "start_time_ms": 1789541855858,
+      "end_time_ms": 1789549055858,
       "candle_count": 121,
       "path_summary": {
-        "start_open": "75918.0",
-        "end_close": "75534.0",
+        "start_open": "75932.0",
+        "end_close": "75676.0",
         "high": "76076.0",
         "low": "75326.0"
       },
       "candles": [
-        {
-          "open_time_ms": 1789541460000,
-          "close_time_ms": 1789541519999,
-          "interval": "1m",
-          "open": "75918.0",
-          "high": "75921.0",
-          "low": "75901.0",
-          "close": "75902.0",
-          "volume_base": "0.5021",
-          "trades": 80
-        },
-        {
-          "open_time_ms": 1789541520000,
-          "close_time_ms": 1789541579999,
-          "interval": "1m",
-          "open": "75902.0",
-          "high": "75916.0",
-          "low": "75901.0",
-          "close": "75903.0",
-          "volume_base": "0.13315",
-          "trades": 47
-        },
-        {
-          "open_time_ms": 1789541580000,
-          "close_time_ms": 1789541639999,
-          "interval": "1m",
-          "open": "75903.0",
-          "high": "75912.0",
-          "low": "75902.0",
-          "close": "75912.0",
-          "volume_base": "1.6734",
-          "trades": 69
-        },
-        {
-          "open_time_ms": 1789541640000,
-          "close_time_ms": 1789541699999,
-          "interval": "1m",
-          "open": "75912.0",
-          "high": "75912.0",
-          "low": "75911.0",
-          "close": "75912.0",
-          "volume_base": "3.27128",
-          "trades": 69
-        },
-        {
-          "open_time_ms": 1789541700000,
-          "close_time_ms": 1789541759999,
-          "interval": "1m",
-          "open": "75912.0",
-          "high": "75912.0",
-          "low": "75900.0",
-          "close": "75912.0",
-          "volume_base": "7.66508",
-          "trades": 141
-        },
-        {
-          "open_time_ms": 1789541760000,
-          "close_time_ms": 1789541819999,
-          "interval": "1m",
-          "open": "75912.0",
-          "high": "75934.0",
-          "low": "75911.0",
-          "close": "75932.0",
-          "volume_base": "2.67048",
-          "trades": 81
-        },
         {
           "open_time_ms": 1789541820000,
           "close_time_ms": 1789541879999,
@@ -1350,12 +1284,78 @@
           "open": "75528.0",
           "high": "75535.0",
           "low": "75528.0",
-          "close": "75534.0",
-          "volume_base": "0.0209",
-          "trades": 22
+          "close": "75535.0",
+          "volume_base": "0.16241",
+          "trades": 93
+        },
+        {
+          "open_time_ms": 1789548720000,
+          "close_time_ms": 1789548779999,
+          "interval": "1m",
+          "open": "75535.0",
+          "high": "75535.0",
+          "low": "75534.0",
+          "close": "75535.0",
+          "volume_base": "0.41993",
+          "trades": 102
+        },
+        {
+          "open_time_ms": 1789548780000,
+          "close_time_ms": 1789548839999,
+          "interval": "1m",
+          "open": "75535.0",
+          "high": "75550.0",
+          "low": "75534.0",
+          "close": "75550.0",
+          "volume_base": "5.22567",
+          "trades": 138
+        },
+        {
+          "open_time_ms": 1789548840000,
+          "close_time_ms": 1789548899999,
+          "interval": "1m",
+          "open": "75550.0",
+          "high": "75595.0",
+          "low": "75549.0",
+          "close": "75594.0",
+          "volume_base": "40.53073",
+          "trades": 252
+        },
+        {
+          "open_time_ms": 1789548900000,
+          "close_time_ms": 1789548959999,
+          "interval": "1m",
+          "open": "75595.0",
+          "high": "75631.0",
+          "low": "75594.0",
+          "close": "75631.0",
+          "volume_base": "4.43942",
+          "trades": 211
+        },
+        {
+          "open_time_ms": 1789548960000,
+          "close_time_ms": 1789549019999,
+          "interval": "1m",
+          "open": "75631.0",
+          "high": "75690.0",
+          "low": "75630.0",
+          "close": "75662.0",
+          "volume_base": "31.94418",
+          "trades": 324
+        },
+        {
+          "open_time_ms": 1789549020000,
+          "close_time_ms": 1789549079999,
+          "interval": "1m",
+          "open": "75663.0",
+          "high": "75676.0",
+          "low": "75662.0",
+          "close": "75676.0",
+          "volume_base": "1.87349",
+          "trades": 73
         }
       ],
-      "current_open_interest_base": "36295.02066",
+      "current_open_interest_base": "36310.47048",
       "oi_history": "UNKNOWN",
       "oi_history_note": "Official public REST exposes current OI; rolling OI history is persisted by the static collector in market-state-history.json.",
       "funding_history": [
@@ -1377,80 +1377,14 @@
         "status": "OK",
         "instrument": "UBTC/USDC",
         "api_coin": "@142",
-        "current_mid_px": "75519.5",
+        "current_mid_px": "75655.5",
         "path_summary": {
-          "start_open": "75892.0",
-          "end_close": "75522.0",
+          "start_open": "75904.0",
+          "end_close": "75653.0",
           "high": "76033.0",
           "low": "75311.0"
         },
         "candles": [
-          {
-            "open_time_ms": 1789541460000,
-            "close_time_ms": 1789541519999,
-            "interval": "1m",
-            "open": "75892.0",
-            "high": "75905.0",
-            "low": "75872.0",
-            "close": "75872.0",
-            "volume_base": "0.0323",
-            "trades": 11
-          },
-          {
-            "open_time_ms": 1789541520000,
-            "close_time_ms": 1789541579999,
-            "interval": "1m",
-            "open": "75873.0",
-            "high": "75888.0",
-            "low": "75873.0",
-            "close": "75876.0",
-            "volume_base": "0.00447",
-            "trades": 8
-          },
-          {
-            "open_time_ms": 1789541580000,
-            "close_time_ms": 1789541639999,
-            "interval": "1m",
-            "open": "75876.0",
-            "high": "75888.0",
-            "low": "75875.0",
-            "close": "75887.0",
-            "volume_base": "0.00959",
-            "trades": 8
-          },
-          {
-            "open_time_ms": 1789541640000,
-            "close_time_ms": 1789541699999,
-            "interval": "1m",
-            "open": "75888.0",
-            "high": "75888.0",
-            "low": "75875.0",
-            "close": "75882.0",
-            "volume_base": "0.00538",
-            "trades": 7
-          },
-          {
-            "open_time_ms": 1789541700000,
-            "close_time_ms": 1789541759999,
-            "interval": "1m",
-            "open": "75883.0",
-            "high": "75890.0",
-            "low": "75882.0",
-            "close": "75882.0",
-            "volume_base": "0.00432",
-            "trades": 8
-          },
-          {
-            "open_time_ms": 1789541760000,
-            "close_time_ms": 1789541819999,
-            "interval": "1m",
-            "open": "75893.0",
-            "high": "75908.0",
-            "low": "75892.0",
-            "close": "75903.0",
-            "volume_base": "0.00143",
-            "trades": 7
-          },
           {
             "open_time_ms": 1789541820000,
             "close_time_ms": 1789541879999,
@@ -2711,10 +2645,76 @@
             "interval": "1m",
             "open": "75518.0",
             "high": "75522.0",
-            "low": "75518.0",
-            "close": "75522.0",
-            "volume_base": "0.00087",
-            "trades": 2
+            "low": "75514.0",
+            "close": "75521.0",
+            "volume_base": "0.00306",
+            "trades": 6
+          },
+          {
+            "open_time_ms": 1789548720000,
+            "close_time_ms": 1789548779999,
+            "interval": "1m",
+            "open": "75522.0",
+            "high": "75523.0",
+            "low": "75516.0",
+            "close": "75521.0",
+            "volume_base": "0.00187",
+            "trades": 8
+          },
+          {
+            "open_time_ms": 1789548780000,
+            "close_time_ms": 1789548839999,
+            "interval": "1m",
+            "open": "75527.0",
+            "high": "75533.0",
+            "low": "75523.0",
+            "close": "75532.0",
+            "volume_base": "0.00124",
+            "trades": 6
+          },
+          {
+            "open_time_ms": 1789548840000,
+            "close_time_ms": 1789548899999,
+            "interval": "1m",
+            "open": "75536.0",
+            "high": "75543.0",
+            "low": "75535.0",
+            "close": "75543.0",
+            "volume_base": "0.00349",
+            "trades": 7
+          },
+          {
+            "open_time_ms": 1789548900000,
+            "close_time_ms": 1789548959999,
+            "interval": "1m",
+            "open": "75575.0",
+            "high": "75600.0",
+            "low": "75571.0",
+            "close": "75600.0",
+            "volume_base": "0.00133",
+            "trades": 6
+          },
+          {
+            "open_time_ms": 1789548960000,
+            "close_time_ms": 1789549019999,
+            "interval": "1m",
+            "open": "75600.0",
+            "high": "75660.0",
+            "low": "75599.0",
+            "close": "75659.0",
+            "volume_base": "0.11934",
+            "trades": 22
+          },
+          {
+            "open_time_ms": 1789549020000,
+            "close_time_ms": 1789549079999,
+            "interval": "1m",
+            "open": "75637.0",
+            "high": "75653.0",
+            "low": "75637.0",
+            "close": "75653.0",
+            "volume_base": "0.00058",
+            "trades": 3
           }
         ],
         "error": null
@@ -2728,82 +2728,16 @@
       "type": "perp",
       "status": "OK",
       "interval": "1m",
-      "start_time_ms": 1789541468751,
-      "end_time_ms": 1789548668751,
+      "start_time_ms": 1789541855858,
+      "end_time_ms": 1789549055858,
       "candle_count": 121,
       "path_summary": {
-        "start_open": "2397.8",
-        "end_close": "2393.6",
+        "start_open": "2399.6",
+        "end_close": "2401.9",
         "high": "2409.9",
         "low": "2381.8"
       },
       "candles": [
-        {
-          "open_time_ms": 1789541460000,
-          "close_time_ms": 1789541519999,
-          "interval": "1m",
-          "open": "2397.8",
-          "high": "2397.8",
-          "low": "2397.3",
-          "close": "2397.4",
-          "volume_base": "18.1007",
-          "trades": 25
-        },
-        {
-          "open_time_ms": 1789541520000,
-          "close_time_ms": 1789541579999,
-          "interval": "1m",
-          "open": "2397.7",
-          "high": "2398.5",
-          "low": "2397.7",
-          "close": "2397.9",
-          "volume_base": "17.9132",
-          "trades": 21
-        },
-        {
-          "open_time_ms": 1789541580000,
-          "close_time_ms": 1789541639999,
-          "interval": "1m",
-          "open": "2397.8",
-          "high": "2397.8",
-          "low": "2397.2",
-          "close": "2397.5",
-          "volume_base": "906.3161",
-          "trades": 126
-        },
-        {
-          "open_time_ms": 1789541640000,
-          "close_time_ms": 1789541699999,
-          "interval": "1m",
-          "open": "2397.5",
-          "high": "2398.0",
-          "low": "2397.5",
-          "close": "2397.9",
-          "volume_base": "37.5184",
-          "trades": 27
-        },
-        {
-          "open_time_ms": 1789541700000,
-          "close_time_ms": 1789541759999,
-          "interval": "1m",
-          "open": "2398.0",
-          "high": "2398.9",
-          "low": "2397.9",
-          "close": "2398.9",
-          "volume_base": "12.7026",
-          "trades": 28
-        },
-        {
-          "open_time_ms": 1789541760000,
-          "close_time_ms": 1789541819999,
-          "interval": "1m",
-          "open": "2398.8",
-          "high": "2399.7",
-          "low": "2398.8",
-          "close": "2399.6",
-          "volume_base": "18.2759",
-          "trades": 30
-        },
         {
           "open_time_ms": 1789541820000,
           "close_time_ms": 1789541879999,
@@ -4063,14 +3997,80 @@
           "close_time_ms": 1789548719999,
           "interval": "1m",
           "open": "2393.6",
-          "high": "2393.6",
+          "high": "2393.8",
           "low": "2393.5",
-          "close": "2393.6",
-          "volume_base": "12.093",
-          "trades": 20
+          "close": "2393.8",
+          "volume_base": "284.2492",
+          "trades": 341
+        },
+        {
+          "open_time_ms": 1789548720000,
+          "close_time_ms": 1789548779999,
+          "interval": "1m",
+          "open": "2393.8",
+          "high": "2394.0",
+          "low": "2393.7",
+          "close": "2394.0",
+          "volume_base": "406.4346",
+          "trades": 286
+        },
+        {
+          "open_time_ms": 1789548780000,
+          "close_time_ms": 1789548839999,
+          "interval": "1m",
+          "open": "2394.0",
+          "high": "2394.7",
+          "low": "2394.0",
+          "close": "2394.6",
+          "volume_base": "147.4235",
+          "trades": 200
+        },
+        {
+          "open_time_ms": 1789548840000,
+          "close_time_ms": 1789548899999,
+          "interval": "1m",
+          "open": "2394.7",
+          "high": "2397.5",
+          "low": "2394.6",
+          "close": "2397.5",
+          "volume_base": "334.352",
+          "trades": 316
+        },
+        {
+          "open_time_ms": 1789548900000,
+          "close_time_ms": 1789548959999,
+          "interval": "1m",
+          "open": "2397.5",
+          "high": "2399.5",
+          "low": "2397.5",
+          "close": "2399.5",
+          "volume_base": "215.1835",
+          "trades": 158
+        },
+        {
+          "open_time_ms": 1789548960000,
+          "close_time_ms": 1789549019999,
+          "interval": "1m",
+          "open": "2399.5",
+          "high": "2402.5",
+          "low": "2399.4",
+          "close": "2400.6",
+          "volume_base": "271.3885",
+          "trades": 166
+        },
+        {
+          "open_time_ms": 1789549020000,
+          "close_time_ms": 1789549079999,
+          "interval": "1m",
+          "open": "2400.6",
+          "high": "2401.9",
+          "low": "2400.6",
+          "close": "2401.9",
+          "volume_base": "168.633",
+          "trades": 95
         }
       ],
-      "current_open_interest_base": "963620.8307999996",
+      "current_open_interest_base": "963409.7903999996",
       "oi_history": "UNKNOWN",
       "oi_history_note": "Official public REST exposes current OI; rolling OI history is persisted by the static collector in market-state-history.json.",
       "funding_history": [
@@ -4092,80 +4092,14 @@
         "status": "OK",
         "instrument": "UETH/USDC",
         "api_coin": "@151",
-        "current_mid_px": "2392.85",
+        "current_mid_px": "2400.85",
         "path_summary": {
-          "start_open": "2397.0",
-          "end_close": "2392.7",
+          "start_open": "2398.7",
+          "end_close": "2400.2",
           "high": "2409.0",
           "low": "2383.2"
         },
         "candles": [
-          {
-            "open_time_ms": 1789541460000,
-            "close_time_ms": 1789541519999,
-            "interval": "1m",
-            "open": "2397.0",
-            "high": "2397.0",
-            "low": "2397.0",
-            "close": "2397.0",
-            "volume_base": "0.0049",
-            "trades": 1
-          },
-          {
-            "open_time_ms": 1789541520000,
-            "close_time_ms": 1789541579999,
-            "interval": "1m",
-            "open": "2397.6",
-            "high": "2397.6",
-            "low": "2397.6",
-            "close": "2397.6",
-            "volume_base": "0.0049",
-            "trades": 1
-          },
-          {
-            "open_time_ms": 1789541580000,
-            "close_time_ms": 1789541639999,
-            "interval": "1m",
-            "open": "2396.8",
-            "high": "2396.9",
-            "low": "2396.8",
-            "close": "2396.9",
-            "volume_base": "0.0147",
-            "trades": 3
-          },
-          {
-            "open_time_ms": 1789541640000,
-            "close_time_ms": 1789541699999,
-            "interval": "1m",
-            "open": "2397.2",
-            "high": "2397.2",
-            "low": "2397.2",
-            "close": "2397.2",
-            "volume_base": "0.0049",
-            "trades": 1
-          },
-          {
-            "open_time_ms": 1789541700000,
-            "close_time_ms": 1789541759999,
-            "interval": "1m",
-            "open": "2397.7",
-            "high": "2397.7",
-            "low": "2397.7",
-            "close": "2397.7",
-            "volume_base": "0.0049",
-            "trades": 1
-          },
-          {
-            "open_time_ms": 1789541760000,
-            "close_time_ms": 1789541819999,
-            "interval": "1m",
-            "open": "2399.0",
-            "high": "2399.0",
-            "low": "2398.6",
-            "close": "2398.6",
-            "volume_base": "0.0098",
-            "trades": 2
-          },
           {
             "open_time_ms": 1789541820000,
             "close_time_ms": 1789541879999,
@@ -5419,6 +5353,83 @@
             "close": "2392.7",
             "volume_base": "0.0258",
             "trades": 2
+          },
+          {
+            "open_time_ms": 1789548660000,
+            "close_time_ms": 1789548719999,
+            "interval": "1m",
+            "open": "2392.9",
+            "high": "2392.9",
+            "low": "2392.9",
+            "close": "2392.9",
+            "volume_base": "0.0148",
+            "trades": 3
+          },
+          {
+            "open_time_ms": 1789548720000,
+            "close_time_ms": 1789548779999,
+            "interval": "1m",
+            "open": "2392.9",
+            "high": "2393.4",
+            "low": "2392.9",
+            "close": "2393.4",
+            "volume_base": "2.012",
+            "trades": 5
+          },
+          {
+            "open_time_ms": 1789548780000,
+            "close_time_ms": 1789548839999,
+            "interval": "1m",
+            "open": "2393.4",
+            "high": "2393.4",
+            "low": "2393.4",
+            "close": "2393.4",
+            "volume_base": "1.0068",
+            "trades": 2
+          },
+          {
+            "open_time_ms": 1789548840000,
+            "close_time_ms": 1789548899999,
+            "interval": "1m",
+            "open": "2393.7",
+            "high": "2396.1",
+            "low": "2393.7",
+            "close": "2396.1",
+            "volume_base": "41.8498",
+            "trades": 23
+          },
+          {
+            "open_time_ms": 1789548900000,
+            "close_time_ms": 1789548959999,
+            "interval": "1m",
+            "open": "2396.2",
+            "high": "2398.0",
+            "low": "2396.2",
+            "close": "2398.0",
+            "volume_base": "9.0986",
+            "trades": 13
+          },
+          {
+            "open_time_ms": 1789548960000,
+            "close_time_ms": 1789549019999,
+            "interval": "1m",
+            "open": "2398.3",
+            "high": "2400.8",
+            "low": "2398.3",
+            "close": "2400.4",
+            "volume_base": "16.3219",
+            "trades": 23
+          },
+          {
+            "open_time_ms": 1789549020000,
+            "close_time_ms": 1789549079999,
+            "interval": "1m",
+            "open": "2400.1",
+            "high": "2400.2",
+            "low": "2400.1",
+            "close": "2400.2",
+            "volume_base": "0.2176",
+            "trades": 3
           }
         ],
         "error": null
@@ -5432,82 +5443,16 @@
       "type": "perp",
       "status": "OK",
       "interval": "1m",
-      "start_time_ms": 1789541468751,
-      "end_time_ms": 1789548668751,
+      "start_time_ms": 1789541855858,
+      "end_time_ms": 1789549055858,
       "candle_count": 121,
       "path_summary": {
-        "start_open": "97.111",
-        "end_close": "96.711",
+        "start_open": "97.197",
+        "end_close": "96.929",
         "high": "97.52",
         "low": "96.357"
       },
       "candles": [
-        {
-          "open_time_ms": 1789541460000,
-          "close_time_ms": 1789541519999,
-          "interval": "1m",
-          "open": "97.111",
-          "high": "97.115",
-          "low": "97.11",
-          "close": "97.115",
-          "volume_base": "120.5",
-          "trades": 14
-        },
-        {
-          "open_time_ms": 1789541520000,
-          "close_time_ms": 1789541579999,
-          "interval": "1m",
-          "open": "97.124",
-          "high": "97.153",
-          "low": "97.124",
-          "close": "97.132",
-          "volume_base": "341.37",
-          "trades": 25
-        },
-        {
-          "open_time_ms": 1789541580000,
-          "close_time_ms": 1789541639999,
-          "interval": "1m",
-          "open": "97.131",
-          "high": "97.136",
-          "low": "97.131",
-          "close": "97.136",
-          "volume_base": "175.62",
-          "trades": 17
-        },
-        {
-          "open_time_ms": 1789541640000,
-          "close_time_ms": 1789541699999,
-          "interval": "1m",
-          "open": "97.136",
-          "high": "97.151",
-          "low": "97.111",
-          "close": "97.151",
-          "volume_base": "242.27",
-          "trades": 21
-        },
-        {
-          "open_time_ms": 1789541700000,
-          "close_time_ms": 1789541759999,
-          "interval": "1m",
-          "open": "97.151",
-          "high": "97.184",
-          "low": "97.151",
-          "close": "97.184",
-          "volume_base": "1598.43",
-          "trades": 54
-        },
-        {
-          "open_time_ms": 1789541760000,
-          "close_time_ms": 1789541819999,
-          "interval": "1m",
-          "open": "97.184",
-          "high": "97.209",
-          "low": "97.183",
-          "close": "97.197",
-          "volume_base": "222.43",
-          "trades": 26
-        },
         {
           "open_time_ms": 1789541820000,
           "close_time_ms": 1789541879999,
@@ -6770,11 +6715,77 @@
           "high": "96.711",
           "low": "96.71",
           "close": "96.711",
-          "volume_base": "7.98",
-          "trades": 14
+          "volume_base": "24.93",
+          "trades": 31
+        },
+        {
+          "open_time_ms": 1789548720000,
+          "close_time_ms": 1789548779999,
+          "interval": "1m",
+          "open": "96.711",
+          "high": "96.719",
+          "low": "96.71",
+          "close": "96.719",
+          "volume_base": "124.22",
+          "trades": 110
+        },
+        {
+          "open_time_ms": 1789548780000,
+          "close_time_ms": 1789548839999,
+          "interval": "1m",
+          "open": "96.718",
+          "high": "96.719",
+          "low": "96.718",
+          "close": "96.719",
+          "volume_base": "174.42",
+          "trades": 51
+        },
+        {
+          "open_time_ms": 1789548840000,
+          "close_time_ms": 1789548899999,
+          "interval": "1m",
+          "open": "96.718",
+          "high": "96.77",
+          "low": "96.718",
+          "close": "96.77",
+          "volume_base": "348.26",
+          "trades": 105
+        },
+        {
+          "open_time_ms": 1789548900000,
+          "close_time_ms": 1789548959999,
+          "interval": "1m",
+          "open": "96.769",
+          "high": "96.802",
+          "low": "96.769",
+          "close": "96.8",
+          "volume_base": "275.91",
+          "trades": 46
+        },
+        {
+          "open_time_ms": 1789548960000,
+          "close_time_ms": 1789549019999,
+          "interval": "1m",
+          "open": "96.813",
+          "high": "96.955",
+          "low": "96.813",
+          "close": "96.905",
+          "volume_base": "309.83",
+          "trades": 71
+        },
+        {
+          "open_time_ms": 1789549020000,
+          "close_time_ms": 1789549079999,
+          "interval": "1m",
+          "open": "96.905",
+          "high": "96.934",
+          "low": "96.905",
+          "close": "96.929",
+          "volume_base": "479.91",
+          "trades": 28
         }
       ],
-      "current_open_interest_base": "5434926.6200000001",
+      "current_open_interest_base": "5433793.7799999975",
       "oi_history": "UNKNOWN",
       "oi_history_note": "Official public REST exposes current OI; rolling OI history is persisted by the static collector in market-state-history.json.",
       "funding_history": [
@@ -6796,80 +6807,14 @@
         "status": "OK",
         "instrument": "USOL/USDC",
         "api_coin": "@156",
-        "current_mid_px": "96.6955",
+        "current_mid_px": "96.9175",
         "path_summary": {
-          "start_open": "97.084",
-          "end_close": "96.709",
+          "start_open": "97.163",
+          "end_close": "96.9",
           "high": "97.423",
           "low": "96.324"
         },
         "candles": [
-          {
-            "open_time_ms": 1789541460000,
-            "close_time_ms": 1789541519999,
-            "interval": "1m",
-            "open": "97.084",
-            "high": "97.084",
-            "low": "97.084",
-            "close": "97.084",
-            "volume_base": "0.0",
-            "trades": 0
-          },
-          {
-            "open_time_ms": 1789541520000,
-            "close_time_ms": 1789541579999,
-            "interval": "1m",
-            "open": "97.108",
-            "high": "97.115",
-            "low": "97.108",
-            "close": "97.115",
-            "volume_base": "29.832",
-            "trades": 4
-          },
-          {
-            "open_time_ms": 1789541580000,
-            "close_time_ms": 1789541639999,
-            "interval": "1m",
-            "open": "97.099",
-            "high": "97.099",
-            "low": "97.089",
-            "close": "97.089",
-            "volume_base": "14.199",
-            "trades": 2
-          },
-          {
-            "open_time_ms": 1789541640000,
-            "close_time_ms": 1789541699999,
-            "interval": "1m",
-            "open": "97.089",
-            "high": "97.089",
-            "low": "97.089",
-            "close": "97.089",
-            "volume_base": "0.0",
-            "trades": 0
-          },
-          {
-            "open_time_ms": 1789541700000,
-            "close_time_ms": 1789541759999,
-            "interval": "1m",
-            "open": "97.089",
-            "high": "97.089",
-            "low": "97.089",
-            "close": "97.089",
-            "volume_base": "0.0",
-            "trades": 0
-          },
-          {
-            "open_time_ms": 1789541760000,
-            "close_time_ms": 1789541819999,
-            "interval": "1m",
-            "open": "97.089",
-            "high": "97.089",
-            "low": "97.089",
-            "close": "97.089",
-            "volume_base": "0.0",
-            "trades": 0
-          },
           {
             "open_time_ms": 1789541820000,
             "close_time_ms": 1789541879999,
@@ -8123,6 +8068,72 @@
             "close": "96.709",
             "volume_base": "1.0",
             "trades": 2
+          },
+          {
+            "open_time_ms": 1789548660000,
+            "close_time_ms": 1789548719999,
+            "interval": "1m",
+            "open": "96.689",
+            "high": "96.696",
+            "low": "96.689",
+            "close": "96.696",
+            "volume_base": "0.827",
+            "trades": 2
+          },
+          {
+            "open_time_ms": 1789548720000,
+            "close_time_ms": 1789548779999,
+            "interval": "1m",
+            "open": "96.696",
+            "high": "96.696",
+            "low": "96.696",
+            "close": "96.696",
+            "volume_base": "0.0",
+            "trades": 0
+          },
+          {
+            "open_time_ms": 1789548780000,
+            "close_time_ms": 1789548839999,
+            "interval": "1m",
+            "open": "96.696",
+            "high": "96.696",
+            "low": "96.696",
+            "close": "96.696",
+            "volume_base": "0.0",
+            "trades": 0
+          },
+          {
+            "open_time_ms": 1789548840000,
+            "close_time_ms": 1789548899999,
+            "interval": "1m",
+            "open": "96.696",
+            "high": "96.696",
+            "low": "96.696",
+            "close": "96.696",
+            "volume_base": "0.0",
+            "trades": 0
+          },
+          {
+            "open_time_ms": 1789548900000,
+            "close_time_ms": 1789548959999,
+            "interval": "1m",
+            "open": "96.764",
+            "high": "96.764",
+            "low": "96.764",
+            "close": "96.764",
+            "volume_base": "27.898",
+            "trades": 1
+          },
+          {
+            "open_time_ms": 1789548960000,
+            "close_time_ms": 1789549019999,
+            "interval": "1m",
+            "open": "96.79",
+            "high": "96.9",
+            "low": "96.79",
+            "close": "96.9",
+            "volume_base": "6.584",
+            "trades": 2
           }
         ],
         "error": null
@@ -8136,82 +8147,16 @@
       "type": "perp",
       "status": "OK",
       "interval": "1m",
-      "start_time_ms": 1789541468751,
-      "end_time_ms": 1789548668751,
+      "start_time_ms": 1789541855858,
+      "end_time_ms": 1789549055858,
       "candle_count": 121,
       "path_summary": {
-        "start_open": "77.253",
-        "end_close": "77.405",
+        "start_open": "77.358",
+        "end_close": "77.533",
         "high": "77.997",
         "low": "77.027"
       },
       "candles": [
-        {
-          "open_time_ms": 1789541460000,
-          "close_time_ms": 1789541519999,
-          "interval": "1m",
-          "open": "77.253",
-          "high": "77.257",
-          "low": "77.213",
-          "close": "77.221",
-          "volume_base": "205.4",
-          "trades": 64
-        },
-        {
-          "open_time_ms": 1789541520000,
-          "close_time_ms": 1789541579999,
-          "interval": "1m",
-          "open": "77.219",
-          "high": "77.28",
-          "low": "77.205",
-          "close": "77.225",
-          "volume_base": "1335.17",
-          "trades": 82
-        },
-        {
-          "open_time_ms": 1789541580000,
-          "close_time_ms": 1789541639999,
-          "interval": "1m",
-          "open": "77.226",
-          "high": "77.264",
-          "low": "77.226",
-          "close": "77.264",
-          "volume_base": "71.61",
-          "trades": 40
-        },
-        {
-          "open_time_ms": 1789541640000,
-          "close_time_ms": 1789541699999,
-          "interval": "1m",
-          "open": "77.264",
-          "high": "77.322",
-          "low": "77.264",
-          "close": "77.32",
-          "volume_base": "22.3",
-          "trades": 35
-        },
-        {
-          "open_time_ms": 1789541700000,
-          "close_time_ms": 1789541759999,
-          "interval": "1m",
-          "open": "77.318",
-          "high": "77.349",
-          "low": "77.318",
-          "close": "77.347",
-          "volume_base": "126.7",
-          "trades": 46
-        },
-        {
-          "open_time_ms": 1789541760000,
-          "close_time_ms": 1789541819999,
-          "interval": "1m",
-          "open": "77.347",
-          "high": "77.37",
-          "low": "77.347",
-          "close": "77.366",
-          "volume_base": "490.66",
-          "trades": 61
-        },
         {
           "open_time_ms": 1789541820000,
           "close_time_ms": 1789541879999,
@@ -9472,13 +9417,79 @@
           "interval": "1m",
           "open": "77.42",
           "high": "77.42",
-          "low": "77.388",
-          "close": "77.405",
-          "volume_base": "1073.49",
-          "trades": 73
+          "low": "77.337",
+          "close": "77.369",
+          "volume_base": "1691.63",
+          "trades": 159
+        },
+        {
+          "open_time_ms": 1789548720000,
+          "close_time_ms": 1789548779999,
+          "interval": "1m",
+          "open": "77.369",
+          "high": "77.455",
+          "low": "77.337",
+          "close": "77.455",
+          "volume_base": "2092.02",
+          "trades": 176
+        },
+        {
+          "open_time_ms": 1789548780000,
+          "close_time_ms": 1789548839999,
+          "interval": "1m",
+          "open": "77.446",
+          "high": "77.447",
+          "low": "77.399",
+          "close": "77.4",
+          "volume_base": "1115.56",
+          "trades": 93
+        },
+        {
+          "open_time_ms": 1789548840000,
+          "close_time_ms": 1789548899999,
+          "interval": "1m",
+          "open": "77.401",
+          "high": "77.436",
+          "low": "77.382",
+          "close": "77.436",
+          "volume_base": "997.05",
+          "trades": 109
+        },
+        {
+          "open_time_ms": 1789548900000,
+          "close_time_ms": 1789548959999,
+          "interval": "1m",
+          "open": "77.44",
+          "high": "77.457",
+          "low": "77.414",
+          "close": "77.424",
+          "volume_base": "504.45",
+          "trades": 71
+        },
+        {
+          "open_time_ms": 1789548960000,
+          "close_time_ms": 1789549019999,
+          "interval": "1m",
+          "open": "77.424",
+          "high": "77.592",
+          "low": "77.424",
+          "close": "77.532",
+          "volume_base": "6023.07",
+          "trades": 292
+        },
+        {
+          "open_time_ms": 1789549020000,
+          "close_time_ms": 1789549079999,
+          "interval": "1m",
+          "open": "77.529",
+          "high": "77.559",
+          "low": "77.529",
+          "close": "77.533",
+          "volume_base": "412.78",
+          "trades": 63
         }
       ],
-      "current_open_interest_base": "20383388.5400000028",
+      "current_open_interest_base": "20387217.3399999961",
       "oi_history": "UNKNOWN",
       "oi_history_note": "Official public REST exposes current OI; rolling OI history is persisted by the static collector in market-state-history.json.",
       "funding_history": [
@@ -9500,80 +9511,14 @@
         "status": "OK",
         "instrument": "HYPE/USDC",
         "api_coin": "@107",
-        "current_mid_px": "77.4405",
+        "current_mid_px": "77.566",
         "path_summary": {
-          "start_open": "77.258",
-          "end_close": "77.44",
+          "start_open": "77.369",
+          "end_close": "77.562",
           "high": "78.0",
           "low": "77.066"
         },
         "candles": [
-          {
-            "open_time_ms": 1789541460000,
-            "close_time_ms": 1789541519999,
-            "interval": "1m",
-            "open": "77.258",
-            "high": "77.267",
-            "low": "77.219",
-            "close": "77.226",
-            "volume_base": "45.18",
-            "trades": 14
-          },
-          {
-            "open_time_ms": 1789541520000,
-            "close_time_ms": 1789541579999,
-            "interval": "1m",
-            "open": "77.225",
-            "high": "77.292",
-            "low": "77.225",
-            "close": "77.242",
-            "volume_base": "99.69",
-            "trades": 23
-          },
-          {
-            "open_time_ms": 1789541580000,
-            "close_time_ms": 1789541639999,
-            "interval": "1m",
-            "open": "77.235",
-            "high": "77.279",
-            "low": "77.235",
-            "close": "77.279",
-            "volume_base": "9.56",
-            "trades": 13
-          },
-          {
-            "open_time_ms": 1789541640000,
-            "close_time_ms": 1789541699999,
-            "interval": "1m",
-            "open": "77.279",
-            "high": "77.327",
-            "low": "77.279",
-            "close": "77.326",
-            "volume_base": "45.3",
-            "trades": 19
-          },
-          {
-            "open_time_ms": 1789541700000,
-            "close_time_ms": 1789541759999,
-            "interval": "1m",
-            "open": "77.326",
-            "high": "77.358",
-            "low": "77.326",
-            "close": "77.358",
-            "volume_base": "83.89",
-            "trades": 19
-          },
-          {
-            "open_time_ms": 1789541760000,
-            "close_time_ms": 1789541819999,
-            "interval": "1m",
-            "open": "77.359",
-            "high": "77.392",
-            "low": "77.358",
-            "close": "77.383",
-            "volume_base": "48.79",
-            "trades": 26
-          },
           {
             "open_time_ms": 1789541820000,
             "close_time_ms": 1789541879999,
@@ -10833,11 +10778,77 @@
             "close_time_ms": 1789548719999,
             "interval": "1m",
             "open": "77.44",
+            "high": "77.442",
+            "low": "77.4",
+            "close": "77.405",
+            "volume_base": "164.37",
+            "trades": 15
+          },
+          {
+            "open_time_ms": 1789548720000,
+            "close_time_ms": 1789548779999,
+            "interval": "1m",
+            "open": "77.403",
+            "high": "77.45",
+            "low": "77.396",
+            "close": "77.45",
+            "volume_base": "139.0",
+            "trades": 15
+          },
+          {
+            "open_time_ms": 1789548780000,
+            "close_time_ms": 1789548839999,
+            "interval": "1m",
+            "open": "77.469",
+            "high": "77.469",
+            "low": "77.435",
+            "close": "77.435",
+            "volume_base": "175.12",
+            "trades": 17
+          },
+          {
+            "open_time_ms": 1789548840000,
+            "close_time_ms": 1789548899999,
+            "interval": "1m",
+            "open": "77.436",
             "high": "77.44",
-            "low": "77.44",
-            "close": "77.44",
-            "volume_base": "46.83",
-            "trades": 2
+            "low": "77.411",
+            "close": "77.415",
+            "volume_base": "298.68",
+            "trades": 23
+          },
+          {
+            "open_time_ms": 1789548900000,
+            "close_time_ms": 1789548959999,
+            "interval": "1m",
+            "open": "77.447",
+            "high": "77.478",
+            "low": "77.439",
+            "close": "77.439",
+            "volume_base": "109.85",
+            "trades": 13
+          },
+          {
+            "open_time_ms": 1789548960000,
+            "close_time_ms": 1789549019999,
+            "interval": "1m",
+            "open": "77.442",
+            "high": "77.613",
+            "low": "77.442",
+            "close": "77.593",
+            "volume_base": "565.14",
+            "trades": 42
+          },
+          {
+            "open_time_ms": 1789549020000,
+            "close_time_ms": 1789549079999,
+            "interval": "1m",
+            "open": "77.542",
+            "high": "77.58",
+            "low": "77.542",
+            "close": "77.562",
+            "volume_base": "190.18",
+            "trades": 14
           }
         ],
         "error": null
@@ -10851,82 +10862,16 @@
       "type": "spot",
       "status": "OK",
       "interval": "1m",
-      "start_time_ms": 1789541468751,
-      "end_time_ms": 1789548668751,
+      "start_time_ms": 1789541855858,
+      "end_time_ms": 1789549055858,
       "candle_count": 121,
       "path_summary": {
-        "start_open": "4327.8",
-        "end_close": "4327.6",
+        "start_open": "4330.0",
+        "end_close": "4332.2",
         "high": "4336.3",
         "low": "4323.9"
       },
       "candles": [
-        {
-          "open_time_ms": 1789541460000,
-          "close_time_ms": 1789541519999,
-          "interval": "1m",
-          "open": "4327.8",
-          "high": "4327.8",
-          "low": "4327.8",
-          "close": "4327.8",
-          "volume_base": "0.01",
-          "trades": 1
-        },
-        {
-          "open_time_ms": 1789541520000,
-          "close_time_ms": 1789541579999,
-          "interval": "1m",
-          "open": "4329.2",
-          "high": "4329.2",
-          "low": "4329.2",
-          "close": "4329.2",
-          "volume_base": "0.01",
-          "trades": 1
-        },
-        {
-          "open_time_ms": 1789541580000,
-          "close_time_ms": 1789541639999,
-          "interval": "1m",
-          "open": "4328.8",
-          "high": "4328.8",
-          "low": "4328.8",
-          "close": "4328.8",
-          "volume_base": "0.01",
-          "trades": 1
-        },
-        {
-          "open_time_ms": 1789541640000,
-          "close_time_ms": 1789541699999,
-          "interval": "1m",
-          "open": "4328.5",
-          "high": "4328.5",
-          "low": "4327.7",
-          "close": "4327.7",
-          "volume_base": "0.02",
-          "trades": 2
-        },
-        {
-          "open_time_ms": 1789541700000,
-          "close_time_ms": 1789541759999,
-          "interval": "1m",
-          "open": "4328.9",
-          "high": "4328.9",
-          "low": "4328.9",
-          "close": "4328.9",
-          "volume_base": "0.01",
-          "trades": 1
-        },
-        {
-          "open_time_ms": 1789541760000,
-          "close_time_ms": 1789541819999,
-          "interval": "1m",
-          "open": "4330.1",
-          "high": "4330.1",
-          "low": "4330.1",
-          "close": "4330.1",
-          "volume_base": "0.01",
-          "trades": 1
-        },
         {
           "open_time_ms": 1789541820000,
           "close_time_ms": 1789541879999,
@@ -12187,8 +12132,74 @@
           "interval": "1m",
           "open": "4327.6",
           "high": "4327.6",
-          "low": "4327.6",
-          "close": "4327.6",
+          "low": "4326.8",
+          "close": "4326.8",
+          "volume_base": "0.02",
+          "trades": 2
+        },
+        {
+          "open_time_ms": 1789548720000,
+          "close_time_ms": 1789548779999,
+          "interval": "1m",
+          "open": "4329.0",
+          "high": "4329.0",
+          "low": "4329.0",
+          "close": "4329.0",
+          "volume_base": "0.01",
+          "trades": 1
+        },
+        {
+          "open_time_ms": 1789548780000,
+          "close_time_ms": 1789548839999,
+          "interval": "1m",
+          "open": "4330.1",
+          "high": "4330.1",
+          "low": "4330.1",
+          "close": "4330.1",
+          "volume_base": "0.01",
+          "trades": 1
+        },
+        {
+          "open_time_ms": 1789548840000,
+          "close_time_ms": 1789548899999,
+          "interval": "1m",
+          "open": "4330.0",
+          "high": "4330.0",
+          "low": "4330.0",
+          "close": "4330.0",
+          "volume_base": "0.01",
+          "trades": 1
+        },
+        {
+          "open_time_ms": 1789548900000,
+          "close_time_ms": 1789548959999,
+          "interval": "1m",
+          "open": "4330.6",
+          "high": "4330.6",
+          "low": "4330.6",
+          "close": "4330.6",
+          "volume_base": "0.01",
+          "trades": 1
+        },
+        {
+          "open_time_ms": 1789548960000,
+          "close_time_ms": 1789549019999,
+          "interval": "1m",
+          "open": "4330.6",
+          "high": "4330.6",
+          "low": "4330.6",
+          "close": "4330.6",
+          "volume_base": "0.02",
+          "trades": 2
+        },
+        {
+          "open_time_ms": 1789549020000,
+          "close_time_ms": 1789549079999,
+          "interval": "1m",
+          "open": "4332.2",
+          "high": "4332.2",
+          "low": "4332.2",
+          "close": "4332.2",
           "volume_base": "0.01",
           "trades": 1
         }
