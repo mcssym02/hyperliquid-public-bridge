@@ -575,6 +575,119 @@ def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, 
     }
 
 
+
+def build_radar_core(
+    snapshot_data: dict[str, Any],
+    derived_data: dict[str, Any],
+    liquidations_data: dict[str, Any],
+    xaut_data: dict[str, Any],
+) -> dict[str, Any]:
+    """One compact source for the hourly Radar.
+
+    This intentionally duplicates only decision-useful fields so a Radar run
+    needs one public read in the normal case. Detailed files remain canonical
+    fallbacks and audit sources.
+    """
+    snap_assets = {
+        r.get("asset"): r for r in snapshot_data.get("assets", [])
+        if isinstance(r, dict)
+    }
+    der_assets = {
+        r.get("asset"): r for r in derived_data.get("assets", [])
+        if isinstance(r, dict)
+    }
+    liq_assets = {
+        r.get("asset"): r for r in liquidations_data.get("assets", [])
+        if isinstance(r, dict)
+    }
+
+    assets: dict[str, Any] = {}
+    for asset in PERPS:
+        s = snap_assets.get(asset, {})
+        d = der_assets.get(asset, {})
+        l = liq_assets.get(asset, {})
+        g = l.get("global_h1", {}) if isinstance(l.get("global_h1"), dict) else {}
+        h = l.get("hyperliquid_observed_h1", {}) if isinstance(l.get("hyperliquid_observed_h1"), dict) else {}
+        assets[asset] = {
+            "instrument": s.get("instrument", asset),
+            "type": "perp",
+            "status": s.get("status", UNKNOWN),
+            "mid_px": s.get("mid_px", d.get("current_mid_px", UNKNOWN)),
+            "mark_px": s.get("mark_px", UNKNOWN),
+            "high_24h": s.get("high_24h", UNKNOWN),
+            "low_24h": s.get("low_24h", UNKNOWN),
+            "best_bid": s.get("best_bid", UNKNOWN),
+            "best_ask": s.get("best_ask", UNKNOWN),
+            "volume_24h_notional": s.get("volume_24h_notional", UNKNOWN),
+            "price_change_h1_pct": d.get("price_change_h1_pct"),
+            "open_interest_base": s.get("open_interest_base", d.get("open_interest_base", UNKNOWN)),
+            "delta_oi_h1_abs": d.get("delta_oi_h1_abs"),
+            "delta_oi_h1_pct": d.get("delta_oi_h1_pct"),
+            "funding_rate_hourly": s.get("funding_rate_hourly", d.get("funding_rate_hourly", UNKNOWN)),
+            "funding_change_h1_abs": d.get("funding_change_h1_abs"),
+            "spot_compare_status": d.get("spot_compare_status", s.get("spot_compare_status", "UNAVAILABLE")),
+            "spot_compare_instrument": d.get("spot_compare_instrument", s.get("spot_compare_instrument", UNKNOWN)),
+            "spot_compare_mid_px": d.get("spot_compare_mid_px", s.get("spot_compare_mid_px", UNKNOWN)),
+            "spot_perp_basis_bps": d.get("spot_perp_basis_bps", s.get("spot_perp_basis_bps", UNKNOWN)),
+            "basis_change_h1_bps": d.get("basis_change_h1_bps"),
+            "spot_perp_state": d.get("spot_perp_state", "INSUFFICIENT_DATA"),
+            "baseline_status": d.get("baseline_status", derived_data.get("baseline_h1_status", "NOT_RECORDED")),
+            "liquidations_global_h1": {
+                "coverage_status": l.get("global_coverage_status", "UNAVAILABLE"),
+                "status": g.get("status", "UNAVAILABLE"),
+                "bucket_count": g.get("bucket_count"),
+                "long_usd": g.get("long_usd"),
+                "short_usd": g.get("short_usd"),
+                "total_usd": g.get("total_usd"),
+            },
+            "liquidations_hyperliquid_h1": {
+                "coverage_status": l.get("hyperliquid_coverage_status", "UNAVAILABLE"),
+                "count": h.get("count"),
+                "long_usd": h.get("long_usd"),
+                "short_usd": h.get("short_usd"),
+                "total_usd": h.get("total_usd"),
+                "raw_event_limit": l.get("raw_event_limit"),
+                "earliest_raw_event_utc": l.get("hyperliquid_earliest_raw_event_utc"),
+                "latest_raw_event_utc": l.get("hyperliquid_latest_raw_event_utc"),
+            },
+        }
+
+    sx = snap_assets.get("XAUT0", {})
+    dx = der_assets.get("XAUT0", {})
+    assets["XAUT0"] = {
+        "instrument": sx.get("instrument", xaut_data.get("instrument", "XAUT0/USDC")),
+        "type": "spot",
+        "status": sx.get("status", xaut_data.get("status", UNKNOWN)),
+        "mid_px": sx.get("mid_px", dx.get("current_mid_px", UNKNOWN)),
+        "mark_px": sx.get("mark_px", xaut_data.get("mark_px", UNKNOWN)),
+        "high_24h": sx.get("high_24h", UNKNOWN),
+        "low_24h": sx.get("low_24h", UNKNOWN),
+        "best_bid": sx.get("best_bid", UNKNOWN),
+        "best_ask": sx.get("best_ask", UNKNOWN),
+        "volume_24h_notional": sx.get("volume_24h_notional", UNKNOWN),
+        "price_change_h1_pct": dx.get("price_change_h1_pct"),
+        "derivatives_perp": NA,
+        "baseline_status": dx.get("baseline_status", derived_data.get("baseline_h1_status", "NOT_RECORDED")),
+        "identity_guard": "Exact Hyperliquid XAUT0/USDC spot; never substitute xyz:GOLD/XAU/GC levels.",
+    }
+
+    return {
+        "service": "hyperliquid-public-bridge",
+        "version": "1.4.0",
+        "timestamp_utc": snapshot_data.get("timestamp_utc"),
+        "status": "OK" if snapshot_data.get("status") == "OK" else snapshot_data.get("status", UNKNOWN),
+        "baseline_h1_timestamp_utc": derived_data.get("baseline_h1_timestamp_utc"),
+        "baseline_h1_status": derived_data.get("baseline_h1_status", "NOT_RECORDED"),
+        "liquidations_status": liquidations_data.get("status", "UNAVAILABLE"),
+        "source_policy": {
+            "market": "Hyperliquid official public API",
+            "liquidations": "MarginPad secondary observed; global archive + venue-specific raw coverage",
+            "auth_required": False,
+        },
+        "assets": assets,
+    }
+
+
 def prune_and_append(records: list[dict[str, Any]], new_record: dict[str, Any]) -> list[dict[str, Any]]:
     now_ts = parse_ts(new_record.get("timestamp_utc")) or datetime.now(timezone.utc).timestamp()
     cutoff = now_ts - KEEP_HOURS * 3600
@@ -598,12 +711,13 @@ async def main() -> None:
     updated_records = prune_and_append(previous_records, compact_record(snapshot_data))
     state_data = {
         "service": "hyperliquid-public-bridge",
-        "version": "1.3.0",
+        "version": "1.4.0",
         "timestamp_utc": snapshot_data.get("timestamp_utc"),
         "keep_hours": KEEP_HOURS,
         "record_count": len(updated_records),
         "records": updated_records,
     }
+    radar_core_data = build_radar_core(snapshot_data, derived_data, liquidations_data, xaut_data)
 
     write_json("health.json", health_data)
     write_json("snapshot.json", snapshot_data)
@@ -611,6 +725,7 @@ async def main() -> None:
     write_json("xaut.json", xaut_data)
     write_json("liquidations.json", liquidations_data)
     write_json("derived.json", derived_data)
+    write_json("radar-core.json", radar_core_data)
     write_json("market-state-history.json", state_data)
 
     print(json.dumps({
@@ -622,6 +737,7 @@ async def main() -> None:
         "liq_global_coverage": {a.get("asset"): a.get("global_coverage_status") for a in liquidations_data.get("assets", [])},
         "liq_hl_coverage": {a.get("asset"): a.get("hyperliquid_coverage_status") for a in liquidations_data.get("assets", [])},
         "derived": derived_data.get("status"),
+        "radar_core": radar_core_data.get("status"),
         "baseline_h1": derived_data.get("baseline_h1_status"),
         "state_records": len(updated_records),
         "timestamp_utc": health_data.get("timestamp_utc"),
