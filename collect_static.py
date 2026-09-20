@@ -576,18 +576,70 @@ def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, 
 
 
 
+def h1_path_summary(history_data: dict[str, Any], asset: str, current_ts: float) -> dict[str, Any]:
+    row = next(
+        (r for r in history_data.get("assets", []) if isinstance(r, dict) and r.get("asset") == asset),
+        None,
+    )
+    if not row:
+        return {"status": "UNAVAILABLE"}
+    candles = [x for x in row.get("candles", []) if isinstance(x, dict)]
+    cutoff_ms = int((current_ts - 3600) * 1000)
+    end_ms = int(current_ts * 1000)
+    selected = [
+        x for x in candles
+        if int(x.get("close_time_ms", 0) or 0) >= cutoff_ms
+        and int(x.get("open_time_ms", 0) or 0) <= end_ms
+    ]
+    if not selected:
+        return {"status": "NOT_RECORDED"}
+
+    opens = [as_float(x.get("open")) for x in selected]
+    highs = [as_float(x.get("high")) for x in selected]
+    lows = [as_float(x.get("low")) for x in selected]
+    closes = [as_float(x.get("close")) for x in selected]
+    opens = [x for x in opens if x is not None]
+    highs = [x for x in highs if x is not None]
+    lows = [x for x in lows if x is not None]
+    closes = [x for x in closes if x is not None]
+    if not opens or not highs or not lows or not closes:
+        return {"status": "INSUFFICIENT_DATA"}
+
+    start_open = opens[0]
+    end_close = closes[-1]
+    hi = max(highs)
+    lo = min(lows)
+    vol = sum(as_float(x.get("volume_base")) or 0.0 for x in selected)
+    trades = sum(int(x.get("trades", 0) or 0) for x in selected)
+
+    def rel(v: float) -> float | None:
+        return ((v / start_open) - 1.0) * 100.0 if start_open else None
+
+    return {
+        "status": "OK",
+        "candle_count": len(selected),
+        "start_open": start_open,
+        "end_close": end_close,
+        "high": hi,
+        "low": lo,
+        "close_change_pct": rel(end_close),
+        "max_up_from_start_pct": rel(hi),
+        "max_down_from_start_pct": rel(lo),
+        "range_pct_of_start": ((hi - lo) / start_open * 100.0) if start_open else None,
+        "volume_base": vol,
+        "trades": trades,
+        "note": "Last ~60 minutes of 1m candles. Use this for path/excursions; do not confuse with snapshot-to-snapshot price_change_h1_pct.",
+    }
+
+
 def build_radar_core(
     snapshot_data: dict[str, Any],
     derived_data: dict[str, Any],
     liquidations_data: dict[str, Any],
     xaut_data: dict[str, Any],
+    history_data: dict[str, Any],
 ) -> dict[str, Any]:
-    """One compact source for the hourly Radar.
-
-    This intentionally duplicates only decision-useful fields so a Radar run
-    needs one public read in the normal case. Detailed files remain canonical
-    fallbacks and audit sources.
-    """
+    """One compact, unit-safe source for the hourly Radar."""
     snap_assets = {
         r.get("asset"): r for r in snapshot_data.get("assets", [])
         if isinstance(r, dict)
@@ -600,6 +652,7 @@ def build_radar_core(
         r.get("asset"): r for r in liquidations_data.get("assets", [])
         if isinstance(r, dict)
     }
+    current_ts = parse_ts(snapshot_data.get("timestamp_utc")) or datetime.now(timezone.utc).timestamp()
 
     assets: dict[str, Any] = {}
     for asset in PERPS:
@@ -608,6 +661,12 @@ def build_radar_core(
         l = liq_assets.get(asset, {})
         g = l.get("global_h1", {}) if isinstance(l.get("global_h1"), dict) else {}
         h = l.get("hyperliquid_observed_h1", {}) if isinstance(l.get("hyperliquid_observed_h1"), dict) else {}
+        mid = as_float(s.get("mid_px") or d.get("current_mid_px"))
+        oi_base = as_float(s.get("open_interest_base") or d.get("open_interest_base"))
+        doi_base = as_float(d.get("delta_oi_h1_abs"))
+        funding_decimal = as_float(s.get("funding_rate_hourly") or d.get("funding_rate_hourly"))
+        funding_delta_decimal = as_float(d.get("funding_change_h1_abs"))
+
         assets[asset] = {
             "instrument": s.get("instrument", asset),
             "type": "perp",
@@ -618,13 +677,26 @@ def build_radar_core(
             "low_24h": s.get("low_24h", UNKNOWN),
             "best_bid": s.get("best_bid", UNKNOWN),
             "best_ask": s.get("best_ask", UNKNOWN),
-            "volume_24h_notional": s.get("volume_24h_notional", UNKNOWN),
+            "volume_24h_notional_usd": s.get("volume_24h_notional", UNKNOWN),
+
             "price_change_h1_pct": d.get("price_change_h1_pct"),
+            "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
+            "h1_path": h1_path_summary(history_data, asset, current_ts),
+
             "open_interest_base": s.get("open_interest_base", d.get("open_interest_base", UNKNOWN)),
-            "delta_oi_h1_abs": d.get("delta_oi_h1_abs"),
+            "open_interest_unit": asset,
+            "open_interest_notional_usd_est": (oi_base * mid) if oi_base is not None and mid is not None else None,
+            "delta_oi_h1_abs_base": d.get("delta_oi_h1_abs"),
+            "delta_oi_h1_unit": asset,
             "delta_oi_h1_pct": d.get("delta_oi_h1_pct"),
-            "funding_rate_hourly": s.get("funding_rate_hourly", d.get("funding_rate_hourly", UNKNOWN)),
-            "funding_change_h1_abs": d.get("funding_change_h1_abs"),
+            "delta_oi_h1_notional_usd_at_current_mid_est": (doi_base * mid) if doi_base is not None and mid is not None else None,
+
+            "funding_rate_hourly_decimal": s.get("funding_rate_hourly", d.get("funding_rate_hourly", UNKNOWN)),
+            "funding_rate_hourly_pct": (funding_decimal * 100.0) if funding_decimal is not None else None,
+            "funding_change_h1_decimal": d.get("funding_change_h1_abs"),
+            "funding_change_h1_pct_points": (funding_delta_decimal * 100.0) if funding_delta_decimal is not None else None,
+            "funding_interval": s.get("funding_interval", "1h"),
+
             "spot_compare_status": d.get("spot_compare_status", s.get("spot_compare_status", "UNAVAILABLE")),
             "spot_compare_instrument": d.get("spot_compare_instrument", s.get("spot_compare_instrument", UNKNOWN)),
             "spot_compare_mid_px": d.get("spot_compare_mid_px", s.get("spot_compare_mid_px", UNKNOWN)),
@@ -632,23 +704,27 @@ def build_radar_core(
             "basis_change_h1_bps": d.get("basis_change_h1_bps"),
             "spot_perp_state": d.get("spot_perp_state", "INSUFFICIENT_DATA"),
             "baseline_status": d.get("baseline_status", derived_data.get("baseline_h1_status", "NOT_RECORDED")),
+
             "liquidations_global_h1": {
                 "coverage_status": l.get("global_coverage_status", "UNAVAILABLE"),
                 "status": g.get("status", "UNAVAILABLE"),
                 "bucket_count": g.get("bucket_count"),
-                "long_usd": g.get("long_usd"),
-                "short_usd": g.get("short_usd"),
+                "bucket_count_semantics": "number of returned archive buckets; NOT minutes of coverage",
+                "long_positions_liquidated_usd": g.get("long_usd"),
+                "short_positions_liquidated_usd": g.get("short_usd"),
                 "total_usd": g.get("total_usd"),
+                "scope": "secondary observed multi-venue archive; approximately 70%+ documented market coverage, not exhaustive",
             },
             "liquidations_hyperliquid_h1": {
                 "coverage_status": l.get("hyperliquid_coverage_status", "UNAVAILABLE"),
                 "count": h.get("count"),
-                "long_usd": h.get("long_usd"),
-                "short_usd": h.get("short_usd"),
+                "long_positions_liquidated_usd": h.get("long_usd"),
+                "short_positions_liquidated_usd": h.get("short_usd"),
                 "total_usd": h.get("total_usd"),
                 "raw_event_limit": l.get("raw_event_limit"),
                 "earliest_raw_event_utc": l.get("hyperliquid_earliest_raw_event_utc"),
                 "latest_raw_event_utc": l.get("hyperliquid_latest_raw_event_utc"),
+                "scope": "secondary observed Hyperliquid event stream, not official market-wide REST",
             },
         }
 
@@ -664,16 +740,19 @@ def build_radar_core(
         "low_24h": sx.get("low_24h", UNKNOWN),
         "best_bid": sx.get("best_bid", UNKNOWN),
         "best_ask": sx.get("best_ask", UNKNOWN),
-        "volume_24h_notional": sx.get("volume_24h_notional", UNKNOWN),
+        "volume_24h_notional_usd": sx.get("volume_24h_notional", UNKNOWN),
         "price_change_h1_pct": dx.get("price_change_h1_pct"),
+        "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
+        "h1_path": h1_path_summary(history_data, "XAUT0", current_ts),
         "derivatives_perp": NA,
         "baseline_status": dx.get("baseline_status", derived_data.get("baseline_h1_status", "NOT_RECORDED")),
         "identity_guard": "Exact Hyperliquid XAUT0/USDC spot; never substitute xyz:GOLD/XAU/GC levels.",
+        "weekend_guard": "XAUT0 may trade while traditional gold venues are closed; do not treat weekend XAUT0 moves as confirmed XAU/GC moves.",
     }
 
     return {
         "service": "hyperliquid-public-bridge",
-        "version": "1.4.0",
+        "version": "1.5.0",
         "timestamp_utc": snapshot_data.get("timestamp_utc"),
         "status": "OK" if snapshot_data.get("status") == "OK" else snapshot_data.get("status", UNKNOWN),
         "baseline_h1_timestamp_utc": derived_data.get("baseline_h1_timestamp_utc"),
@@ -684,6 +763,25 @@ def build_radar_core(
             "liquidations": "MarginPad secondary observed; global archive + venue-specific raw coverage",
             "auth_required": False,
         },
+        "unit_schema": {
+            "price_change_h1_pct": "percent",
+            "open_interest_base": "base asset units, NOT USD",
+            "delta_oi_h1_abs_base": "base asset units, NOT USD",
+            "open_interest_notional_usd_est": "estimated USD at current midpoint",
+            "funding_rate_hourly_decimal": "decimal rate, e.g. 0.0000125 = 0.00125%",
+            "funding_rate_hourly_pct": "percent per funding interval",
+            "spot_perp_basis_bps": "basis points",
+            "liquidations": "USD notional of positions liquidated",
+        },
+        "interpretation_rules": [
+            "Long positions liquidated = forced sell-side flow; short positions liquidated = forced buy-to-cover flow.",
+            "Price up/down plus OI up/down does not identify the side of new positioning by itself.",
+            "Positive funding means longs pay shorts; it is not automatically crowded-long evidence unless magnitude is elevated in context.",
+            "Negative funding means shorts pay longs; it is not automatically crowded-short evidence unless magnitude is elevated in context.",
+            "Basis sign alone is not a directional trigger; use magnitude, change, spot/perp state and structure.",
+            "price_change_h1_pct is endpoint-to-endpoint; use h1_path for intrahour sweeps, breakouts and reversals.",
+            "Global liquidation archive and Hyperliquid OI are different venue scopes; do not normalize one mechanically by the other.",
+        ],
         "assets": assets,
     }
 
@@ -711,13 +809,13 @@ async def main() -> None:
     updated_records = prune_and_append(previous_records, compact_record(snapshot_data))
     state_data = {
         "service": "hyperliquid-public-bridge",
-        "version": "1.4.0",
+        "version": "1.5.0",
         "timestamp_utc": snapshot_data.get("timestamp_utc"),
         "keep_hours": KEEP_HOURS,
         "record_count": len(updated_records),
         "records": updated_records,
     }
-    radar_core_data = build_radar_core(snapshot_data, derived_data, liquidations_data, xaut_data)
+    radar_core_data = build_radar_core(snapshot_data, derived_data, liquidations_data, xaut_data, history_data)
 
     write_json("health.json", health_data)
     write_json("snapshot.json", snapshot_data)
