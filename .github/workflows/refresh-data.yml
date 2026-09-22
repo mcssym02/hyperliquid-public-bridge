@@ -17,7 +17,7 @@ permissions:
 
 concurrency:
   group: public-crypto-data-refresh
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   collect:
@@ -159,5 +159,6 @@ jobs:
             echo "No data changes"
           else
             git commit -m "data: refresh public crypto snapshots"
+            git pull --rebase origin main
             git push
           fi
