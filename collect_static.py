@@ -402,32 +402,43 @@ def summarize_histogram(payload: Any) -> dict[str, Any]:
     }
 
 
-async def fetch_marginpad(client: httpx.AsyncClient, path: str) -> tuple[Any | None, str | None]:
-    try:
-        r = await client.get(f"{MARGINPAD_BASE}{path}")
-        r.raise_for_status()
-        payload = r.json()
-        if isinstance(payload, dict) and payload.get("ok") is False:
-            return None, f"API error: {payload.get('error')}"
-        return payload, None
-    except Exception as exc:
-        return None, f"{type(exc).__name__}: {str(exc)[:220]}"
+async def fetch_marginpad(
+    client: httpx.AsyncClient,
+    path: str,
+    semaphore: asyncio.Semaphore,
+) -> tuple[Any | None, str | None]:
+    last_error: str | None = None
+    for attempt in range(1, LIQ_RETRIES + 1):
+        try:
+            async with semaphore:
+                r = await client.get(f"{MARGINPAD_BASE}{path}")
+            r.raise_for_status()
+            payload = r.json()
+            if isinstance(payload, dict) and payload.get("ok") is False:
+                return None, f"API error: {payload.get('error')}"
+            return payload, None
+        except Exception as exc:
+            last_error = f"{type(exc).__name__}: {str(exc)[:220]}"
+            if attempt < LIQ_RETRIES:
+                await asyncio.sleep(0.8 * attempt)
+    return None, last_error or "unknown MarginPad error"
 
 
 async def collect_liquidations() -> dict[str, Any]:
     now = datetime.now(timezone.utc).timestamp()
     cutoff = now - LIQ_WINDOW_SECONDS
-    headers = {"User-Agent": "hyperliquid-public-bridge/1.3 liquidation-audit"}
+    headers = {"User-Agent": "hyperliquid-public-bridge/1.6 liquidation-audit"}
+    semaphore = asyncio.Semaphore(LIQ_CONCURRENCY)
     async with httpx.AsyncClient(timeout=LIQ_TIMEOUT, headers=headers, follow_redirects=True) as client:
         recent_tasks = {
-            a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/recent?symbol={a}&minutes={LIQ_RECENT_MINUTES}"))
+            a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/recent?symbol={a}&minutes={LIQ_RECENT_MINUTES}", semaphore))
             for a in PERPS
         }
         live_tasks = {
-            a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/live?symbol={a}&limit={LIQ_LIVE_LIMIT}"))
+            a: asyncio.create_task(fetch_marginpad(client, f"/liquidations/live?symbol={a}&limit={LIQ_LIVE_LIMIT}", semaphore))
             for a in PERPS
         }
-        feed_task = asyncio.create_task(fetch_marginpad(client, "/feed"))
+        feed_task = asyncio.create_task(fetch_marginpad(client, "/feed", semaphore))
         feed_payload, feed_error = await feed_task
         recent_results = {a: await task for a, task in recent_tasks.items()}
         live_results = {a: await task for a, task in live_tasks.items()}
