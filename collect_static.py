@@ -758,6 +758,65 @@ def liquidation_last_good(
     return load_json_file(LIQ_LAST_GOOD_FILE)
 
 
+
+def unavailable_liquidations(reason: str) -> dict[str, Any]:
+    assets = []
+    for asset in PERPS:
+        assets.append({
+            "asset": asset,
+            "window_minutes": LIQ_RECENT_MINUTES,
+            "global_coverage_status": "UNAVAILABLE",
+            "global_h1": {
+                "status": "UNAVAILABLE",
+                "bucket_count": 0,
+                "long_usd": None,
+                "short_usd": None,
+                "total_usd": None,
+                "note": reason,
+            },
+            "hyperliquid_coverage_status": "UNAVAILABLE",
+            "hyperliquid_observed_h1": {
+                "count": 0,
+                "total_usd": 0,
+                "long_count": 0,
+                "long_usd": 0,
+                "short_count": 0,
+                "short_usd": 0,
+                "unknown_side_count": 0,
+                "unknown_side_usd": 0,
+                "by_exchange": {},
+            },
+            "hyperliquid_earliest_raw_event_utc": None,
+            "hyperliquid_latest_raw_event_utc": None,
+            "raw_event_limit": LIQ_LIVE_LIMIT,
+            "raw_event_sample_count_total": 0,
+            "raw_event_sample_count_h1": 0,
+        })
+    return {
+        "service": "hyperliquid-public-bridge",
+        "version": "1.6.0",
+        "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "status": "UNAVAILABLE",
+        "window_minutes": LIQ_RECENT_MINUTES,
+        "source": {
+            "provider": "MarginPad",
+            "authentication_required": False,
+            "methodology": "Secondary liquidation component timed out or failed; primary market collection continues independently.",
+        },
+        "assets": assets,
+        "source_errors": {"collector": reason},
+    }
+
+
+async def collect_liquidations_bounded() -> dict[str, Any]:
+    try:
+        return await asyncio.wait_for(collect_liquidations(), timeout=35.0)
+    except asyncio.TimeoutError:
+        return unavailable_liquidations("COLLECTOR_TIMEOUT_35S")
+    except Exception as exc:
+        return unavailable_liquidations(f"{type(exc).__name__}: {str(exc)[:220]}")
+
+
 def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, Any]], liquidations_data: dict[str, Any]) -> dict[str, Any]:
     ts_str = snapshot_data.get("timestamp_utc")
     current_ts = parse_ts(ts_str) or datetime.now(timezone.utc).timestamp()
@@ -1107,7 +1166,7 @@ def prune_and_append(records: list[dict[str, Any]], new_record: dict[str, Any]) 
 
 async def main() -> None:
     health_data, snapshot_data, history_data, xaut_data, liquidations_data = await asyncio.gather(
-        health(), snapshot(), history(2), xaut(), collect_liquidations()
+        health(), snapshot(), history(2), xaut(), collect_liquidations_bounded()
     )
     multi_tf_data = await collect_multitf(xaut_data)
     liquidations_last_good_data = liquidation_last_good(liquidations_data)
