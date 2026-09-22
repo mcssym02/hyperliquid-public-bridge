@@ -12,6 +12,7 @@ from app import health, history, snapshot, xaut
 
 DATA_DIR = Path("data")
 STATE_FILE = DATA_DIR / "market-state-history.json"
+LIQ_LAST_GOOD_FILE = DATA_DIR / "liquidations-last-good.json"
 KEEP_HOURS = 48
 TARGET_HOURS = 1
 TARGET_TOLERANCE_MIN = 25
@@ -20,10 +21,20 @@ UNKNOWN = "UNKNOWN"
 NA = "NOT_APPLICABLE"
 
 MARGINPAD_BASE = "https://marginpad.io/api/v1"
+HL_INFO_URL = "https://api.hyperliquid.xyz/info"
 LIQ_WINDOW_SECONDS = 3600
 LIQ_RECENT_MINUTES = 60
 LIQ_LIVE_LIMIT = 1000
-LIQ_TIMEOUT = httpx.Timeout(connect=4.0, read=12.0, write=4.0, pool=4.0)
+LIQ_RETRIES = 3
+LIQ_CONCURRENCY = 3
+LIQ_TIMEOUT = httpx.Timeout(connect=5.0, read=20.0, write=5.0, pool=10.0)
+HL_TIMEOUT = httpx.Timeout(connect=4.0, read=12.0, write=4.0, pool=8.0)
+TF_CONFIG = {
+    "15m": 6 * 3600,
+    "1h": 3 * 24 * 3600,
+    "4h": 14 * 24 * 3600,
+    "1d": 60 * 24 * 3600,
+}
 
 
 def write_json(name: str, payload: dict) -> None:
