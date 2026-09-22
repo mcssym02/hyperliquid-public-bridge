@@ -890,10 +890,13 @@ def build_radar_core(
     snapshot_data: dict[str, Any],
     derived_data: dict[str, Any],
     liquidations_data: dict[str, Any],
+    liquidations_last_good_data: dict[str, Any] | None,
     xaut_data: dict[str, Any],
     history_data: dict[str, Any],
+    multi_tf_data: dict[str, Any],
+    records_before_append: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    """One compact, unit-safe source for the hourly Radar."""
+    """Compact decision feed: primary market + multi-TF + multi-horizon derivatives."""
     snap_assets = {
         r.get("asset"): r for r in snapshot_data.get("assets", [])
         if isinstance(r, dict)
@@ -906,13 +909,21 @@ def build_radar_core(
         r.get("asset"): r for r in liquidations_data.get("assets", [])
         if isinstance(r, dict)
     }
+    last_good_assets = {
+        r.get("asset"): r for r in (liquidations_last_good_data or {}).get("assets", [])
+        if isinstance(r, dict)
+    }
+    mtf_assets = multi_tf_data.get("assets", {}) if isinstance(multi_tf_data.get("assets"), dict) else {}
     current_ts = parse_ts(snapshot_data.get("timestamp_utc")) or datetime.now(timezone.utc).timestamp()
+    last_good_ts = parse_ts((liquidations_last_good_data or {}).get("timestamp_utc"))
+    last_good_age_minutes = ((current_ts - last_good_ts) / 60.0) if last_good_ts is not None else None
 
     assets: dict[str, Any] = {}
     for asset in PERPS:
         s = snap_assets.get(asset, {})
         d = der_assets.get(asset, {})
         l = liq_assets.get(asset, {})
+        lg = last_good_assets.get(asset, {})
         g = l.get("global_h1", {}) if isinstance(l.get("global_h1"), dict) else {}
         h = l.get("hyperliquid_observed_h1", {}) if isinstance(l.get("hyperliquid_observed_h1"), dict) else {}
         mid = as_float(s.get("mid_px") or d.get("current_mid_px"))
@@ -920,6 +931,21 @@ def build_radar_core(
         doi_base = as_float(d.get("delta_oi_h1_abs"))
         funding_decimal = as_float(s.get("funding_rate_hourly") or d.get("funding_rate_hourly"))
         funding_delta_decimal = as_float(d.get("funding_change_h1_abs"))
+
+        last_good_liq = None
+        if l.get("global_coverage_status") != "FULL_60M_ARCHIVE" and lg:
+            lgg = lg.get("global_h1", {}) if isinstance(lg.get("global_h1"), dict) else {}
+            lgh = lg.get("hyperliquid_observed_h1", {}) if isinstance(lg.get("hyperliquid_observed_h1"), dict) else {}
+            last_good_liq = {
+                "timestamp_utc": (liquidations_last_good_data or {}).get("timestamp_utc"),
+                "age_minutes": last_good_age_minutes,
+                "historical_only": True,
+                "global_coverage_status": lg.get("global_coverage_status"),
+                "global_h1": lgg,
+                "hyperliquid_coverage_status": lg.get("hyperliquid_coverage_status"),
+                "hyperliquid_observed_h1": lgh,
+                "rule": "Historical fallback only; never substitute for current H-1 liquidation flow.",
+            }
 
         assets[asset] = {
             "instrument": s.get("instrument", asset),
@@ -936,6 +962,8 @@ def build_radar_core(
             "price_change_h1_pct": d.get("price_change_h1_pct"),
             "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
             "h1_path": h1_path_summary(history_data, asset, current_ts),
+            "multi_tf": mtf_assets.get(asset, {"status": "UNAVAILABLE"}),
+            "derivatives_horizons": derivative_horizons(snapshot_data, records_before_append, asset),
 
             "open_interest_base": s.get("open_interest_base", d.get("open_interest_base", UNKNOWN)),
             "open_interest_unit": asset,
@@ -980,6 +1008,7 @@ def build_radar_core(
                 "latest_raw_event_utc": l.get("hyperliquid_latest_raw_event_utc"),
                 "scope": "secondary observed Hyperliquid event stream, not official market-wide REST",
             },
+            "liquidations_last_good": last_good_liq,
         }
 
     sx = snap_assets.get("XAUT0", {})
@@ -998,22 +1027,43 @@ def build_radar_core(
         "price_change_h1_pct": dx.get("price_change_h1_pct"),
         "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
         "h1_path": h1_path_summary(history_data, "XAUT0", current_ts),
+        "multi_tf": mtf_assets.get("XAUT0", {"status": "UNAVAILABLE"}),
         "derivatives_perp": NA,
         "baseline_status": dx.get("baseline_status", derived_data.get("baseline_h1_status", "NOT_RECORDED")),
         "identity_guard": "Exact Hyperliquid XAUT0/USDC spot; never substitute xyz:GOLD/XAU/GC levels.",
         "weekend_guard": "XAUT0 may trade while traditional gold venues are closed; do not treat weekend XAUT0 moves as confirmed XAU/GC moves.",
     }
 
+    primary_market_status = snapshot_data.get("status", UNKNOWN)
+    mtf_status = multi_tf_data.get("status", "UNAVAILABLE")
+    h1_status = derived_data.get("baseline_h1_status", "NOT_RECORDED")
+    liq_status = liquidations_data.get("status", "UNAVAILABLE")
+    if primary_market_status == "OK" and h1_status == "OK" and mtf_status in ("OK", "PARTIAL"):
+        decision_status = "OK" if liq_status == "OK" else "DEGRADED_SECONDARY"
+    else:
+        decision_status = "DEGRADED_PRIMARY"
+
     return {
         "service": "hyperliquid-public-bridge",
-        "version": "1.5.0",
+        "version": "1.6.0",
         "timestamp_utc": snapshot_data.get("timestamp_utc"),
-        "status": "OK" if snapshot_data.get("status") == "OK" else snapshot_data.get("status", UNKNOWN),
+        "status": decision_status,
+        "component_status": {
+            "primary_market": primary_market_status,
+            "h1_baseline": h1_status,
+            "multi_tf": mtf_status,
+            "liquidations_current": liq_status,
+            "liquidations_last_good_timestamp_utc": (liquidations_last_good_data or {}).get("timestamp_utc"),
+            "liquidations_last_good_age_minutes": last_good_age_minutes,
+            "xaut_exact": xaut_data.get("status", "UNAVAILABLE"),
+        },
+        "data_quality_rule": "A secondary liquidation outage must not mark primary market/OI/funding/multi-TF data unavailable. Report the missing component explicitly.",
         "baseline_h1_timestamp_utc": derived_data.get("baseline_h1_timestamp_utc"),
-        "baseline_h1_status": derived_data.get("baseline_h1_status", "NOT_RECORDED"),
-        "liquidations_status": liquidations_data.get("status", "UNAVAILABLE"),
+        "baseline_h1_status": h1_status,
+        "liquidations_status": liq_status,
         "source_policy": {
             "market": "Hyperliquid official public API",
+            "multi_tf": "Hyperliquid official public candleSnapshot",
             "liquidations": "MarginPad secondary observed; global archive + venue-specific raw coverage",
             "auth_required": False,
         },
@@ -1034,7 +1084,9 @@ def build_radar_core(
             "Negative funding means shorts pay longs; it is not automatically crowded-short evidence unless magnitude is elevated in context.",
             "Basis sign alone is not a directional trigger; use magnitude, change, spot/perp state and structure.",
             "price_change_h1_pct is endpoint-to-endpoint; use h1_path for intrahour sweeps, breakouts and reversals.",
+            "multi_tf mechanical hints are inputs, not trade signals; acceptance/retest and regime interpretation remain required.",
             "Global liquidation archive and Hyperliquid OI are different venue scopes; do not normalize one mechanically by the other.",
+            "Last-good liquidations are historical context only and never replace current H-1 liquidation flow.",
         ],
         "assets": assets,
     }
@@ -1057,19 +1109,30 @@ async def main() -> None:
     health_data, snapshot_data, history_data, xaut_data, liquidations_data = await asyncio.gather(
         health(), snapshot(), history(2), xaut(), collect_liquidations()
     )
+    multi_tf_data = await collect_multitf(xaut_data)
+    liquidations_last_good_data = liquidation_last_good(liquidations_data)
 
     previous_records = load_history()
     derived_data = derive(snapshot_data, previous_records, liquidations_data)
     updated_records = prune_and_append(previous_records, compact_record(snapshot_data))
     state_data = {
         "service": "hyperliquid-public-bridge",
-        "version": "1.5.0",
+        "version": "1.6.0",
         "timestamp_utc": snapshot_data.get("timestamp_utc"),
         "keep_hours": KEEP_HOURS,
         "record_count": len(updated_records),
         "records": updated_records,
     }
-    radar_core_data = build_radar_core(snapshot_data, derived_data, liquidations_data, xaut_data, history_data)
+    radar_core_data = build_radar_core(
+        snapshot_data,
+        derived_data,
+        liquidations_data,
+        liquidations_last_good_data,
+        xaut_data,
+        history_data,
+        multi_tf_data,
+        previous_records,
+    )
 
     write_json("health.json", health_data)
     write_json("snapshot.json", snapshot_data)
@@ -1077,6 +1140,7 @@ async def main() -> None:
     write_json("xaut.json", xaut_data)
     write_json("liquidations.json", liquidations_data)
     write_json("derived.json", derived_data)
+    write_json("multi-tf.json", multi_tf_data)
     write_json("radar-core.json", radar_core_data)
     write_json("market-state-history.json", state_data)
 
@@ -1089,6 +1153,7 @@ async def main() -> None:
         "liq_global_coverage": {a.get("asset"): a.get("global_coverage_status") for a in liquidations_data.get("assets", [])},
         "liq_hl_coverage": {a.get("asset"): a.get("hyperliquid_coverage_status") for a in liquidations_data.get("assets", [])},
         "derived": derived_data.get("status"),
+        "multi_tf": multi_tf_data.get("status"),
         "radar_core": radar_core_data.get("status"),
         "baseline_h1": derived_data.get("baseline_h1_status"),
         "state_records": len(updated_records),
