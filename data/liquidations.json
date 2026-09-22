@@ -1,13 +1,27 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-09-22T07:49:18.153736Z",
+  "timestamp_utc": "2026-09-22T07:56:40.889105Z",
   "status": "UNAVAILABLE",
   "window_minutes": 60,
   "source": {
     "provider": "MarginPad",
     "authentication_required": false,
-    "methodology": "Secondary liquidation component timed out or failed; primary market collection continues independently."
+    "global_h1_endpoint": "/api/v1/liquidations/recent?symbol={ASSET}&minutes=60",
+    "hyperliquid_raw_endpoint": "/api/v1/liquidations/live?symbol={ASSET}&limit=1000",
+    "methodology": "Global H-1 comes from MarginPad's measured time-bucketed liquidation archive. Hyperliquid-specific H-1 is computed only from returned raw events and carries an explicit coverage status.",
+    "documented_venues": [
+      "binance",
+      "bybit",
+      "okx",
+      "bitmex",
+      "hyperliquid",
+      "bitfinex",
+      "gate",
+      "htx",
+      "dydx"
+    ],
+    "documented_market_coverage": "approximately 70%+ of liquidation flow; observed, not extrapolated"
   },
   "assets": [
     {
@@ -20,7 +34,7 @@
         "long_usd": null,
         "short_usd": null,
         "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "note": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=BTC&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
       },
       "hyperliquid_coverage_status": "UNAVAILABLE",
       "hyperliquid_observed_h1": {
@@ -36,6 +50,7 @@
       },
       "hyperliquid_earliest_raw_event_utc": null,
       "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 0,
       "raw_event_sample_count_h1": 0
@@ -50,7 +65,7 @@
         "long_usd": null,
         "short_usd": null,
         "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "note": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=ETH&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
       },
       "hyperliquid_coverage_status": "UNAVAILABLE",
       "hyperliquid_observed_h1": {
@@ -66,6 +81,7 @@
       },
       "hyperliquid_earliest_raw_event_utc": null,
       "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 0,
       "raw_event_sample_count_h1": 0
@@ -80,7 +96,7 @@
         "long_usd": null,
         "short_usd": null,
         "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "note": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=SOL&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
       },
       "hyperliquid_coverage_status": "UNAVAILABLE",
       "hyperliquid_observed_h1": {
@@ -96,6 +112,7 @@
       },
       "hyperliquid_earliest_raw_event_utc": null,
       "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 0,
       "raw_event_sample_count_h1": 0
@@ -110,7 +127,7 @@
         "long_usd": null,
         "short_usd": null,
         "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "note": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=HYPE&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
       },
       "hyperliquid_coverage_status": "UNAVAILABLE",
       "hyperliquid_observed_h1": {
@@ -126,12 +143,25 @@
       },
       "hyperliquid_earliest_raw_event_utc": null,
       "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 0,
       "raw_event_sample_count_h1": 0
     }
   ],
   "source_errors": {
-    "collector": "COLLECTOR_TIMEOUT_35S"
+    "feed": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/feed'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+    "recent": {
+      "BTC": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=BTC&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "ETH": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=ETH&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "SOL": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=SOL&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "HYPE": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=HYPE&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    },
+    "live": {
+      "BTC": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/live?symbol=BTC&limit=1000'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "ETH": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/live?symbol=ETH&limit=1000'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "SOL": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/live?symbol=SOL&limit=1000'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+      "HYPE": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/live?symbol=HYPE&limit=1000'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+    }
   }
 }
