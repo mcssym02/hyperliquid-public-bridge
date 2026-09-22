@@ -9,7 +9,7 @@ import httpx
 from fastapi import FastAPI, Query
 
 APP_NAME = "hyperliquid-public-bridge"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.6.0"
 INFO_URL = "https://api.hyperliquid.xyz/info"
 PERPS = ("BTC", "ETH", "SOL", "HYPE")
 SPOT_ALIASES = {
