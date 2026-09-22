@@ -1,0 +1,97 @@
+{
+  "service": "uniswap-v3-base-lp-readonly",
+  "version": "1.0.0",
+  "timestamp_utc": "2026-09-22T03:43:40.234759Z",
+  "status": "OK",
+  "security": {
+    "mode": "READ_ONLY",
+    "private_key": false,
+    "wallet_connection": false,
+    "signature": false,
+    "transaction_broadcast": false,
+    "rpc_methods": [
+      "eth_chainId",
+      "eth_call"
+    ]
+  },
+  "chain": {
+    "name": "Base",
+    "chain_id": 8453,
+    "rpc_url": "https://mainnet.base.org"
+  },
+  "contracts": {
+    "nonfungible_position_manager": "0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1",
+    "factory": "0x33128a8fC17869897dcE68Ed026d694621f6FDfD",
+    "pool": "0x6c561b446416e1a00e8e93e221854d6ea4171372"
+  },
+  "position": {
+    "nft_id": 6000457,
+    "expected_owner": "0xf6c62b83f742246080bb42a3e2512474bc690ed1",
+    "owner_onchain": "0xf6c62b83f742246080bb42a3e2512474bc690ed1",
+    "owner_matches_expected": true,
+    "token0": {
+      "address": "0x4200000000000000000000000000000000000006",
+      "symbol": "WETH",
+      "decimals": 18,
+      "metadata_status": "OK",
+      "errors": []
+    },
+    "token1": {
+      "address": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+      "symbol": "USDC",
+      "decimals": 6,
+      "metadata_status": "OK",
+      "errors": []
+    },
+    "fee_tier_raw": 3000,
+    "fee_tier_pct": 0.3,
+    "tick_lower": -200100,
+    "tick_upper": -197700,
+    "liquidity": "2629398367207419",
+    "tokens_owed_stored_raw": {
+      "token0": "0",
+      "token1": "0",
+      "note": "Storage snapshot only; live collectable fees are quoted separately via eth_call collect simulation."
+    }
+  },
+  "pool_state": {
+    "sqrt_price_x96": "4142083034507196944598022",
+    "current_tick": -197188,
+    "range_status": "OUT OF RANGE — HAUT",
+    "price_token1_per_token0": 2733.2441926234696,
+    "range_lower_token1_per_token0": 2042.6873518015664,
+    "range_upper_token1_per_token0": 2596.7334014394255,
+    "price_orientation": "USDC per WETH"
+  },
+  "principal": {
+    "token0": 0.0,
+    "token1": 15150.736900083753,
+    "token0_symbol": "WETH",
+    "token1_symbol": "USDC",
+    "estimated_value_usdc": 15150.736900083753,
+    "method": "Uniswap V3 liquidity math from on-chain liquidity, slot0 sqrtPriceX96, and position ticks."
+  },
+  "fees_collectable": {
+    "status": "OK",
+    "method": "eth_call simulation of NonfungiblePositionManager.collect; no state change, no signature, no broadcast",
+    "token0_raw": "15795962268071395",
+    "token1_raw": "51101614",
+    "token0": 0.015795962268071395,
+    "token1": 51.101614,
+    "token0_symbol": "WETH",
+    "token1_symbol": "USDC",
+    "estimated_value_usdc": 94.2758361361056
+  },
+  "estimated_total_value_usdc": 15245.012736219858,
+  "state_guard": {
+    "confirmed_onchain_position": true,
+    "safe_for_automatic_state_update": true,
+    "rule": "If owner/NFT identity no longer matches expected state, do not reuse this NFT's range as the active LP."
+  },
+  "sources": {
+    "position_owner_range_liquidity": "Base JSON-RPC eth_call -> official Uniswap V3 NonfungiblePositionManager",
+    "pool_price_tick": "Base JSON-RPC eth_call -> Uniswap V3 pool slot0",
+    "fees": "Base JSON-RPC eth_call simulation -> NonfungiblePositionManager.collect; simulation discarded",
+    "deployment_addresses": "Uniswap official contracts deployment registry for Base chain 8453"
+  }
+}
