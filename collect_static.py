@@ -25,9 +25,9 @@ HL_INFO_URL = "https://api.hyperliquid.xyz/info"
 LIQ_WINDOW_SECONDS = 3600
 LIQ_RECENT_MINUTES = 60
 LIQ_LIVE_LIMIT = 1000
-LIQ_RETRIES = 3
+LIQ_RETRIES = 2
 LIQ_CONCURRENCY = 3
-LIQ_TIMEOUT = httpx.Timeout(connect=5.0, read=20.0, write=5.0, pool=10.0)
+LIQ_TIMEOUT = httpx.Timeout(connect=4.0, read=12.0, write=4.0, pool=8.0)
 HL_TIMEOUT = httpx.Timeout(connect=4.0, read=12.0, write=4.0, pool=8.0)
 TF_CONFIG = {
     "15m": 6 * 3600,
