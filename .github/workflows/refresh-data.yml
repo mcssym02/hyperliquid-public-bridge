@@ -55,6 +55,7 @@ jobs:
               "xaut.json",
               "liquidations.json",
               "derived.json",
+              "multi-tf.json",
               "radar-core.json",
               "market-state-history.json",
               "uniswap-lp.json",
@@ -105,6 +106,27 @@ jobs:
                   assert gh.get("long_usd") is not None, f"{asset} global long liquidation total missing"
                   assert gh.get("short_usd") is not None, f"{asset} global short liquidation total missing"
 
+          mtf = loaded["multi-tf.json"]
+          assert mtf.get("status") in ("OK", "PARTIAL"), f"multi-TF unavailable: {mtf.get('status')}"
+          mtf_assets = mtf.get("assets", {})
+          for asset in ("BTC", "ETH", "SOL", "HYPE", "XAUT0"):
+              assert asset in mtf_assets, f"{asset} missing from multi-tf.json"
+              tfs = mtf_assets[asset].get("timeframes", {})
+              for tf in ("15m", "1h", "4h", "1d"):
+                  assert tf in tfs, f"{asset} {tf} missing from multi-tf.json"
+
+          core = loaded["radar-core.json"]
+          assert core.get("version") == "1.6.0", f"unexpected radar-core version {core.get('version')}"
+          assert core.get("component_status", {}).get("primary_market") in ("OK", "PARTIAL"), "primary market unavailable"
+          assert core.get("component_status", {}).get("h1_baseline") == "OK", "H-1 baseline missing"
+          assert core.get("component_status", {}).get("multi_tf") in ("OK", "PARTIAL"), "multi-TF missing in radar-core"
+          core_assets = core.get("assets", {})
+          for asset in ("BTC", "ETH", "SOL", "HYPE"):
+              assert asset in core_assets, f"{asset} missing from radar-core"
+              assert "derivatives_horizons" in core_assets[asset], f"{asset} derivative horizons missing"
+              assert "multi_tf" in core_assets[asset], f"{asset} multi-TF missing"
+          assert core_assets.get("XAUT0", {}).get("type") == "spot", "radar-core XAUT0 must be spot"
+
           state = loaded["market-state-history.json"]
           assert isinstance(state.get("records"), list), "state records missing"
           assert state.get("record_count") == len(state.get("records", [])), "state record_count mismatch"
@@ -129,7 +151,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/multi-tf.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json
+          if [ -f data/liquidations-last-good.json ]; then
+            git add data/liquidations-last-good.json
+          fi
           if git diff --cached --quiet; then
             echo "No data changes"
           else
