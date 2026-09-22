@@ -526,6 +526,238 @@ async def collect_liquidations() -> dict[str, Any]:
     }
 
 
+
+def nearest_record_hours(
+    records: list[dict[str, Any]],
+    current_ts: float,
+    hours: int,
+) -> dict[str, Any] | None:
+    target = current_ts - hours * 3600
+    tolerance = (35 * 60) if hours <= 4 else (90 * 60)
+    candidates: list[tuple[float, dict[str, Any]]] = []
+    for r in records:
+        ts = parse_ts(r.get("timestamp_utc"))
+        if ts is None or ts >= current_ts:
+            continue
+        gap = abs(ts - target)
+        if gap <= tolerance:
+            candidates.append((gap, r))
+    if not candidates:
+        return None
+    candidates.sort(key=lambda x: x[0])
+    return candidates[0][1]
+
+
+def derivative_horizons(
+    snapshot_data: dict[str, Any],
+    records_before_append: list[dict[str, Any]],
+    asset: str,
+) -> dict[str, Any]:
+    current_ts = parse_ts(snapshot_data.get("timestamp_utc")) or datetime.now(timezone.utc).timestamp()
+    current = compact_record(snapshot_data).get("assets", {}).get(asset, {})
+    out: dict[str, Any] = {}
+    for hours in (1, 4, 24):
+        baseline = nearest_record_hours(records_before_append, current_ts, hours)
+        if not baseline:
+            out[f"{hours}h"] = {"status": "NOT_RECORDED"}
+            continue
+        prev = baseline.get("assets", {}).get(asset, {})
+        cur_f = as_float(current.get("funding_rate_hourly"))
+        prev_f = as_float(prev.get("funding_rate_hourly"))
+        perp_ret = pct_delta(current.get("mid_px"), prev.get("mid_px"))
+        spot_ret = pct_delta(current.get("spot_compare_mid_px"), prev.get("spot_compare_mid_px"))
+        out[f"{hours}h"] = {
+            "status": "OK",
+            "baseline_timestamp_utc": baseline.get("timestamp_utc"),
+            "price_change_pct": perp_ret,
+            "open_interest_change_abs_base": abs_delta(current.get("open_interest_base"), prev.get("open_interest_base")),
+            "open_interest_change_pct": pct_delta(current.get("open_interest_base"), prev.get("open_interest_base")),
+            "funding_change_decimal": (cur_f - prev_f) if cur_f is not None and prev_f is not None else None,
+            "funding_change_pct_points": ((cur_f - prev_f) * 100.0) if cur_f is not None and prev_f is not None else None,
+            "basis_change_bps": abs_delta(current.get("spot_perp_basis_bps"), prev.get("spot_perp_basis_bps")),
+            "spot_price_change_pct": spot_ret,
+            "perp_minus_spot_return_pp": (perp_ret - spot_ret) if perp_ret is not None and spot_ret is not None else None,
+        }
+    return out
+
+
+def tf_candle_row(raw: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "open_time_ms": raw.get("t"),
+        "close_time_ms": raw.get("T"),
+        "open": as_float(raw.get("o")),
+        "high": as_float(raw.get("h")),
+        "low": as_float(raw.get("l")),
+        "close": as_float(raw.get("c")),
+        "volume_base": as_float(raw.get("v")),
+        "trades": int(raw.get("n", 0) or 0),
+    }
+
+
+def summarize_tf_candles(raw: Any, now_ms: int) -> dict[str, Any]:
+    if not isinstance(raw, list):
+        return {"status": "UNAVAILABLE"}
+    rows = [tf_candle_row(x) for x in raw if isinstance(x, dict)]
+    rows = [x for x in rows if x.get("open_time_ms") is not None]
+    rows.sort(key=lambda x: int(x.get("open_time_ms") or 0))
+    closed = [x for x in rows if int(x.get("close_time_ms") or 0) <= now_ms]
+    forming = next(
+        (x for x in reversed(rows)
+         if int(x.get("open_time_ms") or 0) <= now_ms < int(x.get("close_time_ms") or 0)),
+        None,
+    )
+    if len(closed) < 2:
+        return {
+            "status": "INSUFFICIENT_DATA",
+            "closed_candle_count": len(closed),
+            "forming_candle": forming,
+        }
+
+    recent = closed[-8:]
+    structure_rows = closed[-5:]
+    highs = [x["high"] for x in recent if x.get("high") is not None]
+    lows = [x["low"] for x in recent if x.get("low") is not None]
+    vols = [x["volume_base"] for x in recent if x.get("volume_base") is not None]
+
+    hh = hl = lh = ll = 0
+    for prev, cur in zip(structure_rows, structure_rows[1:]):
+        if prev.get("high") is not None and cur.get("high") is not None:
+            hh += int(cur["high"] > prev["high"])
+            lh += int(cur["high"] < prev["high"])
+        if prev.get("low") is not None and cur.get("low") is not None:
+            hl += int(cur["low"] > prev["low"])
+            ll += int(cur["low"] < prev["low"])
+
+    if hh >= 3 and hl >= 3:
+        hint = "MECHANICAL_UP"
+    elif lh >= 3 and ll >= 3:
+        hint = "MECHANICAL_DOWN"
+    else:
+        hint = "MECHANICAL_MIXED"
+
+    first_open = recent[0].get("open")
+    last_close = recent[-1].get("close")
+    lookback_change = None
+    if first_open not in (None, 0) and last_close is not None:
+        lookback_change = (last_close / first_open - 1.0) * 100.0
+
+    return {
+        "status": "OK",
+        "closed_candle_count": len(closed),
+        "last_closed": closed[-1],
+        "previous_closed": closed[-2],
+        "forming_candle": forming,
+        "recent_8_high": max(highs) if highs else None,
+        "recent_8_low": min(lows) if lows else None,
+        "recent_8_volume_base": sum(vols) if vols else None,
+        "recent_8_change_pct": lookback_change,
+        "mechanical_structure_hint": hint,
+        "pairwise_counts_last_5": {
+            "higher_high": hh,
+            "higher_low": hl,
+            "lower_high": lh,
+            "lower_low": ll,
+        },
+        "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context.",
+    }
+
+
+async def fetch_hl_candles(
+    client: httpx.AsyncClient,
+    semaphore: asyncio.Semaphore,
+    coin: str,
+    interval: str,
+    start_ms: int,
+    end_ms: int,
+) -> tuple[Any | None, str | None]:
+    payload = {
+        "type": "candleSnapshot",
+        "req": {"coin": coin, "interval": interval, "startTime": start_ms, "endTime": end_ms},
+    }
+    last_error: str | None = None
+    for attempt in range(1, 3):
+        try:
+            async with semaphore:
+                r = await client.post(HL_INFO_URL, json=payload)
+            r.raise_for_status()
+            return r.json(), None
+        except Exception as exc:
+            last_error = f"{type(exc).__name__}: {str(exc)[:220]}"
+            if attempt < 2:
+                await asyncio.sleep(0.5 * attempt)
+    return None, last_error or "unknown Hyperliquid candle error"
+
+
+async def collect_multitf(xaut_data: dict[str, Any]) -> dict[str, Any]:
+    now_ts = datetime.now(timezone.utc).timestamp()
+    now_ms = int(now_ts * 1000)
+    xaut_coin = xaut_data.get("api_coin") if isinstance(xaut_data, dict) else None
+    coins = {a: a for a in PERPS}
+    if xaut_coin:
+        coins["XAUT0"] = str(xaut_coin)
+
+    semaphore = asyncio.Semaphore(5)
+    tasks: dict[tuple[str, str], asyncio.Task] = {}
+    headers = {"User-Agent": "hyperliquid-public-bridge/1.6 multi-tf"}
+    async with httpx.AsyncClient(timeout=HL_TIMEOUT, headers=headers) as client:
+        for asset, coin in coins.items():
+            for interval, seconds in TF_CONFIG.items():
+                start_ms = int((now_ts - seconds) * 1000)
+                tasks[(asset, interval)] = asyncio.create_task(
+                    fetch_hl_candles(client, semaphore, coin, interval, start_ms, now_ms)
+                )
+        results = {k: await task for k, task in tasks.items()}
+
+    assets: dict[str, Any] = {}
+    any_ok = False
+    for asset in (*PERPS, "XAUT0"):
+        if asset not in coins:
+            assets[asset] = {"status": "UNAVAILABLE", "error": "instrument unresolved"}
+            continue
+        tfs: dict[str, Any] = {}
+        for interval in TF_CONFIG:
+            raw, err = results[(asset, interval)]
+            summary = summarize_tf_candles(raw, now_ms)
+            if err:
+                summary["error"] = err
+            if summary.get("status") == "OK":
+                any_ok = True
+            tfs[interval] = summary
+        statuses = [x.get("status") for x in tfs.values()]
+        asset_status = "OK" if statuses and all(x == "OK" for x in statuses) else "PARTIAL" if any(x == "OK" for x in statuses) else "UNAVAILABLE"
+        assets[asset] = {"status": asset_status, "timeframes": tfs}
+
+    return {
+        "service": "hyperliquid-public-bridge",
+        "version": "1.6.0",
+        "timestamp_utc": iso_utc(now_ts),
+        "status": "OK" if assets and all(v.get("status") == "OK" for v in assets.values()) else "PARTIAL" if any_ok else "UNAVAILABLE",
+        "source": "Hyperliquid official public candleSnapshot",
+        "assets": assets,
+    }
+
+
+def load_json_file(path: Path) -> dict[str, Any] | None:
+    try:
+        if path.exists():
+            raw = json.loads(path.read_text(encoding="utf-8"))
+            return raw if isinstance(raw, dict) else None
+    except Exception:
+        return None
+    return None
+
+
+def liquidation_last_good(
+    current: dict[str, Any],
+) -> dict[str, Any] | None:
+    rows = [x for x in current.get("assets", []) if isinstance(x, dict)]
+    all_global_full = bool(rows) and all(x.get("global_coverage_status") == "FULL_60M_ARCHIVE" for x in rows)
+    if all_global_full:
+        write_json("liquidations-last-good.json", current)
+        return current
+    return load_json_file(LIQ_LAST_GOOD_FILE)
+
+
 def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, Any]], liquidations_data: dict[str, Any]) -> dict[str, Any]:
     ts_str = snapshot_data.get("timestamp_utc")
     current_ts = parse_ts(ts_str) or datetime.now(timezone.utc).timestamp()
