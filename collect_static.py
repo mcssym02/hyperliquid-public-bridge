@@ -508,7 +508,7 @@ async def collect_liquidations() -> dict[str, Any]:
 
     return {
         "service": "hyperliquid-public-bridge",
-        "version": "1.3.0",
+        "version": "1.6.0",
         "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "status": "OK" if any_ok else "UNAVAILABLE",
         "window_minutes": LIQ_RECENT_MINUTES,
@@ -810,7 +810,7 @@ def derive(snapshot_data: dict[str, Any], records_before_append: list[dict[str, 
     liq_assets = {r.get("asset"): r for r in liquidations_data.get("assets", []) if isinstance(r, dict)}
     return {
         "service": "hyperliquid-public-bridge",
-        "version": "1.3.0",
+        "version": "1.6.0",
         "timestamp_utc": ts_str,
         "status": "OK",
         "baseline_h1_timestamp_utc": baseline_ts,
