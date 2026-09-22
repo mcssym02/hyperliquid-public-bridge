@@ -1,4 +1,4 @@
-name: Refresh Hyperliquid public data
+name: Refresh public crypto data
 
 on:
   workflow_dispatch:
@@ -6,6 +6,7 @@ on:
     paths:
       - "app.py"
       - "collect_static.py"
+      - "collect_uniswap_lp.py"
       - "requirements.txt"
       - ".github/workflows/refresh-data.yml"
   schedule:
@@ -15,7 +16,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: hyperliquid-data-refresh
+  group: public-crypto-data-refresh
   cancel-in-progress: false
 
 jobs:
@@ -38,6 +39,9 @@ jobs:
       - name: Collect official Hyperliquid data and public liquidation feed
         run: python collect_static.py
 
+      - name: Collect Base Uniswap V3 LP state read-only
+        run: python collect_uniswap_lp.py
+
       - name: Validate generated JSON
         run: |
           python - <<'PY'
@@ -53,6 +57,7 @@ jobs:
               "derived.json",
               "radar-core.json",
               "market-state-history.json",
+              "uniswap-lp.json",
           ]
           loaded = {}
           for name in required:
@@ -103,6 +108,20 @@ jobs:
           state = loaded["market-state-history.json"]
           assert isinstance(state.get("records"), list), "state records missing"
           assert state.get("record_count") == len(state.get("records", [])), "state record_count mismatch"
+
+          lp = loaded["uniswap-lp.json"]
+          assert lp.get("status") in ("OK", "PARTIAL"), f"LP collector failed: {lp.get('error')}"
+          assert lp.get("security", {}).get("mode") == "READ_ONLY", "LP collector not read-only"
+          assert lp.get("security", {}).get("transaction_broadcast") is False, "LP broadcast must be false"
+          assert lp.get("chain", {}).get("chain_id") == 8453, "LP wrong chain"
+          assert lp.get("position", {}).get("nft_id") == 6000457, "LP wrong NFT"
+          assert lp.get("position", {}).get("owner_matches_expected") is True, "LP owner mismatch"
+          assert lp.get("contracts", {}).get("nonfungible_position_manager", "").lower() == "0x03a520b32c04bf3beef7beb72e919cf822ed34f1", "LP wrong position manager"
+          assert lp.get("contracts", {}).get("factory", "").lower() == "0x33128a8fc17869897dce68ed026d694621f6fdfd", "LP wrong factory"
+          assert lp.get("pool_state", {}).get("range_status") in (
+              "IN RANGE", "OUT OF RANGE — HAUT", "OUT OF RANGE — BAS"
+          ), "LP range status missing"
+
           print("JSON validation OK")
           PY
 
@@ -110,10 +129,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/radar-core.json data/market-state-history.json
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json
           if git diff --cached --quiet; then
             echo "No data changes"
           else
-            git commit -m "data: refresh Hyperliquid snapshot"
+            git commit -m "data: refresh public crypto snapshots"
             git push
           fi
