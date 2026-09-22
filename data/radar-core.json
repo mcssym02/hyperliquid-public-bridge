@@ -1,13 +1,24 @@
 {
   "service": "hyperliquid-public-bridge",
-  "version": "1.5.0",
-  "timestamp_utc": "2026-09-22T05:56:45.977278Z",
-  "status": "OK",
-  "baseline_h1_timestamp_utc": "2026-09-22T04:56:54.337455Z",
+  "version": "1.6.0",
+  "timestamp_utc": "2026-09-22T06:26:53.831755Z",
+  "status": "DEGRADED_SECONDARY",
+  "component_status": {
+    "primary_market": "OK",
+    "h1_baseline": "OK",
+    "multi_tf": "OK",
+    "liquidations_current": "UNAVAILABLE",
+    "liquidations_last_good_timestamp_utc": null,
+    "liquidations_last_good_age_minutes": null,
+    "xaut_exact": "OK"
+  },
+  "data_quality_rule": "A secondary liquidation outage must not mark primary market/OI/funding/multi-TF data unavailable. Report the missing component explicitly.",
+  "baseline_h1_timestamp_utc": "2026-09-22T05:47:49.971623Z",
   "baseline_h1_status": "OK",
   "liquidations_status": "UNAVAILABLE",
   "source_policy": {
     "market": "Hyperliquid official public API",
+    "multi_tf": "Hyperliquid official public candleSnapshot",
     "liquidations": "MarginPad secondary observed; global archive + venue-specific raw coverage",
     "auth_required": false
   },
@@ -28,44 +39,273 @@
     "Negative funding means shorts pay longs; it is not automatically crowded-short evidence unless magnitude is elevated in context.",
     "Basis sign alone is not a directional trigger; use magnitude, change, spot/perp state and structure.",
     "price_change_h1_pct is endpoint-to-endpoint; use h1_path for intrahour sweeps, breakouts and reversals.",
-    "Global liquidation archive and Hyperliquid OI are different venue scopes; do not normalize one mechanically by the other."
+    "multi_tf mechanical hints are inputs, not trade signals; acceptance/retest and regime interpretation remain required.",
+    "Global liquidation archive and Hyperliquid OI are different venue scopes; do not normalize one mechanically by the other.",
+    "Last-good liquidations are historical context only and never replace current H-1 liquidation flow."
   ],
   "assets": {
     "BTC": {
       "instrument": "BTC",
       "type": "perp",
       "status": "OK",
-      "mid_px": "85575.5",
-      "mark_px": "85578.0",
+      "mid_px": "85380.5",
+      "mark_px": "85381.0",
       "high_24h": "87471.0",
-      "low_24h": "81339.0",
-      "best_bid": "85575.0",
-      "best_ask": "85576.0",
-      "volume_24h_notional_usd": "5086985198.4844532013",
-      "price_change_h1_pct": 0.09240144333393374,
+      "low_24h": "81440.0",
+      "best_bid": "85380.0",
+      "best_ask": "85381.0",
+      "volume_24h_notional_usd": "5084061402.3268060684",
+      "price_change_h1_pct": -0.2639986449627041,
       "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
       "h1_path": {
         "status": "OK",
         "candle_count": 61,
-        "start_open": 85542.0,
-        "end_close": 85576.0,
+        "start_open": 85216.0,
+        "end_close": 85380.0,
         "high": 85663.0,
         "low": 85158.0,
-        "close_change_pct": 0.0397465572467226,
-        "max_up_from_start_pct": 0.14145098314277682,
-        "max_down_from_start_pct": -0.4489022936101539,
-        "range_pct_of_start": 0.59035327675294,
-        "volume_base": 1206.77379,
-        "trades": 15087,
+        "close_change_pct": 0.19245212166729697,
+        "max_up_from_start_pct": 0.5245493803980539,
+        "max_down_from_start_pct": -0.06806233571160503,
+        "range_pct_of_start": 0.5926117161096508,
+        "volume_base": 950.22437,
+        "trades": 13342,
         "note": "Last ~60 minutes of 1m candles. Use this for path/excursions; do not confuse with snapshot-to-snapshot price_change_h1_pct."
       },
-      "open_interest_base": "43905.57678",
+      "multi_tf": {
+        "status": "OK",
+        "timeframes": {
+          "15m": {
+            "status": "OK",
+            "closed_candle_count": 24,
+            "last_closed": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790057699999,
+              "open": 85454.0,
+              "high": 85525.0,
+              "low": 85305.0,
+              "close": 85411.0,
+              "volume_base": 206.18574,
+              "trades": 2860
+            },
+            "previous_closed": {
+              "open_time_ms": 1790055900000,
+              "close_time_ms": 1790056799999,
+              "open": 85477.0,
+              "high": 85663.0,
+              "low": 85444.0,
+              "close": 85455.0,
+              "volume_base": 276.6352,
+              "trades": 3463
+            },
+            "forming_candle": {
+              "open_time_ms": 1790057700000,
+              "close_time_ms": 1790058599999,
+              "open": 85410.0,
+              "high": 85434.0,
+              "low": 85296.0,
+              "close": 85381.0,
+              "volume_base": 78.0834,
+              "trades": 2047
+            },
+            "recent_8_high": 85694.0,
+            "recent_8_low": 85158.0,
+            "recent_8_volume_base": 1771.5488400000002,
+            "recent_8_change_pct": -0.31279543412038313,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 1,
+              "lower_high": 2,
+              "lower_low": 3
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1h": {
+            "status": "OK",
+            "closed_candle_count": 72,
+            "last_closed": {
+              "open_time_ms": 1790053200000,
+              "close_time_ms": 1790056799999,
+              "open": 85502.0,
+              "high": 85663.0,
+              "low": 85158.0,
+              "close": 85455.0,
+              "volume_base": 1208.66153,
+              "trades": 15091
+            },
+            "previous_closed": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790053199999,
+              "open": 85747.0,
+              "high": 85791.0,
+              "low": 85470.0,
+              "close": 85503.0,
+              "volume_base": 562.93098,
+              "trades": 10193
+            },
+            "forming_candle": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790060399999,
+              "open": 85454.0,
+              "high": 85525.0,
+              "low": 85296.0,
+              "close": 85381.0,
+              "volume_base": 284.26914,
+              "trades": 4907
+            },
+            "recent_8_high": 86798.0,
+            "recent_8_low": 85158.0,
+            "recent_8_volume_base": 9061.12213,
+            "recent_8_change_pct": -1.344954975756174,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 0,
+              "higher_low": 2,
+              "lower_high": 4,
+              "lower_low": 2
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "4h": {
+            "status": "OK",
+            "closed_candle_count": 84,
+            "last_closed": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790049599999,
+              "open": 86662.0,
+              "high": 86680.0,
+              "low": 85342.0,
+              "close": 85747.0,
+              "volume_base": 6019.81741,
+              "trades": 71216
+            },
+            "previous_closed": {
+              "open_time_ms": 1790020800000,
+              "close_time_ms": 1790035199999,
+              "open": 86566.0,
+              "high": 87471.0,
+              "low": 86338.0,
+              "close": 86662.0,
+              "volume_base": 6791.37409,
+              "trades": 68785
+            },
+            "forming_candle": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790063999999,
+              "open": 85747.0,
+              "high": 85791.0,
+              "low": 85158.0,
+              "close": 85381.0,
+              "volume_base": 2055.86165,
+              "trades": 30191
+            },
+            "recent_8_high": 87471.0,
+            "recent_8_low": 80587.0,
+            "recent_8_volume_base": 69714.03235,
+            "recent_8_change_pct": 5.590651052249185,
+            "mechanical_structure_hint": "MECHANICAL_UP",
+            "pairwise_counts_last_5": {
+              "higher_high": 3,
+              "higher_low": 3,
+              "lower_high": 1,
+              "lower_low": 1
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1d": {
+            "status": "OK",
+            "closed_candle_count": 60,
+            "last_closed": {
+              "open_time_ms": 1789948800000,
+              "close_time_ms": 1790035199999,
+              "open": 81221.0,
+              "high": 87471.0,
+              "low": 80888.0,
+              "close": 86662.0,
+              "volume_base": 60404.7103,
+              "trades": 611861
+            },
+            "previous_closed": {
+              "open_time_ms": 1789862400000,
+              "close_time_ms": 1789948799999,
+              "open": 81292.0,
+              "high": 81505.0,
+              "low": 80148.0,
+              "close": 81221.0,
+              "volume_base": 19296.8742,
+              "trades": 226163
+            },
+            "forming_candle": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790121599999,
+              "open": 86662.0,
+              "high": 86680.0,
+              "low": 85158.0,
+              "close": 85381.0,
+              "volume_base": 8075.67906,
+              "trades": 101407
+            },
+            "recent_8_high": 87471.0,
+            "recent_8_low": 74903.0,
+            "recent_8_volume_base": 317412.64262,
+            "recent_8_change_pct": 12.824986004608707,
+            "mechanical_structure_hint": "MECHANICAL_UP",
+            "pairwise_counts_last_5": {
+              "higher_high": 3,
+              "higher_low": 3,
+              "lower_high": 1,
+              "lower_low": 1
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          }
+        }
+      },
+      "derivatives_horizons": {
+        "1h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T05:47:49.971623Z",
+          "price_change_pct": -0.2639986449627041,
+          "open_interest_change_abs_base": -87.15449999999691,
+          "open_interest_change_pct": -0.1985058546350449,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": -2.2028999999999996,
+          "spot_price_change_pct": -0.24204439819226486,
+          "perp_minus_spot_return_pp": -0.021954246770439223
+        },
+        "4h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T02:51:23.798031Z",
+          "price_change_pct": -0.4976254989365714,
+          "open_interest_change_abs_base": 134.03156000000308,
+          "open_interest_change_pct": 0.30682023407981873,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": -1.8293,
+          "spot_price_change_pct": -0.4794372736233621,
+          "perp_minus_spot_return_pp": -0.018188225313209294
+        },
+        "24h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-21T05:56:43.236033Z",
+          "price_change_pct": 4.6566930002512885,
+          "open_interest_change_abs_base": 514.4554199999984,
+          "open_interest_change_pct": 1.1880187661545305,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": 2.0944000000000003,
+          "spot_price_change_pct": 4.6347909806158105,
+          "perp_minus_spot_return_pp": 0.021902019635478
+        }
+      },
+      "open_interest_base": "43818.09966",
       "open_interest_unit": "BTC",
-      "open_interest_notional_usd_est": 3757241685.7368903,
-      "delta_oi_h1_abs_base": -346.7841599999956,
+      "open_interest_notional_usd_est": 3741211258.02063,
+      "delta_oi_h1_abs_base": -87.15449999999691,
       "delta_oi_h1_unit": "BTC",
-      "delta_oi_h1_pct": -0.7836512055711231,
-      "delta_oi_h1_notional_usd_at_current_mid_est": -29676227.884079624,
+      "delta_oi_h1_pct": -0.1985058546350449,
+      "delta_oi_h1_notional_usd_at_current_mid_est": -7441294.7872497365,
       "funding_rate_hourly_decimal": "0.0000125",
       "funding_rate_hourly_pct": 0.00125,
       "funding_change_h1_decimal": 0.0,
@@ -73,9 +313,9 @@
       "funding_interval": "1h",
       "spot_compare_status": "OK",
       "spot_compare_instrument": "UBTC/USDC",
-      "spot_compare_mid_px": "85502.5",
-      "spot_perp_basis_bps": "8.5378",
-      "basis_change_h1_bps": -1.2967999999999993,
+      "spot_compare_mid_px": "85314.5",
+      "spot_perp_basis_bps": "7.7361",
+      "basis_change_h1_bps": -2.2028999999999996,
       "spot_perp_state": "CONVERGENT",
       "baseline_status": "OK",
       "liquidations_global_h1": {
@@ -98,43 +338,271 @@
         "earliest_raw_event_utc": null,
         "latest_raw_event_utc": null,
         "scope": "secondary observed Hyperliquid event stream, not official market-wide REST"
-      }
+      },
+      "liquidations_last_good": null
     },
     "ETH": {
       "instrument": "ETH",
       "type": "perp",
       "status": "OK",
-      "mid_px": "2737.85",
-      "mark_px": "2737.9",
+      "mid_px": "2729.75",
+      "mark_px": "2729.7",
       "high_24h": "2809.5",
       "low_24h": "2648.4",
-      "best_bid": "2737.8",
-      "best_ask": "2737.9",
-      "volume_24h_notional_usd": "2052122306.3521995544",
-      "price_change_h1_pct": 0.31510488229367084,
+      "best_bid": "2729.7",
+      "best_ask": "2729.8",
+      "volume_24h_notional_usd": "2046807106.6316077709",
+      "price_change_h1_pct": -0.34681025828238177,
       "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
       "h1_path": {
         "status": "OK",
         "candle_count": 61,
-        "start_open": 2730.8,
-        "end_close": 2737.9,
+        "start_open": 2719.4,
+        "end_close": 2729.8,
         "high": 2740.8,
         "low": 2716.2,
-        "close_change_pct": 0.2599970704555421,
-        "max_up_from_start_pct": 0.36619305697964677,
-        "max_down_from_start_pct": -0.5346418631902883,
-        "range_pct_of_start": 0.900834920169927,
-        "volume_base": 13203.8482,
-        "trades": 7051,
+        "close_change_pct": 0.38243730234610585,
+        "max_up_from_start_pct": 0.7869382952121917,
+        "max_down_from_start_pct": -0.11767301610650094,
+        "range_pct_of_start": 0.9046113113186866,
+        "volume_base": 14091.2152,
+        "trades": 6587,
         "note": "Last ~60 minutes of 1m candles. Use this for path/excursions; do not confuse with snapshot-to-snapshot price_change_h1_pct."
       },
-      "open_interest_base": "1136131.9735999997",
+      "multi_tf": {
+        "status": "OK",
+        "timeframes": {
+          "15m": {
+            "status": "OK",
+            "closed_candle_count": 24,
+            "last_closed": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790057699999,
+              "open": 2734.7,
+              "high": 2736.8,
+              "low": 2726.0,
+              "close": 2731.0,
+              "volume_base": 3494.3981,
+              "trades": 1683
+            },
+            "previous_closed": {
+              "open_time_ms": 1790055900000,
+              "close_time_ms": 1790056799999,
+              "open": 2735.3,
+              "high": 2740.8,
+              "low": 2734.4,
+              "close": 2734.8,
+              "volume_base": 3748.9425,
+              "trades": 1722
+            },
+            "forming_candle": {
+              "open_time_ms": 1790057700000,
+              "close_time_ms": 1790058599999,
+              "open": 2731.4,
+              "high": 2732.2,
+              "low": 2727.0,
+              "close": 2729.8,
+              "volume_base": 514.9063,
+              "trades": 699
+            },
+            "recent_8_high": 2742.4,
+            "recent_8_low": 2716.2,
+            "recent_8_volume_base": 23859.0897,
+            "recent_8_change_pct": -0.36483035388544804,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 1,
+              "lower_high": 2,
+              "lower_low": 3
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1h": {
+            "status": "OK",
+            "closed_candle_count": 72,
+            "last_closed": {
+              "open_time_ms": 1790053200000,
+              "close_time_ms": 1790056799999,
+              "open": 2730.7,
+              "high": 2740.8,
+              "low": 2716.2,
+              "close": 2734.8,
+              "volume_base": 13524.6894,
+              "trades": 7189
+            },
+            "previous_closed": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790053199999,
+              "open": 2740.6,
+              "high": 2744.6,
+              "low": 2727.4,
+              "close": 2730.7,
+              "volume_base": 8204.5297,
+              "trades": 5862
+            },
+            "forming_candle": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790060399999,
+              "open": 2734.7,
+              "high": 2736.8,
+              "low": 2726.0,
+              "close": 2729.8,
+              "volume_base": 4009.3044,
+              "trades": 2382
+            },
+            "recent_8_high": 2789.7,
+            "recent_8_low": 2716.2,
+            "recent_8_volume_base": 117006.7605,
+            "recent_8_change_pct": -1.2600642668880946,
+            "mechanical_structure_hint": "MECHANICAL_DOWN",
+            "pairwise_counts_last_5": {
+              "higher_high": 0,
+              "higher_low": 1,
+              "lower_high": 4,
+              "lower_low": 3
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "4h": {
+            "status": "OK",
+            "closed_candle_count": 84,
+            "last_closed": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790049599999,
+              "open": 2777.3,
+              "high": 2779.0,
+              "low": 2726.8,
+              "close": 2741.0,
+              "volume_base": 69418.5896,
+              "trades": 34428
+            },
+            "previous_closed": {
+              "open_time_ms": 1790020800000,
+              "close_time_ms": 1790035199999,
+              "open": 2763.8,
+              "high": 2809.5,
+              "low": 2763.8,
+              "close": 2777.3,
+              "volume_base": 125253.5508,
+              "trades": 43733
+            },
+            "forming_candle": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790063999999,
+              "open": 2740.6,
+              "high": 2744.6,
+              "low": 2716.2,
+              "close": 2729.8,
+              "volume_base": 25738.5235,
+              "trades": 15433
+            },
+            "recent_8_high": 2809.5,
+            "recent_8_low": 2610.0,
+            "recent_8_volume_base": 1012916.0662,
+            "recent_8_change_pct": 4.0780680437424,
+            "mechanical_structure_hint": "MECHANICAL_UP",
+            "pairwise_counts_last_5": {
+              "higher_high": 3,
+              "higher_low": 3,
+              "lower_high": 1,
+              "lower_low": 1
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1d": {
+            "status": "OK",
+            "closed_candle_count": 60,
+            "last_closed": {
+              "open_time_ms": 1789948800000,
+              "close_time_ms": 1790035199999,
+              "open": 2646.2,
+              "high": 2809.5,
+              "low": 2642.2,
+              "close": 2777.3,
+              "volume_base": 867819.3651,
+              "trades": 318184
+            },
+            "previous_closed": {
+              "open_time_ms": 1789862400000,
+              "close_time_ms": 1789948799999,
+              "open": 2632.5,
+              "high": 2650.3,
+              "low": 2562.9,
+              "close": 2646.2,
+              "volume_base": 473216.5214,
+              "trades": 234530
+            },
+            "forming_candle": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790121599999,
+              "open": 2777.3,
+              "high": 2779.0,
+              "low": 2716.2,
+              "close": 2729.8,
+              "volume_base": 95157.1131,
+              "trades": 49861
+            },
+            "recent_8_high": 2809.5,
+            "recent_8_low": 2356.6,
+            "recent_8_volume_base": 5105186.6482,
+            "recent_8_change_pct": 12.17335110464881,
+            "mechanical_structure_hint": "MECHANICAL_UP",
+            "pairwise_counts_last_5": {
+              "higher_high": 3,
+              "higher_low": 3,
+              "lower_high": 1,
+              "lower_low": 1
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          }
+        }
+      },
+      "derivatives_horizons": {
+        "1h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T05:47:49.971623Z",
+          "price_change_pct": -0.34681025828238177,
+          "open_interest_change_abs_base": 2006.763800001936,
+          "open_interest_change_pct": 0.17681114788876684,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": -0.7020999999999997,
+          "spot_price_change_pct": -0.3398191285283736,
+          "perp_minus_spot_return_pp": -0.006991129754008174
+        },
+        "4h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T02:51:23.798031Z",
+          "price_change_pct": -0.5754766804465516,
+          "open_interest_change_abs_base": 1347.5468000001274,
+          "open_interest_change_pct": 0.11866019801438643,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": 3.3310000000000004,
+          "spot_price_change_pct": -0.6085673159266225,
+          "perp_minus_spot_return_pp": 0.03309063548007085
+        },
+        "24h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-21T05:56:43.236033Z",
+          "price_change_pct": 2.354749807832923,
+          "open_interest_change_abs_base": 2107.530600001104,
+          "open_interest_change_pct": 0.18570595665408085,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": 1.6790000000000003,
+          "spot_price_change_pct": 2.3375794983396814,
+          "perp_minus_spot_return_pp": 0.01717030949324183
+        }
+      },
+      "open_interest_base": "1136982.5976000007",
       "open_interest_unit": "ETH",
-      "open_interest_notional_usd_est": 3110558923.920759,
-      "delta_oi_h1_abs_base": 4588.743800000753,
+      "open_interest_notional_usd_est": 3103678245.7986016,
+      "delta_oi_h1_abs_base": 2006.763800001936,
       "delta_oi_h1_unit": "ETH",
-      "delta_oi_h1_pct": 0.4055296942399478,
-      "delta_oi_h1_notional_usd_at_current_mid_est": 12563292.212832062,
+      "delta_oi_h1_pct": 0.17681114788876684,
+      "delta_oi_h1_notional_usd_at_current_mid_est": 5477963.483055285,
       "funding_rate_hourly_decimal": "0.0000125",
       "funding_rate_hourly_pct": 0.00125,
       "funding_change_h1_decimal": 0.0,
@@ -142,9 +610,9 @@
       "funding_interval": "1h",
       "spot_compare_status": "OK",
       "spot_compare_instrument": "UETH/USDC",
-      "spot_compare_mid_px": "2735.65",
-      "spot_perp_basis_bps": "8.0420",
-      "basis_change_h1_bps": 0.7085999999999997,
+      "spot_compare_mid_px": "2727.45",
+      "spot_perp_basis_bps": "8.4328",
+      "basis_change_h1_bps": -0.7020999999999997,
       "spot_perp_state": "CONVERGENT",
       "baseline_status": "OK",
       "liquidations_global_h1": {
@@ -167,43 +635,271 @@
         "earliest_raw_event_utc": null,
         "latest_raw_event_utc": null,
         "scope": "secondary observed Hyperliquid event stream, not official market-wide REST"
-      }
+      },
+      "liquidations_last_good": null
     },
     "SOL": {
       "instrument": "SOL",
       "type": "perp",
       "status": "OK",
-      "mid_px": "117.155",
-      "mark_px": "117.16",
+      "mid_px": "116.605",
+      "mark_px": "116.6",
       "high_24h": "120.09",
-      "low_24h": "111.35",
-      "best_bid": "117.15",
-      "best_ask": "117.16",
-      "volume_24h_notional_usd": "408393874.9279995561",
-      "price_change_h1_pct": 0.6702470461869003,
+      "low_24h": "111.45",
+      "best_bid": "116.6",
+      "best_ask": "116.61",
+      "volume_24h_notional_usd": "409306638.8838003874",
+      "price_change_h1_pct": -0.4184636406336706,
       "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
       "h1_path": {
         "status": "OK",
         "candle_count": 61,
-        "start_open": 116.45,
-        "end_close": 117.16,
+        "start_open": 115.83,
+        "end_close": 116.61,
         "high": 117.29,
         "low": 115.63,
-        "close_change_pct": 0.6097037355087931,
-        "max_up_from_start_pct": 0.7213396307428122,
-        "max_down_from_start_pct": -0.704164877629887,
-        "range_pct_of_start": 1.4255045083727014,
-        "volume_base": 196290.3,
-        "trades": 5833,
+        "close_change_pct": 0.6734006734006703,
+        "max_up_from_start_pct": 1.2604679271345898,
+        "max_down_from_start_pct": -0.1726668393335129,
+        "range_pct_of_start": 1.4331347664681091,
+        "volume_base": 127231.59,
+        "trades": 4568,
         "note": "Last ~60 minutes of 1m candles. Use this for path/excursions; do not confuse with snapshot-to-snapshot price_change_h1_pct."
       },
-      "open_interest_base": "5992712.5999999987",
+      "multi_tf": {
+        "status": "OK",
+        "timeframes": {
+          "15m": {
+            "status": "OK",
+            "closed_candle_count": 24,
+            "last_closed": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790057699999,
+              "open": 116.91,
+              "high": 117.12,
+              "low": 116.47,
+              "close": 116.73,
+              "volume_base": 19322.71,
+              "trades": 899
+            },
+            "previous_closed": {
+              "open_time_ms": 1790055900000,
+              "close_time_ms": 1790056799999,
+              "open": 116.77,
+              "high": 117.29,
+              "low": 116.77,
+              "close": 116.91,
+              "volume_base": 22410.16,
+              "trades": 1153
+            },
+            "forming_candle": {
+              "open_time_ms": 1790057700000,
+              "close_time_ms": 1790058599999,
+              "open": 116.74,
+              "high": 116.81,
+              "low": 116.46,
+              "close": 116.6,
+              "volume_base": 5779.25,
+              "trades": 421
+            },
+            "recent_8_high": 117.29,
+            "recent_8_low": 115.63,
+            "recent_8_volume_base": 253971.15000000002,
+            "recent_8_change_pct": -0.2989408951144523,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 1,
+              "lower_high": 2,
+              "lower_low": 3
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1h": {
+            "status": "OK",
+            "closed_candle_count": 72,
+            "last_closed": {
+              "open_time_ms": 1790053200000,
+              "close_time_ms": 1790056799999,
+              "open": 116.43,
+              "high": 117.29,
+              "low": 115.63,
+              "close": 116.91,
+              "volume_base": 197184.37,
+              "trades": 5854
+            },
+            "previous_closed": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790053199999,
+              "open": 116.91,
+              "high": 117.19,
+              "low": 116.31,
+              "close": 116.4,
+              "volume_base": 53290.89,
+              "trades": 3558
+            },
+            "forming_candle": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790060399999,
+              "open": 116.91,
+              "high": 117.12,
+              "low": 116.46,
+              "close": 116.6,
+              "volume_base": 25101.96,
+              "trades": 1320
+            },
+            "recent_8_high": 119.99,
+            "recent_8_low": 115.63,
+            "recent_8_volume_base": 840484.66,
+            "recent_8_change_pct": -1.8882175226586084,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 0,
+              "lower_high": 2,
+              "lower_low": 4
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "4h": {
+            "status": "OK",
+            "closed_candle_count": 84,
+            "last_closed": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790049599999,
+              "open": 118.99,
+              "high": 119.56,
+              "low": 116.36,
+              "close": 116.87,
+              "volume_base": 400068.48,
+              "trades": 19789
+            },
+            "previous_closed": {
+              "open_time_ms": 1790020800000,
+              "close_time_ms": 1790035199999,
+              "open": 118.44,
+              "high": 120.09,
+              "low": 118.28,
+              "close": 118.98,
+              "volume_base": 506216.27,
+              "trades": 20793
+            },
+            "forming_candle": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790063999999,
+              "open": 116.91,
+              "high": 117.29,
+              "low": 115.63,
+              "close": 116.6,
+              "volume_base": 275577.22,
+              "trades": 10732
+            },
+            "recent_8_high": 120.09,
+            "recent_8_low": 109.14,
+            "recent_8_volume_base": 4622256.9799999995,
+            "recent_8_change_pct": 5.783852280955837,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 3,
+              "lower_high": 2,
+              "lower_low": 1
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1d": {
+            "status": "OK",
+            "closed_candle_count": 60,
+            "last_closed": {
+              "open_time_ms": 1789948800000,
+              "close_time_ms": 1790035199999,
+              "open": 111.19,
+              "high": 120.09,
+              "low": 110.73,
+              "close": 118.98,
+              "volume_base": 3521797.31,
+              "trades": 140308
+            },
+            "previous_closed": {
+              "open_time_ms": 1789862400000,
+              "close_time_ms": 1789948799999,
+              "open": 111.09,
+              "high": 111.51,
+              "low": 107.39,
+              "close": 111.19,
+              "volume_base": 2550360.61,
+              "trades": 90148
+            },
+            "forming_candle": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790121599999,
+              "open": 118.99,
+              "high": 119.56,
+              "low": 115.63,
+              "close": 116.6,
+              "volume_base": 675645.7,
+              "trades": 30521
+            },
+            "recent_8_high": 120.09,
+            "recent_8_low": 95.75,
+            "recent_8_volume_base": 20911366.89,
+            "recent_8_change_pct": 19.8851327522797,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 3,
+              "lower_high": 2,
+              "lower_low": 1
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          }
+        }
+      },
+      "derivatives_horizons": {
+        "1h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T05:47:49.971623Z",
+          "price_change_pct": -0.4184636406336706,
+          "open_interest_change_abs_base": 691.4600000046194,
+          "open_interest_change_pct": 0.011555514502625819,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": -0.8160999999999987,
+          "spot_price_change_pct": -0.41034409061764254,
+          "perp_minus_spot_return_pp": -0.008119550016028043
+        },
+        "4h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T02:51:23.798031Z",
+          "price_change_pct": -0.9513697175621116,
+          "open_interest_change_abs_base": -133386.86000000034,
+          "open_interest_change_pct": -2.180276251018154,
+          "funding_change_decimal": -9.105899999999999e-06,
+          "funding_change_pct_points": -0.0009105899999999999,
+          "basis_change_bps": 1.7917000000000005,
+          "spot_price_change_pct": -0.9690993326816,
+          "perp_minus_spot_return_pp": 0.01772961511948834
+        },
+        "24h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-21T05:56:43.236033Z",
+          "price_change_pct": 4.237250257006231,
+          "open_interest_change_abs_base": -105010.27999999747,
+          "open_interest_change_pct": -1.724445067388003,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": 0.49520000000000053,
+          "spot_price_change_pct": 4.232094126068087,
+          "perp_minus_spot_return_pp": 0.0051561309381442655
+        }
+      },
+      "open_interest_base": "5984501.1800000006",
       "open_interest_unit": "SOL",
-      "open_interest_notional_usd_est": 702076244.6529999,
-      "delta_oi_h1_abs_base": -24980.200000000186,
+      "open_interest_notional_usd_est": 697822760.0939001,
+      "delta_oi_h1_abs_base": 691.4600000046194,
       "delta_oi_h1_unit": "SOL",
-      "delta_oi_h1_pct": -0.4151125826828528,
-      "delta_oi_h1_notional_usd_at_current_mid_est": -2926555.3310000217,
+      "delta_oi_h1_pct": 0.011555514502625819,
+      "delta_oi_h1_notional_usd_at_current_mid_est": 80627.69330053864,
       "funding_rate_hourly_decimal": "0.0000125",
       "funding_rate_hourly_pct": 0.00125,
       "funding_change_h1_decimal": 0.0,
@@ -211,9 +907,9 @@
       "funding_interval": "1h",
       "spot_compare_status": "OK",
       "spot_compare_instrument": "USOL/USDC",
-      "spot_compare_mid_px": "117.055",
-      "spot_perp_basis_bps": "8.5430",
-      "basis_change_h1_bps": 2.094199999999999,
+      "spot_compare_mid_px": "116.495",
+      "spot_perp_basis_bps": "9.4425",
+      "basis_change_h1_bps": -0.8160999999999987,
       "spot_perp_state": "CONVERGENT",
       "baseline_status": "OK",
       "liquidations_global_h1": {
@@ -236,43 +932,271 @@
         "earliest_raw_event_utc": null,
         "latest_raw_event_utc": null,
         "scope": "secondary observed Hyperliquid event stream, not official market-wide REST"
-      }
+      },
+      "liquidations_last_good": null
     },
     "HYPE": {
       "instrument": "HYPE",
       "type": "perp",
       "status": "OK",
-      "mid_px": "94.3725",
-      "mark_px": "94.384",
+      "mid_px": "93.5595",
+      "mark_px": "93.5341",
       "high_24h": "96.153",
       "low_24h": "92.0",
-      "best_bid": "94.372",
-      "best_ask": "94.373",
-      "volume_24h_notional_usd": "679927688.7653198242",
-      "price_change_h1_pct": 1.1316326694635892,
+      "best_bid": "93.559",
+      "best_ask": "93.56",
+      "volume_24h_notional_usd": "681657915.5298794508",
+      "price_change_h1_pct": -0.8593787253432073,
       "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
       "h1_path": {
         "status": "OK",
         "candle_count": 61,
-        "start_open": 93.39,
-        "end_close": 94.372,
+        "start_open": 93.218,
+        "end_close": 93.559,
         "high": 94.554,
-        "low": 93.04,
-        "close_change_pct": 1.0515044437305887,
-        "max_up_from_start_pct": 1.2463861227112183,
-        "max_down_from_start_pct": -0.3747724595781099,
-        "range_pct_of_start": 1.6211585822893197,
-        "volume_base": 255121.25,
-        "trades": 12378,
+        "low": 93.129,
+        "close_change_pct": 0.36580917848483274,
+        "max_up_from_start_pct": 1.43319959664443,
+        "max_down_from_start_pct": -0.09547512283035742,
+        "range_pct_of_start": 1.5286747194747765,
+        "volume_base": 266069.49,
+        "trades": 12831,
         "note": "Last ~60 minutes of 1m candles. Use this for path/excursions; do not confuse with snapshot-to-snapshot price_change_h1_pct."
       },
-      "open_interest_base": "21909034.2600000165",
+      "multi_tf": {
+        "status": "OK",
+        "timeframes": {
+          "15m": {
+            "status": "OK",
+            "closed_candle_count": 24,
+            "last_closed": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790057699999,
+              "open": 94.011,
+              "high": 94.114,
+              "low": 93.61,
+              "close": 93.719,
+              "volume_base": 52255.55,
+              "trades": 2934
+            },
+            "previous_closed": {
+              "open_time_ms": 1790055900000,
+              "close_time_ms": 1790056799999,
+              "open": 94.237,
+              "high": 94.554,
+              "low": 93.976,
+              "close": 94.004,
+              "volume_base": 78587.26,
+              "trades": 3688
+            },
+            "forming_candle": {
+              "open_time_ms": 1790057700000,
+              "close_time_ms": 1790058599999,
+              "open": 93.725,
+              "high": 93.777,
+              "low": 93.391,
+              "close": 93.56,
+              "volume_base": 20532.38,
+              "trades": 1469
+            },
+            "recent_8_high": 94.554,
+            "recent_8_low": 92.591,
+            "recent_8_volume_base": 422061.22,
+            "recent_8_change_pct": 0.8978844808095854,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 2,
+              "lower_high": 2,
+              "lower_low": 2
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1h": {
+            "status": "OK",
+            "closed_candle_count": 72,
+            "last_closed": {
+              "open_time_ms": 1790053200000,
+              "close_time_ms": 1790056799999,
+              "open": 93.542,
+              "high": 94.554,
+              "low": 93.04,
+              "close": 94.004,
+              "volume_base": 266137.33,
+              "trades": 12753
+            },
+            "previous_closed": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790053199999,
+              "open": 92.941,
+              "high": 93.542,
+              "low": 92.591,
+              "close": 93.542,
+              "volume_base": 138471.97,
+              "trades": 8186
+            },
+            "forming_candle": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790060399999,
+              "open": 94.011,
+              "high": 94.114,
+              "low": 93.391,
+              "close": 93.56,
+              "volume_base": 72787.93,
+              "trades": 4403
+            },
+            "recent_8_high": 94.554,
+            "recent_8_low": 92.162,
+            "recent_8_volume_base": 1564765.6,
+            "recent_8_change_pct": 0.7869625817519044,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 2,
+              "lower_high": 2,
+              "lower_low": 2
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "4h": {
+            "status": "OK",
+            "closed_candle_count": 84,
+            "last_closed": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790049599999,
+              "open": 94.153,
+              "high": 94.405,
+              "low": 92.162,
+              "close": 92.942,
+              "volume_base": 707661.54,
+              "trades": 42615
+            },
+            "previous_closed": {
+              "open_time_ms": 1790020800000,
+              "close_time_ms": 1790035199999,
+              "open": 93.33,
+              "high": 94.332,
+              "low": 92.897,
+              "close": 94.143,
+              "volume_base": 843762.75,
+              "trades": 41902
+            },
+            "forming_candle": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790063999999,
+              "open": 92.941,
+              "high": 94.554,
+              "low": 92.591,
+              "close": 93.56,
+              "volume_base": 477397.23,
+              "trades": 25342
+            },
+            "recent_8_high": 96.153,
+            "recent_8_low": 92.0,
+            "recent_8_volume_base": 8582162.86,
+            "recent_8_change_pct": -0.43813135370806,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 1,
+              "lower_high": 2,
+              "lower_low": 3
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1d": {
+            "status": "OK",
+            "closed_candle_count": 60,
+            "last_closed": {
+              "open_time_ms": 1789948800000,
+              "close_time_ms": 1790035199999,
+              "open": 93.748,
+              "high": 96.153,
+              "low": 92.0,
+              "close": 94.143,
+              "volume_base": 7229040.87,
+              "trades": 361427
+            },
+            "previous_closed": {
+              "open_time_ms": 1789862400000,
+              "close_time_ms": 1789948799999,
+              "open": 92.217,
+              "high": 94.094,
+              "low": 89.597,
+              "close": 93.749,
+              "volume_base": 4142167.92,
+              "trades": 232493
+            },
+            "forming_candle": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790121599999,
+              "open": 94.153,
+              "high": 94.554,
+              "low": 92.162,
+              "close": 93.56,
+              "volume_base": 1185058.77,
+              "trades": 67957
+            },
+            "recent_8_high": 96.153,
+            "recent_8_low": 75.15,
+            "recent_8_volume_base": 49486896.11,
+            "recent_8_change_pct": 21.852187419104308,
+            "mechanical_structure_hint": "MECHANICAL_UP",
+            "pairwise_counts_last_5": {
+              "higher_high": 3,
+              "higher_low": 3,
+              "lower_high": 1,
+              "lower_low": 1
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          }
+        }
+      },
+      "derivatives_horizons": {
+        "1h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T05:47:49.971623Z",
+          "price_change_pct": -0.8593787253432073,
+          "open_interest_change_abs_base": -35655.08000002056,
+          "open_interest_change_pct": -0.16285949003839173,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": -3.4662999999999995,
+          "spot_price_change_pct": -0.8250265111346633,
+          "perp_minus_spot_return_pp": -0.03435221420854395
+        },
+        "4h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-22T02:51:23.798031Z",
+          "price_change_pct": 0.47035324817576996,
+          "open_interest_change_abs_base": 59874.87999998778,
+          "open_interest_change_pct": 0.27468534245809195,
+          "funding_change_decimal": 0.0,
+          "funding_change_pct_points": 0.0,
+          "basis_change_bps": 0.24990000000000023,
+          "spot_price_change_pct": 0.46784442427205697,
+          "perp_minus_spot_return_pp": 0.0025088239037129867
+        },
+        "24h": {
+          "status": "OK",
+          "baseline_timestamp_utc": "2026-09-21T05:56:43.236033Z",
+          "price_change_pct": -0.36315035596189427,
+          "open_interest_change_abs_base": 63714.379999969155,
+          "open_interest_change_pct": 0.2923511426479397,
+          "funding_change_decimal": -3.0359e-05,
+          "funding_change_pct_points": -0.0030359,
+          "basis_change_bps": -3.0238999999999994,
+          "spot_price_change_pct": -0.33303315944561707,
+          "perp_minus_spot_return_pp": -0.0301171965162772
+        }
+      },
+      "open_interest_base": "21857499.5599999949",
       "open_interest_unit": "HYPE",
-      "open_interest_notional_usd_est": 2067610335.7018516,
-      "delta_oi_h1_abs_base": 143007.22000000253,
+      "open_interest_notional_usd_est": 2044976730.0838196,
+      "delta_oi_h1_abs_base": -35655.08000002056,
       "delta_oi_h1_unit": "HYPE",
-      "delta_oi_h1_pct": 0.6570203176592404,
-      "delta_oi_h1_notional_usd_at_current_mid_est": 13495948.86945024,
+      "delta_oi_h1_pct": -0.16285949003839173,
+      "delta_oi_h1_notional_usd_at_current_mid_est": -3335871.4572619237,
       "funding_rate_hourly_decimal": "0.0000125",
       "funding_rate_hourly_pct": 0.00125,
       "funding_change_h1_decimal": 0.0,
@@ -280,10 +1204,10 @@
       "funding_interval": "1h",
       "spot_compare_status": "OK",
       "spot_compare_instrument": "HYPE/USDC",
-      "spot_compare_mid_px": "94.3165",
-      "spot_perp_basis_bps": "5.9375",
-      "basis_change_h1_bps": 5.7232,
-      "spot_perp_state": "PERP_LED",
+      "spot_compare_mid_px": "93.522",
+      "spot_perp_basis_bps": "4.0098",
+      "basis_change_h1_bps": -3.4662999999999995,
+      "spot_perp_state": "CONVERGENT",
       "baseline_status": "OK",
       "liquidations_global_h1": {
         "coverage_status": "UNAVAILABLE",
@@ -305,35 +1229,225 @@
         "earliest_raw_event_utc": null,
         "latest_raw_event_utc": null,
         "scope": "secondary observed Hyperliquid event stream, not official market-wide REST"
-      }
+      },
+      "liquidations_last_good": null
     },
     "XAUT0": {
       "instrument": "XAUT0/USDC",
       "type": "spot",
       "status": "OK",
-      "mid_px": "4326.45",
-      "mark_px": "4326.5",
+      "mid_px": "4321.15",
+      "mark_px": "4321.6",
       "high_24h": "4371.9",
-      "low_24h": "4321.2",
-      "best_bid": "4326.4",
-      "best_ask": "4326.5",
-      "volume_24h_notional_usd": "317781.371",
-      "price_change_h1_pct": -0.45785544192255,
+      "low_24h": "4320.7",
+      "best_bid": "4320.7",
+      "best_ask": "4322.0",
+      "volume_24h_notional_usd": "336032.168",
+      "price_change_h1_pct": -0.21245395868696448,
       "price_change_h1_definition": "snapshot midpoint now vs baseline midpoint ~60m ago; NOT the full intrahour path",
       "h1_path": {
         "status": "OK",
         "candle_count": 61,
-        "start_open": 4346.1,
-        "end_close": 4327.0,
-        "high": 4351.6,
-        "low": 4321.2,
-        "close_change_pct": -0.43947447136514217,
-        "max_up_from_start_pct": 0.1265502404454555,
-        "max_down_from_start_pct": -0.572927452198535,
-        "range_pct_of_start": 0.6994776926439922,
-        "volume_base": 8.58,
-        "trades": 136,
+        "start_open": 4334.1,
+        "end_close": 4323.0,
+        "high": 4336.5,
+        "low": 4320.7,
+        "close_change_pct": -0.25610853464388406,
+        "max_up_from_start_pct": 0.055374818301379136,
+        "max_down_from_start_pct": -0.30917606884937054,
+        "range_pct_of_start": 0.3645508871507391,
+        "volume_base": 7.55,
+        "trades": 131,
         "note": "Last ~60 minutes of 1m candles. Use this for path/excursions; do not confuse with snapshot-to-snapshot price_change_h1_pct."
+      },
+      "multi_tf": {
+        "status": "OK",
+        "timeframes": {
+          "15m": {
+            "status": "OK",
+            "closed_candle_count": 24,
+            "last_closed": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790057699999,
+              "open": 4326.6,
+              "high": 4326.6,
+              "low": 4320.7,
+              "close": 4323.0,
+              "volume_base": 0.77,
+              "trades": 26
+            },
+            "previous_closed": {
+              "open_time_ms": 1790055900000,
+              "close_time_ms": 1790056799999,
+              "open": 4324.5,
+              "high": 4335.9,
+              "low": 4324.5,
+              "close": 4327.9,
+              "volume_base": 3.58,
+              "trades": 26
+            },
+            "forming_candle": {
+              "open_time_ms": 1790057700000,
+              "close_time_ms": 1790058599999,
+              "open": 4323.0,
+              "high": 4323.5,
+              "low": 4320.8,
+              "close": 4323.0,
+              "volume_base": 0.14,
+              "trades": 14
+            },
+            "recent_8_high": 4351.6,
+            "recent_8_low": 4320.7,
+            "recent_8_volume_base": 13.209999999999999,
+            "recent_8_change_pct": -0.44446491490685025,
+            "mechanical_structure_hint": "MECHANICAL_DOWN",
+            "pairwise_counts_last_5": {
+              "higher_high": 1,
+              "higher_low": 1,
+              "lower_high": 3,
+              "lower_low": 3
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1h": {
+            "status": "OK",
+            "closed_candle_count": 72,
+            "last_closed": {
+              "open_time_ms": 1790053200000,
+              "close_time_ms": 1790056799999,
+              "open": 4347.3,
+              "high": 4351.6,
+              "low": 4321.2,
+              "close": 4327.9,
+              "volume_base": 11.84,
+              "trades": 141
+            },
+            "previous_closed": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790053199999,
+              "open": 4344.5,
+              "high": 4347.2,
+              "low": 4338.3,
+              "close": 4347.0,
+              "volume_base": 1.76,
+              "trades": 79
+            },
+            "forming_candle": {
+              "open_time_ms": 1790056800000,
+              "close_time_ms": 1790060399999,
+              "open": 4326.6,
+              "high": 4326.6,
+              "low": 4320.7,
+              "close": 4323.0,
+              "volume_base": 0.91,
+              "trades": 40
+            },
+            "recent_8_high": 4371.9,
+            "recent_8_low": 4321.2,
+            "recent_8_volume_base": 27.93,
+            "recent_8_change_pct": -0.32243948501807784,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 2,
+              "higher_low": 1,
+              "lower_high": 2,
+              "lower_low": 3
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "4h": {
+            "status": "OK",
+            "closed_candle_count": 84,
+            "last_closed": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790049599999,
+              "open": 4371.0,
+              "high": 4371.9,
+              "low": 4343.7,
+              "close": 4344.0,
+              "volume_base": 6.97,
+              "trades": 76
+            },
+            "previous_closed": {
+              "open_time_ms": 1790020800000,
+              "close_time_ms": 1790035199999,
+              "open": 4345.0,
+              "high": 4370.9,
+              "low": 4326.9,
+              "close": 4370.9,
+              "volume_base": 14.55,
+              "trades": 92
+            },
+            "forming_candle": {
+              "open_time_ms": 1790049600000,
+              "close_time_ms": 1790063999999,
+              "open": 4344.5,
+              "high": 4351.6,
+              "low": 4320.7,
+              "close": 4323.0,
+              "volume_base": 14.51,
+              "trades": 260
+            },
+            "recent_8_high": 4379.5,
+            "recent_8_low": 4326.9,
+            "recent_8_volume_base": 73.82000000000001,
+            "recent_8_change_pct": -0.6063379476032527,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 3,
+              "higher_low": 2,
+              "lower_high": 1,
+              "lower_low": 2
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          },
+          "1d": {
+            "status": "OK",
+            "closed_candle_count": 60,
+            "last_closed": {
+              "open_time_ms": 1789948800000,
+              "close_time_ms": 1790035199999,
+              "open": 4368.0,
+              "high": 4379.5,
+              "low": 4326.9,
+              "close": 4370.9,
+              "volume_base": 65.87,
+              "trades": 561
+            },
+            "previous_closed": {
+              "open_time_ms": 1789862400000,
+              "close_time_ms": 1789948799999,
+              "open": 4370.6,
+              "high": 4375.6,
+              "low": 4357.7,
+              "close": 4368.1,
+              "volume_base": 20.63,
+              "trades": 238
+            },
+            "forming_candle": {
+              "open_time_ms": 1790035200000,
+              "close_time_ms": 1790121599999,
+              "open": 4371.0,
+              "high": 4371.9,
+              "low": 4320.7,
+              "close": 4323.0,
+              "volume_base": 21.48,
+              "trades": 336
+            },
+            "recent_8_high": 4388.3,
+            "recent_8_low": 4244.3,
+            "recent_8_volume_base": 1112.79,
+            "recent_8_change_pct": 0.8793389955686681,
+            "mechanical_structure_hint": "MECHANICAL_MIXED",
+            "pairwise_counts_last_5": {
+              "higher_high": 3,
+              "higher_low": 2,
+              "lower_high": 1,
+              "lower_low": 2
+            },
+            "note": "Mechanical candle summary only; Radar must still interpret regime, acceptance/retest and context."
+          }
+        }
       },
       "derivatives_perp": "NOT_APPLICABLE",
       "baseline_status": "OK",
