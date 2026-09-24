@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-09-24T03:35:14.472096Z",
+  "timestamp_utc": "2026-09-24T03:48:38.024008Z",
   "status": "OK",
   "window_minutes": 60,
   "source": {
@@ -31,9 +31,9 @@
       "global_h1": {
         "status": "OK",
         "bucket_count": 20,
-        "long_usd": 129692.6892,
-        "short_usd": 153422.89192000002,
-        "total_usd": 283115.58112,
+        "long_usd": 220354.89759999997,
+        "short_usd": 63579.30864,
+        "total_usd": 283934.20623999997,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -50,12 +50,12 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-09-23T16:06:02.729000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-09-24T03:33:37.243000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-09-23T16:09:09.082000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-24T03:48:23.169000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 80
+      "raw_event_sample_count_h1": 83
     },
     {
       "asset": "ETH",
@@ -64,9 +64,9 @@
       "global_h1": {
         "status": "OK",
         "bucket_count": 8,
-        "long_usd": 108358.28022000002,
-        "short_usd": 75215.63079,
-        "total_usd": 183573.91101,
+        "long_usd": 233244.32905,
+        "short_usd": 54953.62049,
+        "total_usd": 288197.94954,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -94,12 +94,12 @@
           }
         }
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-09-23T16:04:04.087000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-09-24T03:33:31.168000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-09-23T16:05:17.013000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-24T03:45:28.115000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 74
+      "raw_event_sample_count_h1": 64
     },
     {
       "asset": "SOL",
@@ -109,8 +109,8 @@
         "status": "OK",
         "bucket_count": 5,
         "long_usd": 2840.9435,
-        "short_usd": 138545.46875499998,
-        "total_usd": 141386.41225499997,
+        "short_usd": 137369.14595499999,
+        "total_usd": 140210.08945499998,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -132,7 +132,7 @@
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 32
+      "raw_event_sample_count_h1": 26
     },
     {
       "asset": "HYPE",
@@ -140,10 +140,10 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 3,
+        "bucket_count": 2,
         "long_usd": 762.24368,
-        "short_usd": 5.5648800000000005,
-        "total_usd": 767.80856,
+        "short_usd": 0.0,
+        "total_usd": 762.24368,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -165,7 +165,7 @@
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 3
+      "raw_event_sample_count_h1": 2
     }
   ],
   "source_errors": {
