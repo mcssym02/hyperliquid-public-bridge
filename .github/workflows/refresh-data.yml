@@ -118,7 +118,9 @@ jobs:
           core = loaded["radar-core.json"]
           assert core.get("version") == "1.6.0", f"unexpected radar-core version {core.get('version')}"
           assert core.get("component_status", {}).get("primary_market") in ("OK", "PARTIAL"), "primary market unavailable"
-          assert core.get("component_status", {}).get("h1_baseline") == "OK", "H-1 baseline missing"
+          assert core.get("component_status", {}).get("h1_baseline") in ("OK", "NOT_RECORDED"), "invalid H-1 baseline status"
+          # A transient H-1 gap must not prevent publishing otherwise fresh primary data.
+          # radar-core will mark the run DEGRADED_PRIMARY until the rolling baseline is rebuilt.
           assert core.get("component_status", {}).get("multi_tf") in ("OK", "PARTIAL"), "multi-TF missing in radar-core"
           core_assets = core.get("assets", {})
           for asset in ("BTC", "ETH", "SOL", "HYPE"):
