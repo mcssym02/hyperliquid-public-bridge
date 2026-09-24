@@ -7,6 +7,8 @@ on:
       - "app.py"
       - "collect_static.py"
       - "collect_uniswap_lp.py"
+      - "update_uniswap_lp_history.py"
+      - "collect_uniswap_universe.py"
       - "requirements.txt"
       - ".github/workflows/refresh-data.yml"
   schedule:
@@ -42,6 +44,12 @@ jobs:
       - name: Collect Base Uniswap V3 LP state read-only
         run: python collect_uniswap_lp.py
 
+      - name: Update daily Uniswap LP history
+        run: python update_uniswap_lp_history.py
+
+      - name: Collect filtered Uniswap V3 Base opportunity universe
+        run: python collect_uniswap_universe.py
+
       - name: Validate generated JSON
         run: |
           python - <<'PY'
@@ -59,6 +67,8 @@ jobs:
               "radar-core.json",
               "market-state-history.json",
               "uniswap-lp.json",
+              "uniswap-lp-history.json",
+              "uniswap-universe.json",
           ]
           loaded = {}
           for name in required:
@@ -146,6 +156,14 @@ jobs:
               "IN RANGE", "OUT OF RANGE — HAUT", "OUT OF RANGE — BAS"
           ), "LP range status missing"
 
+          lp_history = loaded["uniswap-lp-history.json"]
+          assert isinstance(lp_history.get("records"), list), "LP history records missing"
+          assert lp_history.get("record_count") == len(lp_history.get("records", [])), "LP history count mismatch"
+
+          universe = loaded["uniswap-universe.json"]
+          assert universe.get("status") in ("OK", "PARTIAL"), f"Uniswap universe unavailable: {universe.get('errors')}"
+          assert isinstance(universe.get("candidates"), list), "Uniswap candidates missing"
+
           print("JSON validation OK")
           PY
 
@@ -153,7 +171,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/multi-tf.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/multi-tf.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json data/uniswap-lp-history.json data/uniswap-universe.json
           if [ -f data/liquidations-last-good.json ]; then
             git add data/liquidations-last-good.json
           fi
