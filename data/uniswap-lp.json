@@ -1,7 +1,7 @@
 {
   "service": "uniswap-v3-base-lp-readonly",
   "version": "1.0.0",
-  "timestamp_utc": "2026-09-26T00:35:13.880861Z",
+  "timestamp_utc": "2026-09-26T01:09:40.837318Z",
   "status": "OK",
   "security": {
     "mode": "READ_ONLY",
@@ -47,7 +47,7 @@
     "fee_tier_pct": 0.3,
     "tick_lower": -200100,
     "tick_upper": -197700,
-    "liquidity": "2629398367207419",
+    "liquidity": "0",
     "tokens_owed_stored_raw": {
       "token0": "0",
       "token1": "0",
@@ -55,34 +55,34 @@
     }
   },
   "pool_state": {
-    "sqrt_price_x96": "4106307482150771651322603",
-    "current_tick": -197362,
+    "sqrt_price_x96": "4106367442016729640132843",
+    "current_tick": -197361,
     "range_status": "OUT OF RANGE — HAUT",
-    "price_token1_per_token0": 2686.2335276343415,
+    "price_token1_per_token0": 2686.3119764007256,
     "range_lower_token1_per_token0": 2042.6873518015664,
     "range_upper_token1_per_token0": 2596.7334014394255,
     "price_orientation": "USDC per WETH"
   },
   "principal": {
     "token0": 0.0,
-    "token1": 15150.736900083753,
+    "token1": 0.0,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 15150.736900083753,
+    "estimated_value_usdc": 0.0,
     "method": "Uniswap V3 liquidity math from on-chain liquidity, slot0 sqrtPriceX96, and position ticks."
   },
   "fees_collectable": {
     "status": "OK",
     "method": "eth_call simulation of NonfungiblePositionManager.collect; no state change, no signature, no broadcast",
-    "token0_raw": "15795962268071395",
-    "token1_raw": "51101614",
-    "token0": 0.015795962268071395,
-    "token1": 51.101614,
+    "token0_raw": "0",
+    "token1_raw": "0",
+    "token0": 0.0,
+    "token1": 0.0,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 93.53325744574038
+    "estimated_value_usdc": 0.0
   },
-  "estimated_total_value_usdc": 15244.270157529494,
+  "estimated_total_value_usdc": 0.0,
   "state_guard": {
     "confirmed_onchain_position": true,
     "safe_for_automatic_state_update": true,
