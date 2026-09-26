@@ -1,58 +1,88 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-09-26T18:15:36.733931Z",
-  "status": "UNAVAILABLE",
+  "timestamp_utc": "2026-09-26T18:33:48.535180Z",
+  "status": "OK",
   "window_minutes": 60,
   "source": {
     "provider": "MarginPad",
     "authentication_required": false,
-    "methodology": "Secondary liquidation component timed out or failed; primary market collection continues independently."
+    "global_h1_endpoint": "/api/v1/liquidations/recent?symbol={ASSET}&minutes=60",
+    "hyperliquid_raw_endpoint": "/api/v1/liquidations/live?symbol={ASSET}&limit=1000",
+    "methodology": "Global H-1 comes from MarginPad's measured time-bucketed liquidation archive. Hyperliquid-specific H-1 is computed only from returned raw events and carries an explicit coverage status.",
+    "documented_venues": [
+      "binance",
+      "bybit",
+      "okx",
+      "bitmex",
+      "hyperliquid",
+      "bitfinex",
+      "gate",
+      "htx",
+      "dydx"
+    ],
+    "documented_market_coverage": "approximately 70%+ of liquidation flow; observed, not extrapolated"
   },
   "assets": [
     {
       "asset": "BTC",
       "window_minutes": 60,
-      "global_coverage_status": "UNAVAILABLE",
+      "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
-        "status": "UNAVAILABLE",
-        "bucket_count": 0,
-        "long_usd": null,
-        "short_usd": null,
-        "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "status": "OK",
+        "bucket_count": 2,
+        "long_usd": 924.8536,
+        "short_usd": 420.163,
+        "total_usd": 1345.0166,
+        "earliest_bucket_utc": null,
+        "latest_bucket_utc": null,
+        "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
-      "hyperliquid_coverage_status": "UNAVAILABLE",
+      "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
-        "count": 0,
-        "total_usd": 0,
-        "long_count": 0,
-        "long_usd": 0,
+        "count": 1,
+        "total_usd": 840.76,
+        "long_count": 1,
+        "long_usd": 840.76,
         "short_count": 0,
         "short_usd": 0,
         "unknown_side_count": 0,
         "unknown_side_usd": 0,
-        "by_exchange": {}
+        "by_exchange": {
+          "hyperliquid": {
+            "count": 1,
+            "total_usd": 840.76,
+            "long_count": 1,
+            "long_usd": 840.76,
+            "short_count": 0,
+            "short_usd": 0.0,
+            "unknown_side_count": 0,
+            "unknown_side_usd": 0.0
+          }
+        }
       },
-      "hyperliquid_earliest_raw_event_utc": null,
-      "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_earliest_raw_event_utc": "2026-09-25T14:05:59.707000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-26T18:32:41.129000Z",
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
-      "raw_event_sample_count_total": 0,
-      "raw_event_sample_count_h1": 0
+      "raw_event_sample_count_total": 1000,
+      "raw_event_sample_count_h1": 3
     },
     {
       "asset": "ETH",
       "window_minutes": 60,
-      "global_coverage_status": "UNAVAILABLE",
+      "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
-        "status": "UNAVAILABLE",
-        "bucket_count": 0,
-        "long_usd": null,
-        "short_usd": null,
-        "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "status": "OK",
+        "bucket_count": 2,
+        "long_usd": 67.11075,
+        "short_usd": 0.0,
+        "total_usd": 67.11075,
+        "earliest_bucket_utc": null,
+        "latest_bucket_utc": null,
+        "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
-      "hyperliquid_coverage_status": "UNAVAILABLE",
+      "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
         "count": 0,
         "total_usd": 0,
@@ -64,25 +94,28 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": null,
-      "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_earliest_raw_event_utc": "2026-09-25T15:35:44.987000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-26T18:32:55.139000Z",
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
-      "raw_event_sample_count_total": 0,
-      "raw_event_sample_count_h1": 0
+      "raw_event_sample_count_total": 1000,
+      "raw_event_sample_count_h1": 3
     },
     {
       "asset": "SOL",
       "window_minutes": 60,
-      "global_coverage_status": "UNAVAILABLE",
+      "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
-        "status": "UNAVAILABLE",
-        "bucket_count": 0,
-        "long_usd": null,
-        "short_usd": null,
-        "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "status": "OK",
+        "bucket_count": 1,
+        "long_usd": 0.0,
+        "short_usd": 533.847,
+        "total_usd": 533.847,
+        "earliest_bucket_utc": null,
+        "latest_bucket_utc": null,
+        "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
-      "hyperliquid_coverage_status": "UNAVAILABLE",
+      "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
         "count": 0,
         "total_usd": 0,
@@ -94,25 +127,28 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": null,
-      "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_earliest_raw_event_utc": "2026-09-25T16:33:15.185000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-26T18:32:38.766000Z",
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
-      "raw_event_sample_count_total": 0,
-      "raw_event_sample_count_h1": 0
+      "raw_event_sample_count_total": 1000,
+      "raw_event_sample_count_h1": 2
     },
     {
       "asset": "HYPE",
       "window_minutes": 60,
-      "global_coverage_status": "UNAVAILABLE",
+      "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
-        "status": "UNAVAILABLE",
-        "bucket_count": 0,
-        "long_usd": null,
-        "short_usd": null,
-        "total_usd": null,
-        "note": "COLLECTOR_TIMEOUT_35S"
+        "status": "OK",
+        "bucket_count": 9,
+        "long_usd": 18090.497819199998,
+        "short_usd": 0.0,
+        "total_usd": 18090.497819199998,
+        "earliest_bucket_utc": null,
+        "latest_bucket_utc": null,
+        "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
-      "hyperliquid_coverage_status": "UNAVAILABLE",
+      "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
         "count": 0,
         "total_usd": 0,
@@ -124,14 +160,27 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": null,
-      "hyperliquid_latest_raw_event_utc": null,
+      "hyperliquid_earliest_raw_event_utc": "2026-09-24T09:31:09.104000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-26T18:16:25.382000Z",
+      "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
-      "raw_event_sample_count_total": 0,
-      "raw_event_sample_count_h1": 0
+      "raw_event_sample_count_total": 1000,
+      "raw_event_sample_count_h1": 9
     }
   ],
   "source_errors": {
-    "collector": "COLLECTOR_TIMEOUT_35S"
+    "feed": null,
+    "recent": {
+      "BTC": null,
+      "ETH": null,
+      "SOL": null,
+      "HYPE": null
+    },
+    "live": {
+      "BTC": null,
+      "ETH": null,
+      "SOL": null,
+      "HYPE": null
+    }
   }
 }
