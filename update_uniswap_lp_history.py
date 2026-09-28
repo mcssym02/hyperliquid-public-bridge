@@ -75,20 +75,26 @@ def main() -> None:
 
     history = read_json(HISTORY_FILE, {"service": "uniswap-v3-lp-daily-history", "version": "1.0.0", "records": []})
     records = history.get("records") if isinstance(history.get("records"), list) else []
-    existing = next((r for r in records if r.get("date_utc") == day), None)
+    nft_id = compact.get("nft_id")
+    existing = next((
+        r for r in records
+        if r.get("date_utc") == day
+        and (r.get("nft_id") == nft_id or r.get("opening", {}).get("nft_id") == nft_id)
+    ), None)
     if existing is None:
-        records.append({"date_utc": day, "opening": compact, "latest": compact, "fee_delta_today": fee_delta(compact, compact)})
+        records.append({"date_utc": day, "nft_id": nft_id, "opening": compact, "latest": compact, "fee_delta_today": fee_delta(compact, compact)})
     else:
+        existing["nft_id"] = nft_id
         existing["latest"] = compact
         existing["fee_delta_today"] = fee_delta(existing.get("opening", {}), compact)
 
-    records.sort(key=lambda r: r.get("date_utc", ""))
+    records.sort(key=lambda r: (r.get("date_utc", ""), str(r.get("nft_id", ""))))
     records = records[-MAX_DAYS:]
     history.update({
         "timestamp_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "record_count": len(records),
         "records": records,
-        "method": "One UTC record per day with immutable opening and refreshed latest snapshot.",
+        "method": "One UTC record per active NFT per day with immutable opening and refreshed latest snapshot.",
         "limitations": [
             "A fee decrease detects a probable collection or rerange but event logs are needed for exact attribution.",
             "USD fee deltas include WETH price movement; token deltas remain the primary accrual measure.",
