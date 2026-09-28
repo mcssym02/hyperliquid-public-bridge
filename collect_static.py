@@ -975,7 +975,7 @@ def build_radar_core(
     mtf_assets = multi_tf_data.get("assets", {}) if isinstance(multi_tf_data.get("assets"), dict) else {}
     current_ts = parse_ts(snapshot_data.get("timestamp_utc")) or datetime.now(timezone.utc).timestamp()
     last_good_ts = parse_ts((liquidations_last_good_data or {}).get("timestamp_utc"))
-    last_good_age_minutes = ((current_ts - last_good_ts) / 60.0) if last_good_ts is not None else None
+    last_good_age_minutes = max(0.0, (current_ts - last_good_ts) / 60.0) if last_good_ts is not None else None
 
     assets: dict[str, Any] = {}
     for asset in PERPS:
