@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import math
+import os
 from datetime import datetime, timezone
 from decimal import Decimal, getcontext
 from pathlib import Path
@@ -17,8 +18,8 @@ CHAIN_ID = 8453
 CHAIN_NAME = "Base"
 POSITION_MANAGER = "0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1"
 FACTORY = "0x33128a8fC17869897dcE68Ed026d694621f6FDfD"
-NFT_ID = 6000457
-EXPECTED_OWNER = "0xf6c62b83f742246080bb42a3e2512474bc690ed1"
+NFT_ID = int(os.environ["UNISWAP_NFT_ID"])
+EXPECTED_OWNER = os.environ.get("UNISWAP_EXPECTED_OWNER", "0xf6c62b83f742246080bb42a3e2512474bc690ed1")
 
 RPC_URLS = (
     "https://mainnet.base.org",
