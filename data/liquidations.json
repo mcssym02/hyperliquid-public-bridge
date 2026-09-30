@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-09-30T06:56:47.656874Z",
+  "timestamp_utc": "2026-09-30T07:28:17.348346Z",
   "status": "OK",
   "window_minutes": 60,
   "source": {
@@ -30,10 +30,10 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 9,
-        "long_usd": 30475.273549999998,
-        "short_usd": 44341.69761000001,
-        "total_usd": 74816.97116000002,
+        "bucket_count": 16,
+        "long_usd": 8276.31475,
+        "short_usd": 1260946.52347,
+        "total_usd": 1269222.8382199998,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -50,8 +50,8 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-09-29T06:09:23.141000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-09-29T12:51:21.118000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-09-29T06:09:10Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-29T12:25:44.532000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
@@ -63,10 +63,10 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 7,
-        "long_usd": 18753.28674,
-        "short_usd": 4015497.4057799997,
-        "total_usd": 4034250.6925199996,
+        "bucket_count": 9,
+        "long_usd": 163157.23608,
+        "short_usd": 8453473.823040001,
+        "total_usd": 8616631.059120001,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -83,8 +83,8 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-09-29T01:19:53.172000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-09-29T07:27:43.758000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-09-29T08:21:50.613000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-29T12:32:26.148000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
@@ -96,10 +96,10 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 6,
-        "long_usd": 23187.2069,
-        "short_usd": 444597.64139999985,
-        "total_usd": 467784.84829999984,
+        "bucket_count": 5,
+        "long_usd": 21074.6824,
+        "short_usd": 455554.74458938045,
+        "total_usd": 476629.42698938044,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -116,8 +116,8 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-09-27T20:52:08.090000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-09-28T04:22:40.135000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-09-28T21:53:22.109000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-09-29T12:18:31.198000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
@@ -126,16 +126,18 @@
     {
       "asset": "HYPE",
       "window_minutes": 60,
-      "global_coverage_status": "UNAVAILABLE",
+      "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
-        "status": "UNAVAILABLE",
-        "bucket_count": 0,
-        "long_usd": null,
-        "short_usd": null,
-        "total_usd": null,
-        "note": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=HYPE&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+        "status": "OK",
+        "bucket_count": 9,
+        "long_usd": 6848.22025,
+        "short_usd": 49254.36063920001,
+        "total_usd": 56102.580889200006,
+        "earliest_bucket_utc": null,
+        "latest_bucket_utc": null,
+        "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
-      "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
+      "hyperliquid_coverage_status": "UNAVAILABLE",
       "hyperliquid_observed_h1": {
         "count": 0,
         "total_usd": 0,
@@ -147,11 +149,11 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-09-28T14:43:09.090000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-09-29T12:57:32.527000Z",
+      "hyperliquid_earliest_raw_event_utc": null,
+      "hyperliquid_latest_raw_event_utc": null,
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
-      "raw_event_sample_count_total": 1000,
+      "raw_event_sample_count_total": 0,
       "raw_event_sample_count_h1": 0
     }
   ],
@@ -161,13 +163,13 @@
       "BTC": null,
       "ETH": null,
       "SOL": null,
-      "HYPE": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/recent?symbol=HYPE&minutes=60'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      "HYPE": null
     },
     "live": {
       "BTC": null,
       "ETH": null,
       "SOL": null,
-      "HYPE": null
+      "HYPE": "HTTPStatusError: Server error '503 Service Unavailable' for url 'https://marginpad.io/api/v1/liquidations/live?symbol=HYPE&limit=1000'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
     }
   }
 }
