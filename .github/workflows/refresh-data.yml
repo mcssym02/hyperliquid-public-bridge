@@ -184,5 +184,25 @@ jobs:
           else
             git commit -m "data: refresh public crypto snapshots"
             git pull --rebase origin main
-            git push
+
+            # GitHub can occasionally reject a valid push with a transient 5xx.
+            # Retry a few times without weakening branch/history safety.
+            push_ok=0
+            for attempt in 1 2 3; do
+              if git push origin HEAD:main; then
+                push_ok=1
+                break
+              fi
+
+              if [ "$attempt" -lt 3 ]; then
+                echo "Push attempt $attempt failed; refreshing main before retry..."
+                sleep $((attempt * 5))
+                git pull --rebase origin main
+              fi
+            done
+
+            if [ "$push_ok" -ne 1 ]; then
+              echo "::error::Unable to push refreshed data after 3 attempts"
+              exit 1
+            fi
           fi
