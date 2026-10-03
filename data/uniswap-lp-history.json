@@ -546,10 +546,65 @@
         "estimated_value_usdc": 26.04708342622922,
         "note": null
       }
+    },
+    {
+      "date_utc": "2026-10-03",
+      "nft_id": 6099915,
+      "opening": {
+        "timestamp_utc": "2026-10-03T00:53:21.490474Z",
+        "status": "OK",
+        "nft_id": 6099915,
+        "owner_matches_expected": true,
+        "pool": "0x6c561b446416e1a00e8e93e221854d6ea4171372",
+        "fee_tier_pct": 0.3,
+        "tick_lower": -198060,
+        "tick_upper": -196620,
+        "liquidity": "4154755529205386",
+        "range_status": "IN RANGE",
+        "price_usdc_per_weth": 2669.9128695053787,
+        "range_lower": 2504.918179010063,
+        "range_upper": 2892.8693707478715,
+        "principal_weth": 3.160668083030593,
+        "principal_usdc": 6739.187919037894,
+        "principal_value_usdc": 15177.896310156168,
+        "fees_weth": 0.02453203896592584,
+        "fees_usdc": 64.502916,
+        "fees_value_usdc": 130.00132255033282,
+        "total_value_usdc": 15307.897632706501
+      },
+      "latest": {
+        "timestamp_utc": "2026-10-03T00:53:21.490474Z",
+        "status": "OK",
+        "nft_id": 6099915,
+        "owner_matches_expected": true,
+        "pool": "0x6c561b446416e1a00e8e93e221854d6ea4171372",
+        "fee_tier_pct": 0.3,
+        "tick_lower": -198060,
+        "tick_upper": -196620,
+        "liquidity": "4154755529205386",
+        "range_status": "IN RANGE",
+        "price_usdc_per_weth": 2669.9128695053787,
+        "range_lower": 2504.918179010063,
+        "range_upper": 2892.8693707478715,
+        "principal_weth": 3.160668083030593,
+        "principal_usdc": 6739.187919037894,
+        "principal_value_usdc": 15177.896310156168,
+        "fees_weth": 0.02453203896592584,
+        "fees_usdc": 64.502916,
+        "fees_value_usdc": 130.00132255033282,
+        "total_value_usdc": 15307.897632706501
+      },
+      "fee_delta_today": {
+        "status": "OK",
+        "weth": 0.0,
+        "usdc": 0.0,
+        "estimated_value_usdc": 0.0,
+        "note": null
+      }
     }
   ],
-  "timestamp_utc": "2026-10-02T23:56:55.120814Z",
-  "record_count": 10,
+  "timestamp_utc": "2026-10-03T00:53:22.197772Z",
+  "record_count": 11,
   "method": "One UTC record per active NFT per day with immutable opening and refreshed latest snapshot.",
   "limitations": [
     "A fee decrease detects a probable collection or rerange but event logs are needed for exact attribution.",
