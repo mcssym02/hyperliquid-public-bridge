@@ -185,7 +185,7 @@ async def snapshot():
 
 @app.get("/history")
 async def history(hours: int = Query(default=2, ge=1, le=24)):
-    ts = now_utc(); end_ms = int(time.time() * 1000); start_ms = end_ms - hours * 3600 * 1000; interval = "1m" if hours <= 6 else "5m"
+    ts = now_utc(); end_ms = int(time.time() * 1000); start_ms = end_ms - hours * 3600 * 1000; interval = "1m" if hours <= 8 else "5m"
     (pr, pe), (sr, se) = await asyncio.gather(safe({"type": "metaAndAssetCtxs"}), safe({"type": "spotMetaAndAssetCtxs"}))
     perps = perp_map(pr); x = resolve_xaut(sr); spot_comparators = {a: resolve_spot(sr, SPOT_ALIASES[a]) for a in PERPS}
     async def one_perp(asset: str):
