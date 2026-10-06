@@ -1166,7 +1166,7 @@ def prune_and_append(records: list[dict[str, Any]], new_record: dict[str, Any]) 
 
 async def main() -> None:
     health_data, snapshot_data, history_data, xaut_data, liquidations_data = await asyncio.gather(
-        health(), snapshot(), history(2), xaut(), collect_liquidations_bounded()
+        health(), snapshot(), history(8), xaut(), collect_liquidations_bounded()
     )
     multi_tf_data = await collect_multitf(xaut_data)
     liquidations_last_good_data = liquidation_last_good(liquidations_data)
