@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-10-06T22:46:21.916796Z",
+  "timestamp_utc": "2026-10-06T22:54:24.474564Z",
   "status": "OK",
   "window_minutes": 60,
   "source": {
@@ -31,9 +31,9 @@
       "global_h1": {
         "status": "OK",
         "bucket_count": 3,
-        "long_usd": 3928.0101999999997,
-        "short_usd": 10022.77129,
-        "total_usd": 13950.781490000001,
+        "long_usd": 4381.33404,
+        "short_usd": 10535.96809,
+        "total_usd": 14917.30213,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -50,12 +50,12 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-10-05T21:34:59Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-06T22:44:05.130000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-10-05T21:34:59.718000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-06T22:46:33Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 6
+      "raw_event_sample_count_h1": 8
     },
     {
       "asset": "ETH",
@@ -65,8 +65,8 @@
         "status": "OK",
         "bucket_count": 3,
         "long_usd": 28337.235360000002,
-        "short_usd": 3643.8440400000004,
-        "total_usd": 31981.079400000002,
+        "short_usd": 3638.4520200000006,
+        "total_usd": 31975.687380000003,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -154,7 +154,7 @@
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 6
+      "raw_event_sample_count_h1": 0
     }
   ],
   "source_errors": {
