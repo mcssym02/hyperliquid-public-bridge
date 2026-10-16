@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-10-16T07:57:52.781975Z",
+  "timestamp_utc": "2026-10-16T08:26:50.746705Z",
   "status": "OK",
   "window_minutes": 60,
   "source": {
@@ -30,10 +30,10 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 5,
-        "long_usd": 11256.877400000001,
-        "short_usd": 61514.965599999996,
-        "total_usd": 72771.843,
+        "bucket_count": 6,
+        "long_usd": 1068.405,
+        "short_usd": 9055.90248,
+        "total_usd": 10124.307480000001,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -50,12 +50,12 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-10-15T16:27:53.085000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-16T07:51:21.141000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-10-15T16:29:14.184000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-16T08:05:01.124000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 7
+      "raw_event_sample_count_h1": 14
     },
     {
       "asset": "ETH",
@@ -63,10 +63,10 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 4,
-        "long_usd": 30590.84478,
-        "short_usd": 325421.53127999994,
-        "total_usd": 356012.3760599999,
+        "bucket_count": 3,
+        "long_usd": 30207.107399999997,
+        "short_usd": 59780.75246,
+        "total_usd": 89987.85986,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -83,26 +83,24 @@
         "unknown_side_usd": 0,
         "by_exchange": {}
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-10-15T19:42:21.159000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-16T07:51:21.141000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-10-15T20:19:14Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-16T08:11:07.059000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 53
+      "raw_event_sample_count_h1": 34
     },
     {
       "asset": "SOL",
       "window_minutes": 60,
-      "global_coverage_status": "FULL_60M_ARCHIVE",
+      "global_coverage_status": "PARSE_ERROR",
       "global_h1": {
-        "status": "OK",
-        "bucket_count": 2,
-        "long_usd": 319.29,
-        "short_usd": 107.05,
-        "total_usd": 426.34000000000003,
-        "earliest_bucket_utc": null,
-        "latest_bucket_utc": null,
-        "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
+        "status": "PARSE_ERROR",
+        "bucket_count": 0,
+        "long_usd": null,
+        "short_usd": null,
+        "total_usd": null,
+        "note": "No time-bucket list with recognizable long/short fields was found."
       },
       "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
@@ -121,7 +119,7 @@
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 2
+      "raw_event_sample_count_h1": 0
     },
     {
       "asset": "HYPE",
