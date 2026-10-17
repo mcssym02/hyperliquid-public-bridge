@@ -44,7 +44,7 @@ Generated files include:
 - Network: **Base (8453)**
 - Uniswap V3 NonfungiblePositionManager: `0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1`
 - Uniswap V3 Factory: `0x33128a8fC17869897dcE68Ed026d694621f6FDfD`
-- NFT position: **#6000457**
+- NFT position: configured by the workflow environment variable `UNISWAP_NFT_ID` (currently **#6288462**, set 2026-10-17). Older NFT observations remain in `data/uniswap-lp-history.json` and are not live positions.
 - Expected owner/state wallet: `0xf6c62b83f742246080bb42a3e2512474bc690ed1`
 
 It publishes:
