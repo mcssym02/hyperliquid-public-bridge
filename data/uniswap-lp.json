@@ -1,7 +1,7 @@
 {
   "service": "uniswap-v3-base-lp-readonly",
   "version": "1.0.0",
-  "timestamp_utc": "2026-10-17T11:46:02.878539Z",
+  "timestamp_utc": "2026-10-17T11:48:29.479263Z",
   "status": "OK",
   "security": {
     "mode": "READ_ONLY",
@@ -25,7 +25,7 @@
     "pool": "0x6c561b446416e1a00e8e93e221854d6ea4171372"
   },
   "position": {
-    "nft_id": 6197824,
+    "nft_id": 6288462,
     "expected_owner": "0xf6c62b83f742246080bb42a3e2512474bc690ed1",
     "owner_onchain": "0xf6c62b83f742246080bb42a3e2512474bc690ed1",
     "owner_matches_expected": true,
@@ -45,9 +45,9 @@
     },
     "fee_tier_raw": 3000,
     "fee_tier_pct": 0.3,
-    "tick_lower": -198540,
-    "tick_upper": -197340,
-    "liquidity": "0",
+    "tick_lower": -198480,
+    "tick_upper": -198060,
+    "liquidity": "13454543656045881",
     "tokens_owed_stored_raw": {
       "token0": "0",
       "token1": "0",
@@ -55,34 +55,34 @@
     }
   },
   "pool_state": {
-    "sqrt_price_x96": "3906520751232613652266347",
+    "sqrt_price_x96": "3906520718138643366193096",
     "current_tick": -198359,
     "range_status": "IN RANGE",
-    "price_token1_per_token0": 2431.2023324042757,
-    "range_lower_token1_per_token0": 2387.527879957222,
-    "range_upper_token1_per_token0": 2691.914017253847,
+    "price_token1_per_token0": 2431.2022912125644,
+    "range_lower_token1_per_token0": 2401.8953882981978,
+    "range_upper_token1_per_token0": 2504.918179010063,
     "price_orientation": "USDC per WETH"
   },
   "principal": {
-    "token0": 0.0,
-    "token1": 0.0,
+    "token0": 4.045078808693273,
+    "token1": 4010.6347260974885,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 0.0,
+    "estimated_value_usdc": 13845.039593927966,
     "method": "Uniswap V3 liquidity math from on-chain liquidity, slot0 sqrtPriceX96, and position ticks."
   },
   "fees_collectable": {
     "status": "OK",
     "method": "eth_call simulation of NonfungiblePositionManager.collect; no state change, no signature, no broadcast",
-    "token0_raw": "0",
-    "token1_raw": "0",
-    "token0": 0.0,
-    "token1": 0.0,
+    "token0_raw": "18062351541892668",
+    "token1_raw": "26476523",
+    "token0": 0.018062351541892667,
+    "token1": 26.476523,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 0.0
+    "estimated_value_usdc": 70.38975345333625
   },
-  "estimated_total_value_usdc": 0.0,
+  "estimated_total_value_usdc": 13915.429347381303,
   "state_guard": {
     "confirmed_onchain_position": true,
     "safe_for_automatic_state_update": true,
