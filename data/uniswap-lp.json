@@ -1,7 +1,7 @@
 {
   "service": "uniswap-v3-base-lp-readonly",
   "version": "1.0.0",
-  "timestamp_utc": "2026-10-17T14:38:04.351125Z",
+  "timestamp_utc": "2026-10-17T14:46:27.836007Z",
   "status": "OK",
   "security": {
     "mode": "READ_ONLY",
@@ -17,7 +17,7 @@
   "chain": {
     "name": "Base",
     "chain_id": 8453,
-    "rpc_url": "https://mainnet.base.org"
+    "rpc_url": "https://base-rpc.publicnode.com"
   },
   "contracts": {
     "nonfungible_position_manager": "0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1",
@@ -55,34 +55,34 @@
     }
   },
   "pool_state": {
-    "sqrt_price_x96": "3901361949954327655201531",
+    "sqrt_price_x96": "3901361938985827473899688",
     "current_tick": -198386,
     "range_status": "IN RANGE",
-    "price_token1_per_token0": 2424.785467271675,
+    "price_token1_per_token0": 2424.785453637329,
     "range_lower_token1_per_token0": 2401.8953882981978,
     "range_upper_token1_per_token0": 2504.918179010063,
     "price_orientation": "USDC per WETH"
   },
   "principal": {
-    "token0": 4.405896806925029,
-    "token1": 3134.5715997464285,
+    "token0": 4.4058975751055955,
+    "token1": 3134.5697370733606,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 13817.926147476916,
+    "estimated_value_usdc": 13817.92608740539,
     "method": "Uniswap V3 liquidity math from on-chain liquidity, slot0 sqrtPriceX96, and position ticks."
   },
   "fees_collectable": {
     "status": "OK",
     "method": "eth_call simulation of NonfungiblePositionManager.collect; no state change, no signature, no broadcast",
-    "token0_raw": "18967148767858101",
+    "token0_raw": "18967150694088206",
     "token1_raw": "26476615",
-    "token0": 0.0189671487678581,
+    "token0": 0.018967150694088206,
     "token1": 26.476615,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 72.46788168788217
+    "estimated_value_usdc": 72.46788609997225
   },
-  "estimated_total_value_usdc": 13890.394029164798,
+  "estimated_total_value_usdc": 13890.393973505363,
   "state_guard": {
     "confirmed_onchain_position": true,
     "safe_for_automatic_state_update": true,
