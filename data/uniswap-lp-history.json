@@ -1563,7 +1563,7 @@
         "total_value_usdc": 13733.206625357685
       },
       "latest": {
-        "timestamp_utc": "2026-10-18T20:17:15.206743Z",
+        "timestamp_utc": "2026-10-18T20:29:50.366337Z",
         "status": "OK",
         "nft_id": 6294297,
         "owner_matches_expected": true,
@@ -1571,29 +1571,29 @@
         "fee_tier_pct": 0.3,
         "tick_lower": -198660,
         "tick_upper": -198240,
-        "liquidity": "13431246346866659",
+        "liquidity": "0",
         "range_status": "OUT OF RANGE — BAS",
-        "price_usdc_per_weth": 2336.741041823128,
+        "price_usdc_per_weth": 2344.551915894062,
         "range_lower": 2359.050177190276,
         "range_upper": 2460.235238732719,
-        "principal_weth": 5.746367823993451,
+        "principal_weth": 0.0,
         "principal_usdc": 0.0,
-        "principal_value_usdc": 13427.773535737357,
-        "fees_weth": 0.010573228938608225,
-        "fees_usdc": 14.927013,
-        "fees_value_usdc": 39.63391100543783,
-        "total_value_usdc": 13467.407446742794
+        "principal_value_usdc": 0.0,
+        "fees_weth": 0.0,
+        "fees_usdc": 0.0,
+        "fees_value_usdc": 0.0,
+        "total_value_usdc": 0.0
       },
       "fee_delta_today": {
-        "status": "OK",
-        "weth": 0.010571570003640831,
-        "usdc": 12.333902,
-        "estimated_value_usdc": 37.036824267199684,
-        "note": null
+        "status": "RESET_OR_COLLECTION_DETECTED",
+        "weth": -1.658934967393e-06,
+        "usdc": -2.593111,
+        "estimated_value_usdc": -2.5970867382381475,
+        "note": "Negative token delta requires collection/rerange event reconstruction."
       }
     }
   ],
-  "timestamp_utc": "2026-10-18T20:17:15.698810Z",
+  "timestamp_utc": "2026-10-18T20:29:50.919853Z",
   "record_count": 29,
   "method": "One UTC record per active NFT per day with immutable opening and refreshed latest snapshot.",
   "limitations": [
