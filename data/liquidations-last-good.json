@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-10-18T19:28:06.141843Z",
+  "timestamp_utc": "2026-10-18T19:38:52.468509Z",
   "status": "OK",
   "window_minutes": 60,
   "source": {
@@ -30,43 +30,43 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 7,
-        "long_usd": 293591.73028,
-        "short_usd": 6318.221939999999,
-        "total_usd": 299909.95222000004,
+        "bucket_count": 15,
+        "long_usd": 6182613.031133027,
+        "short_usd": 131964.22923,
+        "total_usd": 6314577.2603630265,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
       "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
-        "count": 5,
-        "total_usd": 80108.42232,
-        "long_count": 5,
-        "long_usd": 80108.42232,
-        "short_count": 0,
-        "short_usd": 0,
+        "count": 48,
+        "total_usd": 479846.15707,
+        "long_count": 46,
+        "long_usd": 473762.18014,
+        "short_count": 2,
+        "short_usd": 6083.97693,
         "unknown_side_count": 0,
         "unknown_side_usd": 0,
         "by_exchange": {
           "hyperliquid": {
-            "count": 5,
-            "total_usd": 80108.42232,
-            "long_count": 5,
-            "long_usd": 80108.42232,
-            "short_count": 0,
-            "short_usd": 0.0,
+            "count": 48,
+            "total_usd": 479846.15706999996,
+            "long_count": 46,
+            "long_usd": 473762.1801399999,
+            "short_count": 2,
+            "short_usd": 6083.97693,
             "unknown_side_count": 0,
             "unknown_side_usd": 0.0
           }
         }
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-10-18T09:40:46.579000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:28:03.121000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-10-18T13:25:45.116000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:36:14Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
-      "raw_event_sample_count_total": 1001,
-      "raw_event_sample_count_h1": 54
+      "raw_event_sample_count_total": 1000,
+      "raw_event_sample_count_h1": 291
     },
     {
       "asset": "ETH",
@@ -74,30 +74,30 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 6,
-        "long_usd": 2697511.19674,
-        "short_usd": 14934.29581,
-        "total_usd": 2712445.49255,
+        "bucket_count": 9,
+        "long_usd": 14747744.296363171,
+        "short_usd": 296459.65124000004,
+        "total_usd": 15044203.947603172,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
       "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
-        "count": 4,
-        "total_usd": 17857.8445,
-        "long_count": 4,
-        "long_usd": 17857.8445,
+        "count": 76,
+        "total_usd": 388817.03483,
+        "long_count": 76,
+        "long_usd": 388817.03483,
         "short_count": 0,
         "short_usd": 0,
         "unknown_side_count": 0,
         "unknown_side_usd": 0,
         "by_exchange": {
           "hyperliquid": {
-            "count": 4,
-            "total_usd": 17857.8445,
-            "long_count": 4,
-            "long_usd": 17857.8445,
+            "count": 76,
+            "total_usd": 388817.03483,
+            "long_count": 76,
+            "long_usd": 388817.03483,
             "short_count": 0,
             "short_usd": 0.0,
             "unknown_side_count": 0,
@@ -105,12 +105,12 @@
           }
         }
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-10-18T13:33:56Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:28:00.988000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-10-18T16:29:37.068000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:38:24Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
-      "raw_event_sample_count_total": 1004,
-      "raw_event_sample_count_h1": 177
+      "raw_event_sample_count_total": 1000,
+      "raw_event_sample_count_h1": 781
     },
     {
       "asset": "SOL",
@@ -118,30 +118,30 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 3,
-        "long_usd": 161239.41169999988,
-        "short_usd": 766.0476000000001,
-        "total_usd": 162005.45929999987,
+        "bucket_count": 4,
+        "long_usd": 2337250.9784909994,
+        "short_usd": 1733.6152000000002,
+        "total_usd": 2338984.5936909993,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
       "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
-        "count": 1,
-        "total_usd": 15750.2862,
-        "long_count": 1,
-        "long_usd": 15750.2862,
+        "count": 29,
+        "total_usd": 125293.9428,
+        "long_count": 29,
+        "long_usd": 125293.9428,
         "short_count": 0,
         "short_usd": 0,
         "unknown_side_count": 0,
         "unknown_side_usd": 0,
         "by_exchange": {
           "hyperliquid": {
-            "count": 1,
-            "total_usd": 15750.2862,
-            "long_count": 1,
-            "long_usd": 15750.2862,
+            "count": 29,
+            "total_usd": 125293.9428,
+            "long_count": 29,
+            "long_usd": 125293.9428,
             "short_count": 0,
             "short_usd": 0.0,
             "unknown_side_count": 0,
@@ -149,12 +149,12 @@
           }
         }
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-10-17T21:37:34.833000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:27:10.062000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-10-17T21:38:08.410000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:35:58.383000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 37
+      "raw_event_sample_count_h1": 244
     },
     {
       "asset": "HYPE",
@@ -162,30 +162,30 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 11,
-        "long_usd": 131303.9244555,
+        "bucket_count": 16,
+        "long_usd": 1533474.9465763005,
         "short_usd": 0.0,
-        "total_usd": 131303.9244555,
+        "total_usd": 1533474.9465763005,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
       },
       "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
-        "count": 27,
-        "total_usd": 47592.77022,
-        "long_count": 27,
-        "long_usd": 47592.77022,
+        "count": 114,
+        "total_usd": 393050.54234,
+        "long_count": 114,
+        "long_usd": 393050.54234,
         "short_count": 0,
         "short_usd": 0,
         "unknown_side_count": 0,
         "unknown_side_usd": 0,
         "by_exchange": {
           "hyperliquid": {
-            "count": 27,
-            "total_usd": 47592.770220000006,
-            "long_count": 27,
-            "long_usd": 47592.770220000006,
+            "count": 114,
+            "total_usd": 393050.54234,
+            "long_count": 114,
+            "long_usd": 393050.54234,
             "short_count": 0,
             "short_usd": 0.0,
             "unknown_side_count": 0,
@@ -193,12 +193,12 @@
           }
         }
       },
-      "hyperliquid_earliest_raw_event_utc": "2026-10-17T21:37:44.255000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:28:03.121000Z",
+      "hyperliquid_earliest_raw_event_utc": "2026-10-17T21:38:05.183000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-18T19:37:09.067000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 64
+      "raw_event_sample_count_h1": 254
     }
   ],
   "source_errors": {
