@@ -1,7 +1,7 @@
 {
   "service": "hyperliquid-public-bridge",
   "version": "1.6.0",
-  "timestamp_utc": "2026-10-19T07:48:02.163690Z",
+  "timestamp_utc": "2026-10-19T08:03:06.666024Z",
   "status": "OK",
   "window_minutes": 60,
   "source": {
@@ -30,10 +30,10 @@
       "global_coverage_status": "FULL_60M_ARCHIVE",
       "global_h1": {
         "status": "OK",
-        "bucket_count": 17,
-        "long_usd": 35895.09248,
+        "bucket_count": 20,
+        "long_usd": 59983.54695,
         "short_usd": 5854524.290020001,
-        "total_usd": 5890419.382500001,
+        "total_usd": 5914507.836970001,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -62,11 +62,11 @@
         }
       },
       "hyperliquid_earliest_raw_event_utc": "2026-10-19T02:08:26.316000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-19T07:47:58.171000Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-19T07:55:40.156000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 384
+      "raw_event_sample_count_h1": 386
     },
     {
       "asset": "ETH",
@@ -75,9 +75,9 @@
       "global_h1": {
         "status": "OK",
         "bucket_count": 6,
-        "long_usd": 24157.117500000004,
+        "long_usd": 88902.49061000001,
         "short_usd": 5411629.49505,
-        "total_usd": 5435786.61255,
+        "total_usd": 5500531.98566,
         "earliest_bucket_utc": null,
         "latest_bucket_utc": null,
         "note": "Summed from MarginPad time-bucketed observed liquidation archive for the requested 60-minute window."
@@ -106,7 +106,7 @@
         }
       },
       "hyperliquid_earliest_raw_event_utc": "2026-10-19T01:08:11.429000Z",
-      "hyperliquid_latest_raw_event_utc": "2026-10-19T07:47:22Z",
+      "hyperliquid_latest_raw_event_utc": "2026-10-19T08:01:16.060000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
@@ -154,7 +154,7 @@
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 47
+      "raw_event_sample_count_h1": 42
     },
     {
       "asset": "HYPE",
@@ -172,33 +172,22 @@
       },
       "hyperliquid_coverage_status": "FULL_WINDOW_FROM_RAW_EVENTS",
       "hyperliquid_observed_h1": {
-        "count": 1,
-        "total_usd": 19.27536,
+        "count": 0,
+        "total_usd": 0,
         "long_count": 0,
         "long_usd": 0,
-        "short_count": 1,
-        "short_usd": 19.27536,
+        "short_count": 0,
+        "short_usd": 0,
         "unknown_side_count": 0,
         "unknown_side_usd": 0,
-        "by_exchange": {
-          "hyperliquid": {
-            "count": 1,
-            "total_usd": 19.27536,
-            "long_count": 0,
-            "long_usd": 0.0,
-            "short_count": 1,
-            "short_usd": 19.27536,
-            "unknown_side_count": 0,
-            "unknown_side_usd": 0.0
-          }
-        }
+        "by_exchange": {}
       },
       "hyperliquid_earliest_raw_event_utc": "2026-10-18T15:40:37.474000Z",
       "hyperliquid_latest_raw_event_utc": "2026-10-19T07:46:44.154000Z",
       "hyperliquid_source": "MarginPad public collector of Hyperliquid forced-liquidation stream; secondary observed source, not Hyperliquid official REST.",
       "raw_event_limit": 1000,
       "raw_event_sample_count_total": 1000,
-      "raw_event_sample_count_h1": 7
+      "raw_event_sample_count_h1": 5
     }
   ],
   "source_errors": {
