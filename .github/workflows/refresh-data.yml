@@ -11,6 +11,8 @@ on:
       - "collect_uniswap_lp.py"
       - "lp_state.py"
       - "discover_uniswap_positions.py"
+      - "collect_paper_pools.py"
+      - "refresh_paper_pools.py"
       - "update_uniswap_lp_history.py"
       - "collect_uniswap_universe.py"
       - "requirements.txt"
@@ -80,6 +82,9 @@ jobs:
       - name: Collect filtered Uniswap V3 Base opportunity universe
         run: python collect_uniswap_universe.py
 
+      - name: Refresh exact PAPER pool observations with a bounded optional collector
+        run: python refresh_paper_pools.py --output data/paper-pools.json
+
       - name: Validate generated JSON
         run: |
           python - <<'PY'
@@ -101,6 +106,7 @@ jobs:
               "uniswap-lp-history.json",
               "uniswap-owned-positions.json",
               "uniswap-universe.json",
+              "paper-pools.json",
           ]
           loaded = {}
           for name in required:
@@ -213,6 +219,9 @@ jobs:
           assert universe.get("status") in ("OK", "PARTIAL"), f"Uniswap universe unavailable: {universe.get('errors')}"
           assert isinstance(universe.get("candidates"), list), "Uniswap candidates missing"
 
+          from refresh_paper_pools import validate_snapshot
+          validate_snapshot(loaded["paper-pools.json"])
+
           print("JSON validation OK")
           PY
 
@@ -220,7 +229,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/multi-tf.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json data/uniswap-lp-history.json data/uniswap-owned-positions.json data/uniswap-universe.json
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/multi-tf.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json data/uniswap-lp-history.json data/uniswap-owned-positions.json data/uniswap-universe.json data/paper-pools.json
           if [ -f data/liquidations-last-good.json ]; then
             git add data/liquidations-last-good.json
           fi
