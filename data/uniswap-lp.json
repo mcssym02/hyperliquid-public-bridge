@@ -1,7 +1,7 @@
 {
   "service": "uniswap-v3-base-lp-readonly",
   "version": "1.0.0",
-  "timestamp_utc": "2026-10-22T19:10:20.834040Z",
+  "timestamp_utc": "2026-10-22T19:17:14.901346Z",
   "status": "OK",
   "security": {
     "mode": "READ_ONLY",
@@ -48,6 +48,8 @@
     "tick_lower": -198900,
     "tick_upper": -196920,
     "liquidity": "0",
+    "has_active_liquidity": false,
+    "activity_status": "EMPTY_POSITION",
     "tokens_owed_stored_raw": {
       "token0": "0",
       "token1": "0",
@@ -55,10 +57,10 @@
     }
   },
   "pool_state": {
-    "sqrt_price_x96": "3864204456376500071064818",
+    "sqrt_price_x96": "3864203786475613215641584",
     "current_tick": -198577,
     "range_status": "IN RANGE",
-    "price_token1_per_token0": 2378.816962054568,
+    "price_token1_per_token0": 2378.816137268265,
     "range_lower_token1_per_token0": 2303.109740138532,
     "range_upper_token1_per_token0": 2807.376370762246,
     "price_orientation": "USDC per WETH"
@@ -84,8 +86,10 @@
   },
   "estimated_total_value_usdc": 0.0,
   "state_guard": {
+    "identity_verified": true,
     "confirmed_onchain_position": true,
-    "safe_for_automatic_state_update": true,
+    "has_active_liquidity": false,
+    "safe_for_automatic_state_update": false,
     "rule": "If owner/NFT identity no longer matches expected state, do not reuse this NFT's range as the active LP."
   },
   "sources": {
