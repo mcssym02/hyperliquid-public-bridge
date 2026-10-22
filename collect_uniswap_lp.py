@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 import httpx
+from lp_state import classify_position
 
 DATA_DIR = Path("data")
 OUTPUT_FILE = DATA_DIR / "uniswap-lp.json"
@@ -401,6 +402,7 @@ async def collect() -> dict[str, Any]:
                 "tick_lower": tick_lower,
                 "tick_upper": tick_upper,
                 "liquidity": str(liquidity),
+                **classify_position(liquidity, tokens_owed0_stored, tokens_owed1_stored),
                 "tokens_owed_stored_raw": {
                     "token0": str(tokens_owed0_stored),
                     "token1": str(tokens_owed1_stored),
@@ -432,8 +434,10 @@ async def collect() -> dict[str, Any]:
             },
             "estimated_total_value_usdc": total_usdc,
             "state_guard": {
+                "identity_verified": owner_matches,
                 "confirmed_onchain_position": owner_matches,
-                "safe_for_automatic_state_update": bool(owner_matches and range_status in {
+                "has_active_liquidity": liquidity > 0,
+                "safe_for_automatic_state_update": bool(owner_matches and liquidity > 0 and range_status in {
                     "IN RANGE", "OUT OF RANGE — HAUT", "OUT OF RANGE — BAS"
                 }),
                 "rule": "If owner/NFT identity no longer matches expected state, do not reuse this NFT's range as the active LP.",
@@ -485,3 +489,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+

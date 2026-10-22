@@ -1,0 +1,58 @@
+name: Verify crypto integrity
+on:
+  pull_request:
+    paths:
+      - "lp_state.py"
+      - "collect_uniswap_lp.py"
+      - "discover_uniswap_positions.py"
+      - "audit_paper_registry.py"
+      - "tests/**"
+      - ".github/workflows/verify-integrity.yml"
+permissions:
+  contents: read
+concurrency:
+  group: verify-integrity-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Deterministic integrity tests
+        run: python -m unittest discover -s tests -v
+      - name: Compile collectors
+        run: python -m py_compile collect_uniswap_lp.py discover_uniswap_positions.py audit_paper_registry.py lp_state.py
+      - name: Inventory directly owned Base NFTs using public reads
+        timeout-minutes: 2
+        run: python discover_uniswap_positions.py --owner 0xf6c62b83f742246080bb42a3e2512474bc690ed1 --output inventory-check.json
+      - name: Validate scoped coverage
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path("inventory-check.json").read_text())
+          assert d["status"] == "OK" and d["coverage_complete"] is True
+          assert d["scope"]["chain_id"] == 8453
+          assert d["scope"]["direct_ownership_only"] is True
+          assert d["scope"]["owner"] == "0xf6c62b83f742246080bb42a3e2512474bc690ed1"
+          assert d["security"]["mode"] == "READ_ONLY"
+          assert d["security"]["transaction_broadcast"] is False
+          assert d["automatic_capital_update_authorized"] is False
+          assert d["tracked_nft_change"] is False
+          assert d["owned_nft_count"] == len(d["positions"])
+          assert len({p["nft_id"] for p in d["positions"]}) == len(d["positions"])
+          assert all(p["owner_verified"] for p in d["positions"])
+          assert d["active_nft_ids"] == [p["nft_id"] for p in d["positions"] if int(p["liquidity"]) > 0]
+          print("Scoped inventory verified; no capital or selected-NFT update")
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: scoped-lp-inventory
+          path: inventory-check.json
+          if-no-files-found: warn
+          retention-days: 7
