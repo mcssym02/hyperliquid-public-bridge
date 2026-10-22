@@ -1,7 +1,7 @@
 {
   "service": "uniswap-v3-base-lp-readonly",
   "version": "1.0.0",
-  "timestamp_utc": "2026-10-22T13:14:27.919770Z",
+  "timestamp_utc": "2026-10-22T13:34:16.909996Z",
   "status": "OK",
   "security": {
     "mode": "READ_ONLY",
@@ -55,34 +55,34 @@
     }
   },
   "pool_state": {
-    "sqrt_price_x96": "3882065174607198300863977",
-    "current_tick": -198485,
+    "sqrt_price_x96": "3882796344364236034715141",
+    "current_tick": -198481,
     "range_status": "IN RANGE",
-    "price_token1_per_token0": 2400.858016198721,
+    "price_token1_per_token0": 2401.762483283945,
     "range_lower_token1_per_token0": 2303.109740138532,
     "range_upper_token1_per_token0": 2807.376370762246,
     "price_orientation": "USDC per WETH"
   },
   "principal": {
-    "token0": 3.2416695285456747,
-    "token1": 2127.826896840323,
+    "token0": 3.2335554113282168,
+    "token1": 2147.3114093366744,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 9910.615170316336,
+    "estimated_value_usdc": 9913.54348388457,
     "method": "Uniswap V3 liquidity math from on-chain liquidity, slot0 sqrtPriceX96, and position ticks."
   },
   "fees_collectable": {
     "status": "OK",
     "method": "eth_call simulation of NonfungiblePositionManager.collect; no state change, no signature, no broadcast",
-    "token0_raw": "8365321241550488",
-    "token1_raw": "18708877",
-    "token0": 0.008365321241550488,
-    "token1": 18.708877,
+    "token0_raw": "8365586766889858",
+    "token1_raw": "18758372",
+    "token0": 0.008365586766889858,
+    "token1": 18.758372,
     "token0_symbol": "WETH",
     "token1_symbol": "USDC",
-    "estimated_value_usdc": 38.79282556085393
+    "estimated_value_usdc": 38.8505244473727
   },
-  "estimated_total_value_usdc": 9949.407995877189,
+  "estimated_total_value_usdc": 9952.394008331943,
   "state_guard": {
     "confirmed_onchain_position": true,
     "safe_for_automatic_state_update": true,
