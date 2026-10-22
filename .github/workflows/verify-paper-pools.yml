@@ -1,0 +1,52 @@
+name: Verify exact PAPER pool sources
+on:
+  pull_request:
+    paths:
+      - "collect_paper_pools.py"
+      - "tests/test_paper_pools.py"
+      - ".github/workflows/verify-paper-pools.yml"
+permissions:
+  contents: read
+concurrency:
+  group: verify-paper-pools-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Deterministic integrity tests
+        run: python -m unittest discover -s tests -v
+      - name: Compile exact-pool collector
+        run: python -m py_compile collect_paper_pools.py
+      - name: Observe the five exact pools with public reads
+        timeout-minutes: 4
+        run: python collect_paper_pools.py --output paper-pool-check.json
+      - name: Validate live coverage without inferring economics
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          d = json.loads(Path("paper-pool-check.json").read_text())
+          assert d["status"] == "OK" and d["coverage_complete"] is True
+          assert d["verified_pool_count"] == d["expected_pool_count"] == 5
+          assert all(c["block_verified"] for c in d["chains"])
+          assert all(p["identity_verified"] for c in d["chains"] for p in c["pools"])
+          assert d["security"]["mode"] == "READ_ONLY"
+          assert not d["security"]["transaction_broadcast"]
+          assert not d["paper_j0_initialized"] and not d["usd_peg_assumed"]
+          assert not d["automatic_capital_update_authorized"]
+          print("Five exact pool identities verified; no position or J0 created")
+          PY
+      - name: Upload bounded market observation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: exact-paper-pool-check
+          path: paper-pool-check.json
+          if-no-files-found: warn
+          retention-days: 7
