@@ -44,7 +44,7 @@ Generated files include:
 - Network: **Base (8453)**
 - Uniswap V3 NonfungiblePositionManager: `0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1`
 - Uniswap V3 Factory: `0x33128a8fC17869897dcE68Ed026d694621f6FDfD`
-- NFT position: configured by the workflow environment variable `UNISWAP_NFT_ID` (currently **#6288462**, set 2026-10-17). Older NFT observations remain in `data/uniswap-lp-history.json` and are not live positions.
+- NFT position: configured by the workflow environment variable `UNISWAP_NFT_ID` (currently **#6303657**; verify the workflow before relying on this label. This NFT had zero on-chain liquidity in the 2026-10-22T16:57:51Z observation; a tracked NFT is not proof of an active LP). Older NFT observations remain in `data/uniswap-lp-history.json` and are not live positions.
 - Expected owner/state wallet: `0xf6c62b83f742246080bb42a3e2512474bc690ed1`
 
 It publishes:
@@ -79,7 +79,7 @@ No RPC key or user secret is required.
 
 ## Schedule
 
-`.github/workflows/refresh-data.yml` runs at minute `45` and `55` of every hour, plus manually and after collector-code changes.
+`.github/workflows/refresh-data.yml` runs every 10 minutes (`*/10 * * * *`) when GitHub Actions scheduling permits, plus manually and after collector-code changes. Actual data freshness is determined by each JSON `timestamp_utc`, not the cron schedule.
 
 The workflow validates identities and safety invariants before committing refreshed data. A failed Base/LP identity check does not get treated as confirmed portfolio STATE.
 
