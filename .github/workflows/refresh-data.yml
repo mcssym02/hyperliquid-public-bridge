@@ -3,6 +3,8 @@ name: Refresh public crypto data
 on:
   workflow_dispatch:
   push:
+    branches:
+      - "main"
     paths:
       - "app.py"
       - "collect_static.py"
@@ -20,11 +22,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: public-crypto-data-refresh
+  group: public-crypto-data-refresh-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   collect:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
       UNISWAP_NFT_ID: "6303657"
