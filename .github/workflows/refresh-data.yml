@@ -7,6 +7,8 @@ on:
       - "app.py"
       - "collect_static.py"
       - "collect_uniswap_lp.py"
+      - "lp_state.py"
+      - "discover_uniswap_positions.py"
       - "update_uniswap_lp_history.py"
       - "collect_uniswap_universe.py"
       - "requirements.txt"
@@ -50,6 +52,28 @@ jobs:
       - name: Update daily Uniswap LP history
         run: python update_uniswap_lp_history.py
 
+      - name: Inventory directly owned Base NFTs independently of market collectors
+        run: |
+          timeout 60s python discover_uniswap_positions.py --owner "$UNISWAP_EXPECTED_OWNER" --output data/uniswap-owned-positions.json || python - <<'PY'
+          import json
+          import os
+          from datetime import datetime, timezone
+          from pathlib import Path
+          payload = {
+              "service": "uniswap-v3-base-owned-nft-inventory", "version": "1.0.0",
+              "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+              "status": "ERROR", "coverage_complete": False,
+              "active_nft_ids": None, "positions": [],
+              "scope": {"chain_id": 8453, "owner": os.environ["UNISWAP_EXPECTED_OWNER"],
+                        "manager": "0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1",
+                        "direct_ownership_only": True},
+              "security": {"mode": "READ_ONLY", "transaction_broadcast": False},
+              "automatic_capital_update_authorized": False, "tracked_nft_change": False,
+              "errors": ["INVENTORY_RUN_FAILED_OR_INCOMPLETE: no exhaustive negative inference"]
+          }
+          Path("data/uniswap-owned-positions.json").write_text(json.dumps(payload, indent=2) + "\n")
+          PY
+
       - name: Collect filtered Uniswap V3 Base opportunity universe
         run: python collect_uniswap_universe.py
 
@@ -72,6 +96,7 @@ jobs:
               "market-state-history.json",
               "uniswap-lp.json",
               "uniswap-lp-history.json",
+              "uniswap-owned-positions.json",
               "uniswap-universe.json",
           ]
           loaded = {}
@@ -164,6 +189,23 @@ jobs:
           assert isinstance(lp_history.get("records"), list), "LP history records missing"
           assert lp_history.get("record_count") == len(lp_history.get("records", [])), "LP history count mismatch"
 
+          owned = loaded["uniswap-owned-positions.json"]
+          assert owned.get("security", {}).get("mode") == "READ_ONLY"
+          assert owned.get("security", {}).get("transaction_broadcast") is False
+          assert owned.get("automatic_capital_update_authorized") is False
+          assert owned.get("tracked_nft_change") is False
+          assert owned.get("status") in ("OK", "PARTIAL", "ERROR")
+          assert owned.get("scope", {}).get("owner", "").lower() == os.environ["UNISWAP_EXPECTED_OWNER"].lower()
+          if owned.get("coverage_complete") is True:
+              assert owned.get("status") == "OK"
+              rows = owned.get("positions", [])
+              assert owned.get("owned_nft_count") == len(rows)
+              assert len({r["nft_id"] for r in rows}) == len(rows)
+              assert all(r.get("owner_verified") for r in rows)
+              assert owned.get("active_nft_ids") == [r["nft_id"] for r in rows if int(r["liquidity"]) > 0]
+          else:
+              assert owned.get("active_nft_ids") is None, "partial inventory cannot claim exhaustive absence"
+
           universe = loaded["uniswap-universe.json"]
           assert universe.get("status") in ("OK", "PARTIAL"), f"Uniswap universe unavailable: {universe.get('errors')}"
           assert isinstance(universe.get("candidates"), list), "Uniswap candidates missing"
@@ -175,7 +217,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/multi-tf.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json data/uniswap-lp-history.json data/uniswap-universe.json
+          git add data/health.json data/snapshot.json data/history-2h.json data/xaut.json data/liquidations.json data/derived.json data/multi-tf.json data/radar-core.json data/market-state-history.json data/uniswap-lp.json data/uniswap-lp-history.json data/uniswap-owned-positions.json data/uniswap-universe.json
           if [ -f data/liquidations-last-good.json ]; then
             git add data/liquidations-last-good.json
           fi

@@ -1,8 +1,10 @@
 # LP inventory and PAPER integrity: staged rollout
 
-This branch does not change any scheduler, automation destination, portfolio
-balance, selected NFT, historical PAPER result or workflow. No transaction endpoint
-or wallet authentication is introduced.
+This draft leaves production unchanged until integration. Its proposed refresh
+workflow adds a bounded public-read inventory step and JSON output, preserving the
+existing cadence, market collectors and selected NFT. No portfolio balance,
+automation destination, historical PAPER result, wallet authentication or
+transaction endpoint is changed.
 
 ## LP activity guard
 
@@ -24,10 +26,14 @@ tracked NFT. Empty inventory means no directly owned NFT in the declared manager
 and block, not no DeFi exposure. Other wallets/chains/managers/custody/staking are
 outside scope.
 
-Before workflow integration: verify a live complete inventory, including an owner
-with multiple NFTs and the known tracked NFT; compare with primary ownership
-evidence. Keep the current collector in parallel. Add a separate JSON output and
-its schema validation in one reviewed change. Do not change workflow cadence.
+A live PR check verified all 33 directly owned NFTs at block 52953413 on
+2026-10-22T19:09:34Z; none had positive liquidity. The exact historical observation
+is preserved in data/checkpoints/uniswap-owned-positions-20261022.json. This does
+not prove absence of other-account, other-manager or custody/staking exposure.
+The proposed refresh step keeps tracked-NFT valuation separate, caps inventory at
+60 seconds and emits explicit ERROR/null activity on failure. Inventory errors
+do not block primary market publication. Before promotion, review the workflow
+diff and schema validation. Cadence remains unchanged.
 
 ## PAPER inventory
 

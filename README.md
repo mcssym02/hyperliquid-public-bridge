@@ -92,3 +92,22 @@ GitHub Pages base:
 LP endpoint:
 
 `https://mcssym02.github.io/hyperliquid-public-bridge/data/uniswap-lp.json`
+
+## Scoped owned-NFT inventory
+
+`discover_uniswap_positions.py` inventories directly owned NFT positions in the
+official Uniswap V3 manager on Base, at one pinned block. It does not select a new
+tracked NFT, sign anything or authorize financial STATE changes. Coverage excludes
+other wallets, chains, managers and custody/staking contracts.
+
+Proposed regular output: `data/uniswap-owned-positions.json`. A complete scoped
+inventory has `coverage_complete=true`; partial/error results keep
+`active_nft_ids=null`, so an RPC failure cannot imply no LP exposure. The refresh
+step has a 60-second cap and publishes explicit unavailability on failure without
+blocking primary market collection. Tracked-NFT valuation remains separate.
+
+PR verification runs deterministic tests and a live public-read inventory on code
+changes. It has read-only repository permission and no recurring schedule. The
+initial observation is preserved in
+`data/checkpoints/uniswap-owned-positions-20261022.json`; it is historical, never
+a substitute for a fresh inventory. See `docs/integrity-rollout.md`.
