@@ -1,8 +1,10 @@
 # Exact PAPER pool source verification
 
-Status: preparation only. This pull request does not change the scheduled refresh
-workflow, an automation prompt, a capital document, or a PAPER register. Its CI
-has `contents: read` and runs only on relevant pull requests; no new recurrence.
+Status: proposed recurring integration, not deployed while this PR is draft.
+The proposed change reuses the existing main-branch refresh workflow and its
+10-minute cron; it creates no additional recurring task or job. It changes no
+automation prompt, capital document, PAPER register or historical J0. PR CI has
+`contents: read` and cannot publish to main.
 
 ## Problem and scope
 
@@ -40,8 +42,8 @@ endpoint contract. No paid provider, credential or key is provisioned here.
    failures and preserve the observation artifact even when coverage fails.
 2. Review block freshness, cross-chain skew, identity and unit semantics. Separate
    per-chain pinned blocks are not an atomic cross-chain or finalized snapshot.
-3. Before any recurring integration, present the concrete workflow delta, bounded
-   runtime/fallback, source availability and retention plan for human approval.
+3. Before merging, approve the concrete workflow delta below, including its
+   bounded runtime/fallback, source availability and retention plan.
 4. Keep economic formula reconstruction and persistence safety incident separate.
    Do not retry a blocked writer through this collector or another mechanism.
 
@@ -68,6 +70,35 @@ had ZIP SHA256 `bb3b4fe1f7d0ca605876a478e09d64fabb3b34ab49979fdaf8326411449ab940
 that hash covers the archive, not the extracted JSON. The checkpoint is historical,
 not a freshness feed or a new prospective PAPER J0.
 
-Rollback at this preparation stage: close the draft PR. No production deployment
-or scheduled behavior needs reverting. Any future integration must have its own
-reviewed rollback delta.
+## Proposed recurring integration — approval required before merge
+
+- Keep the existing `*/10 * * * *` cron, main-only publication guards, tracked
+  NFT/owner, primary collectors and 4-minute job limit unchanged.
+- After the existing collectors, run `refresh_paper_pools.py` once. Its subprocess
+  receives a hard 20-second timeout; source timeout/crash/invalid JSON becomes
+  explicit ERROR with no usable prices and does not fail the optional collector.
+- Validate identity, quote units, fixed tiers, freshness (source block age at most
+  180 seconds at publication), counts, coverage and null economic fields. A partial
+  valid snapshot retains only verified pool prices. Never reuse last cycle prices.
+- Publish `data/paper-pools.json` through the existing data commit/Pages flow.
+  Only public pool data is included: no account, holdings, balance, PAPER capital,
+  simulated position or private canonical document. Consumers must check status,
+  each block timestamp, coverage and synchronization before use.
+- Add the two pool scripts to the existing push path filter. Change no trigger
+  timing and create no extra recurring workflow. Add up to 20 seconds plus small
+  startup/JSON overhead to a refresh; availability is not guaranteed by a
+  successful PR check. Public RPC rate limits remain an operational limitation.
+- Retain the latest feed in git history through the existing publication process;
+  keep the initial 22 October checkpoint unchanged. PR evidence artifacts expire
+  after 7 days. No additional rolling volume/history dataset is introduced.
+
+This feed supplies observed spot ratios only. Formula reconstruction, fee models,
+LPWIDTH initialization and the deferred Google Docs writer incident stay open.
+
+Rollback before merge: close the draft PR; production is unchanged. After merge,
+remove the optional refresh step, pool JSON validation/required-list entry,
+`data/paper-pools.json` from the commit whitelist, and the two scripts from the
+push path filter. Preserve all other collectors, cron and main-only guards. Keep
+historical checkpoints. Before leaving any old pool JSON available, replace it
+with explicit disabled/ERROR metadata and no usable prices in the same reviewed
+rollback, so consumers cannot mistake it for fresh data.

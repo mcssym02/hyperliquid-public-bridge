@@ -3,6 +3,9 @@ on:
   pull_request:
     paths:
       - "collect_paper_pools.py"
+      - "refresh_paper_pools.py"
+      - "tests/test_paper_pool_refresh.py"
+      - ".github/workflows/refresh-data.yml"
       - "tests/test_paper_pools.py"
       - ".github/workflows/verify-paper-pools.yml"
 permissions:
@@ -22,16 +25,20 @@ jobs:
       - name: Deterministic integrity tests
         run: python -m unittest discover -s tests -v
       - name: Compile exact-pool collector
-        run: python -m py_compile collect_paper_pools.py
+        run: python -m py_compile collect_paper_pools.py refresh_paper_pools.py
       - name: Observe the five exact pools with public reads
-        timeout-minutes: 4
-        run: python collect_paper_pools.py --output paper-pool-check.json
+        timeout-minutes: 1
+        run: python refresh_paper_pools.py --output paper-pool-check.json
       - name: Validate live coverage without inferring economics
         run: |
           python - <<'PY'
           import json
+          from refresh_paper_pools import validate_snapshot
           from pathlib import Path
           d = json.loads(Path("paper-pool-check.json").read_text())
+          validate_snapshot(d)
+          assert d["refresh"]["wall_timeout_seconds"] == 20
+          assert d["refresh"]["previous_prices_reused"] is False
           assert d["status"] == "OK" and d["coverage_complete"] is True
           assert d["verified_pool_count"] == d["expected_pool_count"] == 5
           assert all(c["block_verified"] for c in d["chains"])
