@@ -1,6 +1,6 @@
 # Exact PAPER pool source verification
 
-Status: proposed recurring integration, not deployed while this PR is draft.
+Status: deployed on 2026-10-22 after explicit user approval of PR #2.
 The proposed change reuses the existing main-branch refresh workflow and its
 10-minute cron; it creates no additional recurring task or job. It changes no
 automation prompt, capital document, PAPER register or historical J0. PR CI has
@@ -70,7 +70,7 @@ had ZIP SHA256 `bb3b4fe1f7d0ca605876a478e09d64fabb3b34ab49979fdaf8326411449ab940
 that hash covers the archive, not the extracted JSON. The checkpoint is historical,
 not a freshness feed or a new prospective PAPER J0.
 
-## Proposed recurring integration — approval required before merge
+## Reviewed recurring integration — approved and applied
 
 - Keep the existing `*/10 * * * *` cron, main-only publication guards, tracked
   NFT/owner, primary collectors and 4-minute job limit unchanged.
@@ -102,3 +102,19 @@ push path filter. Preserve all other collectors, cron and main-only guards. Keep
 historical checkpoints. Before leaving any old pool JSON available, replace it
 with explicit disabled/ERROR metadata and no usable prices in the same reviewed
 rollback, so consumers cannot mistake it for fresh data.
+
+
+## Production verification — 2026-10-22
+
+PR #2 merged as `23f14505fab24049e3abc6e494fc5e16c6024d41`, after both CI
+checks passed at source head `da544890ceadf46f269f9dfc7b15045289af904a`
+(35 deterministic tests plus live source and NFT checks).
+
+First production refresh `39869572464` / job `120140293817` succeeded. Data
+commit `0b1af6baf1e18a04f0b5208948b688a060354845` was published by successful
+Pages run `39869728863`. Readback of `data/paper-pools.json` at
+`2026-10-22T23:07:42.873170Z` verified five identities and complete coverage.
+The optional refresh took about 2.8 seconds in that run, with its configured
+20-second limit. Radar core, configured LP and scoped NFT inventory also read OK.
+This verifies the first cycle only, without guaranteeing future RPC availability.
+The Google Docs writer incident remains unresolved and deferred separately.
