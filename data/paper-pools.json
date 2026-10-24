@@ -1,15 +1,15 @@
 {
   "service": "exact-paper-pool-observations",
   "version": "1.0.0",
-  "timestamp_utc": "2026-10-24T18:33:30.161090+00:00",
-  "status": "OK",
-  "coverage_complete": true,
-  "verified_pool_count": 5,
+  "timestamp_utc": "2026-10-24T18:47:56.665749+00:00",
+  "status": "PARTIAL",
+  "coverage_complete": false,
+  "verified_pool_count": 4,
   "expected_pool_count": 5,
   "chains": [
     {
       "chain_id": 8453,
-      "status": "OK",
+      "status": "PARTIAL",
       "block_verified": true,
       "pools": [
         {
@@ -17,30 +17,17 @@
           "chain_id": 8453,
           "dex": "uniswap-v3",
           "pool_address": "0x6c561b446416e1a00e8e93e221854d6ea4171372",
-          "status": "OK",
-          "identity_verified": true,
-          "quote_per_base": "2327.891705796879460873832537602892492409229532942693336883339632755349",
+          "status": "ERROR",
+          "identity_verified": false,
+          "quote_per_base": null,
           "price_unit": "USDC/WETH",
-          "errors": [],
+          "errors": [
+            "TimeoutError: The read operation timed out"
+          ],
           "volume_24h": null,
           "tvl_usd": null,
           "position_fees": null,
-          "net_return": null,
-          "token0": "0x4200000000000000000000000000000000000006",
-          "token1": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
-          "token_decimals": [
-            18,
-            6
-          ],
-          "sqrt_price_x96": "3822618613758094042533616",
-          "tick": -198793,
-          "active_liquidity_raw": "29793407712258897617",
-          "fee_raw": 3000,
-          "fee_denominator": 1000000,
-          "tick_spacing": 60,
-          "fee_kind": "FIXED_TIER",
-          "tradeable_depth_verified": false,
-          "quality": "OBSERVED_ONCHAIN_SPOT_NOT_USD_OR_EXECUTION_QUOTE"
+          "net_return": null
         },
         {
           "pool_id": "BASE_SLIPSTREAM_WETH_USDC",
@@ -49,7 +36,7 @@
           "pool_address": "0x3fe04a59ebd38cf06080a6f60a98d124eb59392a",
           "status": "OK",
           "identity_verified": true,
-          "quote_per_base": "2332.691070285578214334519345785505712941110941993004476645868284067240",
+          "quote_per_base": "2331.203570871313696765152185859593709919458074515492468033646293980868",
           "price_unit": "USDC/WETH",
           "errors": [],
           "volume_24h": null,
@@ -62,10 +49,10 @@
             18,
             6
           ],
-          "sqrt_price_x96": "3826557090311160733189472",
-          "tick": -198773,
-          "active_liquidity_raw": "279266237177867885",
-          "fee_raw": 725,
+          "sqrt_price_x96": "3825336845332179403148051",
+          "tick": -198779,
+          "active_liquidity_raw": "279266299332855071",
+          "fee_raw": 425,
           "fee_denominator": 1000000,
           "tick_spacing": 50,
           "fee_kind": "DYNAMIC_OBSERVED_AT_BLOCK",
@@ -79,7 +66,7 @@
           "pool_address": "0x7aea2e8a3843516afa07293a10ac8e49906dabd1",
           "status": "OK",
           "identity_verified": true,
-          "quote_per_base": "34.41786311793273655267078898603635857562031795747562061906344697353546",
+          "quote_per_base": "34.44651072099480529735212569205031051010828637313152527429353846077383",
           "price_unit": "WETH/cbBTC",
           "errors": [],
           "volume_24h": null,
@@ -92,9 +79,9 @@
             18,
             8
           ],
-          "sqrt_price_x96": "135047836857724559921372",
-          "tick": -265658,
-          "active_liquidity_raw": "276226527953201022",
+          "sqrt_price_x96": "134991668591997019074986",
+          "tick": -265666,
+          "active_liquidity_raw": "277195703158351526",
           "fee_raw": 500,
           "fee_denominator": 1000000,
           "tick_spacing": 10,
@@ -104,10 +91,10 @@
         }
       ],
       "errors": [],
-      "block_number": 53038730,
-      "block_hash": "0x3b75ffd9f19158b8468ab3754ed609e2184dee5393c2116c24caf4fb3d052805",
-      "block_timestamp_utc": "2026-10-24T18:33:27+00:00",
-      "block_age_seconds": 1.9199020862579346,
+      "block_number": 53039156,
+      "block_hash": "0x12d218bf7722cff8470f9ed0953d9b23638e5c5790f33a774b05360deee5ef22",
+      "block_timestamp_utc": "2026-10-24T18:47:39+00:00",
+      "block_age_seconds": 1.1694951057434082,
       "rpc_url": "https://base-rpc.publicnode.com",
       "provider_failures": []
     },
@@ -123,7 +110,7 @@
           "pool_address": "0xd4eb21209c4d6093f80b5b84f5c45cc093ea14a3",
           "status": "OK",
           "identity_verified": true,
-          "quote_per_base": "211.3672479477308755747773137005218172216392673166534831365443048644914",
+          "quote_per_base": "211.3768666709116826366652253510350934681035955922828984115631047704338",
           "price_unit": "USDG/NVDA",
           "errors": [],
           "volume_24h": null,
@@ -136,8 +123,8 @@
             6,
             18
           ],
-          "sqrt_price_x96": "5449551201003983206465989957041903",
-          "tick": 222785,
+          "sqrt_price_x96": "5449427208436538310841781691712069",
+          "tick": 222784,
           "active_liquidity_raw": "1610451174463062274",
           "fee_raw": 500,
           "fee_denominator": 1000000,
@@ -178,16 +165,16 @@
         }
       ],
       "errors": [],
-      "block_number": 96973402,
-      "block_hash": "0x0b25f6a312a7cc86948c56217a0de2f3b855f57403ce3fc02af144e094837aa8",
-      "block_timestamp_utc": "2026-10-24T18:33:28+00:00",
-      "block_age_seconds": 0.9208040237426758,
+      "block_number": 96981576,
+      "block_hash": "0x8035790d6d93645ce713ece35e28bc8ec37d8f320c0c405b6b1905a78af9bc4b",
+      "block_timestamp_utc": "2026-10-24T18:47:39+00:00",
+      "block_age_seconds": 1.1703050136566162,
       "rpc_url": "https://rpc.mainnet.chain.robinhood.com",
       "provider_failures": []
     }
   ],
-  "cross_chain_timestamp_skew_seconds": 1.0,
-  "synchronized_within_60s": true,
+  "cross_chain_timestamp_skew_seconds": 0.0,
+  "synchronized_within_60s": false,
   "security": {
     "mode": "READ_ONLY",
     "transaction_broadcast": false,
@@ -219,8 +206,8 @@
   ],
   "refresh": {
     "wall_timeout_seconds": 20,
-    "started_utc": "2026-10-24T18:33:28.850614+00:00",
-    "finished_utc": "2026-10-24T18:33:30.218867+00:00",
+    "started_utc": "2026-10-24T18:47:40.104744+00:00",
+    "finished_utc": "2026-10-24T18:47:56.720386+00:00",
     "previous_prices_reused": false,
     "primary_market_dependency": false
   }
