@@ -1,7 +1,7 @@
 {
   "service": "uniswap-opportunity-universe",
   "version": "1.0.0",
-  "timestamp_utc": "2026-10-24T09:12:51.065703Z",
+  "timestamp_utc": "2026-10-24T09:30:30.002456Z",
   "status": "OK",
   "scope": {
     "network": "base",
@@ -21,25 +21,64 @@
       "WETH"
     ]
   },
-  "candidate_count": 17,
+  "candidate_count": 19,
   "candidates": [
+    {
+      "network": "base",
+      "dex": "uniswap-v3-base",
+      "pool_address": "0x9011cbf8d2900908286c9bf4d5d1644ece7b684a",
+      "name": "DRV / WETH 0.3%",
+      "liquidity_usd": 105377.0796,
+      "volume_24h_usd": 136552.037809501,
+      "transactions_24h": {
+        "buys": 335,
+        "sells": 319,
+        "buyers": 116,
+        "sellers": 108
+      },
+      "price_change_24h_pct": -0.293,
+      "fee_pct_if_parsed": 0.3,
+      "gross_fees_24h_if_parsed": 409.6561134285029,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0038875257786941263,
+      "pool_created_at": "2026-08-28T00:51:39Z",
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "base_0x9d0e8f5b25384c7310cb8c6ae32c8fbeb645d083",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "base_0x4200000000000000000000000000000000000006",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v3-base",
+            "type": "dex"
+          }
+        }
+      }
+    },
     {
       "network": "base",
       "dex": "uniswap-v3-base",
       "pool_address": "0x2df380544b88adb3ad0a94100dcc45fd705aae2d",
       "name": "xdp / USDC 0.01%",
-      "liquidity_usd": 1729950.7608,
-      "volume_24h_usd": 44007013.6842573,
+      "liquidity_usd": 1744936.9625,
+      "volume_24h_usd": 43742105.8667447,
       "transactions_24h": {
-        "buys": 61755,
-        "sells": 62432,
-        "buyers": 1970,
-        "sellers": 2029
+        "buys": 61467,
+        "sells": 62166,
+        "buyers": 1967,
+        "sellers": 2035
       },
-      "price_change_24h_pct": -2.61,
+      "price_change_24h_pct": -1.021,
       "fee_pct_if_parsed": 0.01,
-      "gross_fees_24h_if_parsed": 4400.70136842573,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0025438304188442136,
+      "gross_fees_24h_if_parsed": 4374.21058667447,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0025068014952284957,
       "pool_created_at": "2026-09-28T12:52:05Z",
       "relationships": {
         "base_token": {
@@ -67,18 +106,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0x67a11022b7b6ed66f81233f6c8ed6e48f7826530",
       "name": "USDC / VVV 0.3%",
-      "liquidity_usd": 1038357.5058,
-      "volume_24h_usd": 662198.297728929,
+      "liquidity_usd": 1033488.4409,
+      "volume_24h_usd": 652805.850445206,
       "transactions_24h": {
-        "buys": 852,
-        "sells": 695,
-        "buyers": 396,
-        "sellers": 344
+        "buys": 856,
+        "sells": 683,
+        "buyers": 400,
+        "sellers": 340
       },
-      "price_change_24h_pct": 0.375,
+      "price_change_24h_pct": -0.124,
       "fee_pct_if_parsed": 0.3,
-      "gross_fees_24h_if_parsed": 1986.5948931867867,
-      "gross_fee_to_tvl_daily_if_parsed": 0.001913208969059476,
+      "gross_fees_24h_if_parsed": 1958.417551335618,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0018949583506034722,
       "pool_created_at": "2025-01-27T21:54:21Z",
       "relationships": {
         "base_token": {
@@ -106,18 +145,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0x3d5d143381916280ff91407febeb52f2b60f33cf",
       "name": "AERO / WETH 0.3%",
-      "liquidity_usd": 1467669.3276,
-      "volume_24h_usd": 871563.215707889,
+      "liquidity_usd": 1470098.2913,
+      "volume_24h_usd": 867432.078016499,
       "transactions_24h": {
-        "buys": 877,
+        "buys": 876,
         "sells": 1101,
-        "buyers": 256,
-        "sellers": 288
+        "buyers": 255,
+        "sellers": 289
       },
-      "price_change_24h_pct": -10.466,
+      "price_change_24h_pct": -9.444,
       "fee_pct_if_parsed": 0.3,
-      "gross_fees_24h_if_parsed": 2614.689647123667,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0017815250328896135,
+      "gross_fees_24h_if_parsed": 2602.296234049497,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0017701511861144335,
       "pool_created_at": "2023-10-04T13:09:45Z",
       "relationships": {
         "base_token": {
@@ -145,18 +184,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0x2f42df4af5312b492e9d7f7b2110d9c7bf2d9e4f",
       "name": "MORPHO / WETH 0.3%",
-      "liquidity_usd": 920159.4745,
-      "volume_24h_usd": 476327.113830386,
+      "liquidity_usd": 924607.7849,
+      "volume_24h_usd": 491092.75883538,
       "transactions_24h": {
-        "buys": 463,
-        "sells": 928,
-        "buyers": 94,
+        "buys": 476,
+        "sells": 927,
+        "buyers": 99,
         "sellers": 174
       },
-      "price_change_24h_pct": -4.647,
+      "price_change_24h_pct": -4.34,
       "fee_pct_if_parsed": 0.3,
-      "gross_fees_24h_if_parsed": 1428.981341491158,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0015529713936463499,
+      "gross_fees_24h_if_parsed": 1473.27827650614,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0015934089032848462,
       "pool_created_at": "2024-11-11T23:28:21Z",
       "relationships": {
         "base_token": {
@@ -184,18 +223,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0x5116773e18a9c7bb03ebb961b38678e45e238923",
       "name": "DRB / WETH 1%",
-      "liquidity_usd": 1174784.0567,
-      "volume_24h_usd": 171390.413709705,
+      "liquidity_usd": 1173685.9945,
+      "volume_24h_usd": 171861.410781482,
       "transactions_24h": {
-        "buys": 796,
-        "sells": 390,
-        "buyers": 154,
+        "buys": 790,
+        "sells": 391,
+        "buyers": 152,
         "sellers": 79
       },
-      "price_change_24h_pct": -12.92,
+      "price_change_24h_pct": -12.68,
       "fee_pct_if_parsed": 1.0,
-      "gross_fees_24h_if_parsed": 1713.90413709705,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0014589099395096088,
+      "gross_fees_24h_if_parsed": 1718.61410781482,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0014642878213324544,
       "pool_created_at": "2025-03-07T09:58:57Z",
       "relationships": {
         "base_token": {
@@ -223,18 +262,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0x6c561b446416e1a00e8e93e221854d6ea4171372",
       "name": "WETH / USDC 0.3%",
-      "liquidity_usd": 155120332.2563,
-      "volume_24h_usd": 64998943.4787806,
+      "liquidity_usd": 155244453.9915,
+      "volume_24h_usd": 63833838.585836,
       "transactions_24h": {
-        "buys": 4786,
-        "sells": 2141,
-        "buyers": 974,
+        "buys": 4672,
+        "sells": 2149,
+        "buyers": 975,
         "sellers": 944
       },
-      "price_change_24h_pct": -1.686,
+      "price_change_24h_pct": -1.369,
       "fee_pct_if_parsed": 0.3,
-      "gross_fees_24h_if_parsed": 194996.8304363418,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0012570681586354215,
+      "gross_fees_24h_if_parsed": 191501.515757508,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0012335481934059504,
       "pool_created_at": "2023-11-18T05:59:09Z",
       "relationships": {
         "base_token": {
@@ -262,18 +301,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0x529d2863a1521d0b57db028168fde2e97120017c",
       "name": "VIRTUAL / USDC 0.3%",
-      "liquidity_usd": 756038.8207,
-      "volume_24h_usd": 277816.188389384,
+      "liquidity_usd": 751726.5614,
+      "volume_24h_usd": 273926.808241071,
       "transactions_24h": {
         "buys": 572,
-        "sells": 823,
+        "sells": 781,
         "buyers": 233,
-        "sellers": 300
+        "sellers": 296
       },
-      "price_change_24h_pct": -5.309,
+      "price_change_24h_pct": -5.198,
       "fee_pct_if_parsed": 0.3,
-      "gross_fees_24h_if_parsed": 833.448565168152,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0011023885842217467,
+      "gross_fees_24h_if_parsed": 821.780424723213,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0010931906186642467,
       "pool_created_at": "2024-04-12T23:47:59Z",
       "relationships": {
         "base_token": {
@@ -301,18 +340,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0xe5b5f522e98b5a2baae212d4da66b865b781db97",
       "name": "AERO / USDC 0.05%",
-      "liquidity_usd": 193146.7651,
-      "volume_24h_usd": 407203.83953631,
+      "liquidity_usd": 193000.3646,
+      "volume_24h_usd": 411643.769953789,
       "transactions_24h": {
-        "buys": 5179,
+        "buys": 5276,
         "sells": 4163,
-        "buyers": 807,
-        "sellers": 788
+        "buyers": 818,
+        "sellers": 786
       },
-      "price_change_24h_pct": -10.002,
+      "price_change_24h_pct": -9.159,
       "fee_pct_if_parsed": 0.05,
-      "gross_fees_24h_if_parsed": 203.60191976815503,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0010541306227041492,
+      "gross_fees_24h_if_parsed": 205.8218849768945,
+      "gross_fee_to_tvl_daily_if_parsed": 0.00106643262256767,
       "pool_created_at": "2024-03-25T19:59:43Z",
       "relationships": {
         "base_token": {
@@ -340,18 +379,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0xd84d4c6cf3dacfe46847b633553a7ec667328a25",
       "name": "AERO / cbBTC 0.3%",
-      "liquidity_usd": 869470.056,
-      "volume_24h_usd": 270222.174066974,
+      "liquidity_usd": 868482.9964,
+      "volume_24h_usd": 269893.631152477,
       "transactions_24h": {
-        "buys": 460,
-        "sells": 768,
-        "buyers": 206,
-        "sellers": 275
+        "buys": 454,
+        "sells": 758,
+        "buyers": 203,
+        "sellers": 272
       },
-      "price_change_24h_pct": -9.404,
+      "price_change_24h_pct": -9.387,
       "fee_pct_if_parsed": 0.3,
-      "gross_fees_24h_if_parsed": 810.666522200922,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0009323685348410918,
+      "gross_fees_24h_if_parsed": 809.6808934574309,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0009322933169833916,
       "pool_created_at": "2026-10-22T23:10:29Z",
       "relationships": {
         "base_token": {
@@ -379,18 +418,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0xb4cb800910b228ed3d0834cf79d697127bbb00e5",
       "name": "WETH / USDC 0.01%",
-      "liquidity_usd": 528807.7386,
-      "volume_24h_usd": 4274446.26983251,
+      "liquidity_usd": 529110.4627,
+      "volume_24h_usd": 4261463.27211652,
       "transactions_24h": {
-        "buys": 21034,
-        "sells": 25298,
-        "buyers": 5309,
-        "sellers": 6885
+        "buys": 20968,
+        "sells": 25260,
+        "buyers": 5255,
+        "sellers": 6872
       },
-      "price_change_24h_pct": -1.686,
+      "price_change_24h_pct": -1.369,
       "fee_pct_if_parsed": 0.01,
-      "gross_fees_24h_if_parsed": 427.444626983251,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0008083176470051207,
+      "gross_fees_24h_if_parsed": 426.146327211652,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0008054014374183193,
       "pool_created_at": "2023-09-16T17:31:47Z",
       "relationships": {
         "base_token": {
@@ -418,18 +457,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0x7af45dfaf2fdea139b2295f37ffea2e16e6fd8ba",
       "name": "FLOCK / USDC 0.3%",
-      "liquidity_usd": 496495.6138,
-      "volume_24h_usd": 130691.232762316,
+      "liquidity_usd": 497465.8826,
+      "volume_24h_usd": 128211.24891968,
       "transactions_24h": {
-        "buys": 511,
-        "sells": 591,
+        "buys": 514,
+        "sells": 563,
         "buyers": 66,
         "sellers": 68
       },
-      "price_change_24h_pct": -3.158,
+      "price_change_24h_pct": -2.138,
       "fee_pct_if_parsed": 0.3,
-      "gross_fees_24h_if_parsed": 392.073698286948,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0007896820986718413,
+      "gross_fees_24h_if_parsed": 384.63374675904,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0007731861826357938,
       "pool_created_at": "2025-05-09T04:06:51Z",
       "relationships": {
         "base_token": {
@@ -457,18 +496,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0xd0b53d9277642d899df5c87a3966a349a798f224",
       "name": "USDC / WETH 0.05%",
-      "liquidity_usd": 8538426.4433,
-      "volume_24h_usd": 11576729.2309488,
+      "liquidity_usd": 8542587.5918,
+      "volume_24h_usd": 11465633.5852123,
       "transactions_24h": {
-        "buys": 12159,
-        "sells": 8335,
-        "buyers": 5590,
-        "sellers": 1415
+        "buys": 12099,
+        "sells": 8378,
+        "buyers": 5579,
+        "sellers": 1422
       },
-      "price_change_24h_pct": 0.118,
+      "price_change_24h_pct": -0.082,
       "fee_pct_if_parsed": 0.05,
-      "gross_fees_24h_if_parsed": 5788.3646154744,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0006779193630011839,
+      "gross_fees_24h_if_parsed": 5732.816792606151,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0006710866855037063,
       "pool_created_at": "2024-03-23T12:55:07Z",
       "relationships": {
         "base_token": {
@@ -494,59 +533,20 @@
     {
       "network": "base",
       "dex": "uniswap-v3-base",
-      "pool_address": "0x7aea2e8a3843516afa07293a10ac8e49906dabd1",
-      "name": "cbBTC / WETH 0.05%",
-      "liquidity_usd": 16970585.8455,
-      "volume_24h_usd": 18789614.6494277,
-      "transactions_24h": {
-        "buys": 1898,
-        "sells": 1905,
-        "buyers": 740,
-        "sellers": 684
-      },
-      "price_change_24h_pct": -1.41,
-      "fee_pct_if_parsed": 0.05,
-      "gross_fees_24h_if_parsed": 9394.80732471385,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0005535935771601557,
-      "pool_created_at": "2024-09-13T15:24:23Z",
-      "relationships": {
-        "base_token": {
-          "data": {
-            "id": "base_0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
-            "type": "token"
-          }
-        },
-        "quote_token": {
-          "data": {
-            "id": "base_0x4200000000000000000000000000000000000006",
-            "type": "token"
-          }
-        },
-        "dex": {
-          "data": {
-            "id": "uniswap-v3-base",
-            "type": "dex"
-          }
-        }
-      }
-    },
-    {
-      "network": "base",
-      "dex": "uniswap-v3-base",
       "pool_address": "0x9c087eb773291e50cf6c6a90ef0f4500e349b903",
       "name": "VIRTUAL / WETH 0.05%",
-      "liquidity_usd": 490261.9758,
-      "volume_24h_usd": 532037.586094041,
+      "liquidity_usd": 488301.7,
+      "volume_24h_usd": 532922.031983735,
       "transactions_24h": {
-        "buys": 1792,
-        "sells": 1886,
-        "buyers": 492,
-        "sellers": 538
+        "buys": 1816,
+        "sells": 1894,
+        "buyers": 500,
+        "sellers": 545
       },
-      "price_change_24h_pct": -4.876,
+      "price_change_24h_pct": -4.821,
       "fee_pct_if_parsed": 0.05,
-      "gross_fees_24h_if_parsed": 266.0187930470205,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0005426053950297414,
+      "gross_fees_24h_if_parsed": 266.46101599186755,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0005456893064100894,
       "pool_created_at": "2024-10-29T09:50:57Z",
       "relationships": {
         "base_token": {
@@ -572,21 +572,99 @@
     {
       "network": "base",
       "dex": "uniswap-v3-base",
+      "pool_address": "0x7aea2e8a3843516afa07293a10ac8e49906dabd1",
+      "name": "cbBTC / WETH 0.05%",
+      "liquidity_usd": 16953078.9416,
+      "volume_24h_usd": 18380958.97344,
+      "transactions_24h": {
+        "buys": 1812,
+        "sells": 1905,
+        "buyers": 713,
+        "sellers": 683
+      },
+      "price_change_24h_pct": -1.439,
+      "fee_pct_if_parsed": 0.05,
+      "gross_fees_24h_if_parsed": 9190.47948672,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0005421127052129812,
+      "pool_created_at": "2024-09-13T15:24:23Z",
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "base_0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "base_0x4200000000000000000000000000000000000006",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v3-base",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "network": "base",
+      "dex": "uniswap-v3-base",
       "pool_address": "0xfbb6eed8e7aa03b138556eedaf5d271a5e1e43ef",
       "name": "cbBTC / USDC 0.05%",
-      "liquidity_usd": 9517562.0965,
-      "volume_24h_usd": 8619312.95664895,
+      "liquidity_usd": 9561444.6487,
+      "volume_24h_usd": 8588082.3930826,
       "transactions_24h": {
-        "buys": 2241,
-        "sells": 3141,
-        "buyers": 694,
-        "sellers": 774
+        "buys": 2242,
+        "sells": 3105,
+        "buyers": 695,
+        "sellers": 771
       },
-      "price_change_24h_pct": -1.432,
+      "price_change_24h_pct": -1.411,
       "fee_pct_if_parsed": 0.05,
-      "gross_fees_24h_if_parsed": 4309.656478324475,
-      "gross_fee_to_tvl_daily_if_parsed": 0.0004528109651009593,
+      "gross_fees_24h_if_parsed": 4294.0411965413,
+      "gross_fee_to_tvl_daily_if_parsed": 0.00044909962399093423,
       "pool_created_at": "2024-09-14T12:04:07Z",
+      "relationships": {
+        "base_token": {
+          "data": {
+            "id": "base_0xcbb7c0000ab88b473b1f5afd9ef808440eed33bf",
+            "type": "token"
+          }
+        },
+        "quote_token": {
+          "data": {
+            "id": "base_0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+            "type": "token"
+          }
+        },
+        "dex": {
+          "data": {
+            "id": "uniswap-v3-base",
+            "type": "dex"
+          }
+        }
+      }
+    },
+    {
+      "network": "base",
+      "dex": "uniswap-v3-base",
+      "pool_address": "0xec558e484cc9f2210714e345298fdc53b253c27d",
+      "name": "cbBTC / USDC 0.3%",
+      "liquidity_usd": 1910012.4392,
+      "volume_24h_usd": 250681.386730995,
+      "transactions_24h": {
+        "buys": 93,
+        "sells": 295,
+        "buyers": 87,
+        "sellers": 227
+      },
+      "price_change_24h_pct": -1.298,
+      "fee_pct_if_parsed": 0.3,
+      "gross_fees_24h_if_parsed": 752.044160192985,
+      "gross_fee_to_tvl_daily_if_parsed": 0.0003937378337221591,
+      "pool_created_at": "2024-09-11T19:50:47Z",
       "relationships": {
         "base_token": {
           "data": {
@@ -613,18 +691,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0xd56da2b74ba826f19015e6b7dd9dae1903e85da1",
       "name": "USDT / USDC 0.01%",
-      "liquidity_usd": 189692.3491,
-      "volume_24h_usd": 195215.024111343,
+      "liquidity_usd": 189583.992,
+      "volume_24h_usd": 252336.0338049,
       "transactions_24h": {
-        "buys": 380,
-        "sells": 291,
-        "buyers": 213,
-        "sellers": 184
+        "buys": 510,
+        "sells": 413,
+        "buyers": 258,
+        "sellers": 262
       },
-      "price_change_24h_pct": -0.195,
+      "price_change_24h_pct": -0.204,
       "fee_pct_if_parsed": 0.01,
-      "gross_fees_24h_if_parsed": 19.5215024111343,
-      "gross_fee_to_tvl_daily_if_parsed": 0.00010291138521798348,
+      "gross_fees_24h_if_parsed": 25.233603380490003,
+      "gross_fee_to_tvl_daily_if_parsed": 0.00013309986309651081,
       "pool_created_at": "2024-04-16T22:04:49Z",
       "relationships": {
         "base_token": {
@@ -652,18 +730,18 @@
       "dex": "uniswap-v3-base",
       "pool_address": "0xe2b8c33ae97658cead06afd47c7f3857e5851871",
       "name": "JitoSOL / cbBTC 0.01%",
-      "liquidity_usd": 14057147.1061,
-      "volume_24h_usd": 593923.934947394,
+      "liquidity_usd": 14018415.3835,
+      "volume_24h_usd": 595549.220748945,
       "transactions_24h": {
-        "buys": 1009,
-        "sells": 1154,
+        "buys": 1013,
+        "sells": 1158,
         "buyers": 302,
-        "sellers": 283
+        "sellers": 281
       },
-      "price_change_24h_pct": -2.648,
+      "price_change_24h_pct": -2.774,
       "fee_pct_if_parsed": 0.01,
-      "gross_fees_24h_if_parsed": 59.3923934947394,
-      "gross_fee_to_tvl_daily_if_parsed": 4.225067365836023e-06,
+      "gross_fees_24h_if_parsed": 59.554922074894506,
+      "gross_fee_to_tvl_daily_if_parsed": 4.248334811436107e-06,
       "pool_created_at": "2026-05-29T16:16:13Z",
       "relationships": {
         "base_token": {
